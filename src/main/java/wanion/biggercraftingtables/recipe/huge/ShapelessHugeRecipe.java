@@ -8,8 +8,42 @@ package wanion.biggercraftingtables.recipe.huge;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.biggercraftingtables.recipe.IAdvancedRecipe;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
 
-public final class ShapelessHugeRecipe implements IAdvancedRecipe
+import javax.annotation.Nonnull;
+
+public final class ShapelessHugeRecipe implements IHugeRecipe
 {
+	private final int recipeSize = 0;
+
+	public ShapelessHugeRecipe()
+	{
+
+	}
+
+	@Override
+	public int getRecipeKey()
+	{
+		return 0;
+	}
+
+	@Override
+	public int getRecipeSize()
+	{
+		return recipeSize;
+	}
+
+	@Override
+	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offsetX, final int offsetY)
+	{
+		return null;
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack getOutput()
+	{
+		return null;
+	}
 }

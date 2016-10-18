@@ -17,8 +17,12 @@ import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTables;
+import wanion.biggercraftingtables.recipe.big.ShapedBigRecipe;
 
 import java.util.Map;
 
@@ -49,18 +53,7 @@ public class BiggerCraftingTables
 	public void preInit(final FMLPreInitializationEvent event)
 	{
 		proxy.preInit();
-	}
-
-	@Mod.EventHandler
-	public void init(final FMLInitializationEvent event)
-	{
-
-	}
-
-	@Mod.EventHandler
-	public void postInit(final FMLPostInitializationEvent event)
-	{
-
+		new ShapedBigRecipe(new ItemStack(Items.furnace_minecart), "T T", "D", "    ",  "DD DD", 'T', OreDictionary.getOres("blockIron"), 'D', "blockGold");
 	}
 
 	@NetworkCheckHandler

@@ -13,11 +13,29 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractRecipeRegistry
+public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 {
-	public final TIntObjectMap<List<IAdvancedRecipe>> craftingRecipes = new TIntObjectHashMap<>();
+	public final TIntObjectMap<List<R>> shapedRecipes = new TIntObjectHashMap<>();
+	public final TIntObjectMap<List<R>> shapelessRecipes = new TIntObjectHashMap<>();
+
+	public final void addRecipe(@Nonnull final R recipe)
+	{
+		final int recipeKey = recipe.getRecipeKey();
+		if (recipeKey != 0) {
+			if (!shapedRecipes.containsKey(recipeKey))
+				shapedRecipes.put(recipeKey, new ArrayList<>());
+			shapedRecipes.get(recipeKey).add(recipe);
+		} else {
+			final int recipeSize = recipe.getRecipeSize();
+			if (!shapelessRecipes.containsKey(recipeSize))
+				shapelessRecipes.put(recipeSize, new ArrayList<R>());
+			shapelessRecipes.get(recipeSize).add(recipe);
+		}
+	}
 
 	public abstract ItemStack findMatchingRecipe(final InventoryCrafting matrix);
 }

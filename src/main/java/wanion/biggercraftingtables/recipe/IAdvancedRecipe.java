@@ -15,9 +15,9 @@ import javax.annotation.Nonnull;
 
 public interface IAdvancedRecipe
 {
-	int getRecipeSize();
-
 	int getRecipeKey();
+
+	int getRecipeSize();
 
 	ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offsetX, final int offsetY);
 
