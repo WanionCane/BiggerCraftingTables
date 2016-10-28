@@ -16,6 +16,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,22 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 			if (!shapelessRecipes.containsKey(recipeSize))
 				shapelessRecipes.put(recipeSize, new ArrayList<>());
 			shapelessRecipes.get(recipeSize).add(recipe);
+		}
+	}
+
+	public final void removeRecipe(@Nullable final R recipe)
+	{
+		if (recipe == null)
+			return;
+		final long recipeKey = recipe.getRecipeKey();
+		if (recipeKey != 0) {
+			final List<R> shapedRecipeList = shapedRecipes.get(recipeKey);
+			if (shapedRecipeList != null)
+				shapedRecipeList.remove(recipe);
+		} else {
+			final List<R> shapelessRecipeList = shapelessRecipes.get(recipe.getRecipeSize());
+			if (shapelessRecipeList != null)
+				shapelessRecipeList.remove(recipe);
 		}
 	}
 
