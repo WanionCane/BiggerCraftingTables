@@ -105,4 +105,10 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 		}
 		return true;
 	}
+
+	@Override
+	public int damageDropped(final int metadata)
+	{
+		return metadata;
+	}
 }

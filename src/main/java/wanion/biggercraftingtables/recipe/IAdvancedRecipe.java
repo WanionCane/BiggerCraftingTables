@@ -15,11 +15,11 @@ import javax.annotation.Nonnull;
 
 public interface IAdvancedRecipe
 {
-	int getRecipeKey();
+	long getRecipeKey();
 
 	int getRecipeSize();
 
-	ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offsetX, final int offsetY);
+	ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY);
 
 	@Nonnull
 	ItemStack getOutput();

@@ -18,7 +18,7 @@ public final class ShapelessBigRecipe implements IBigRecipe
 	private final int recipeSize = 0;
 
 	@Override
-	public int getRecipeKey()
+	public long getRecipeKey()
 	{
 		return 0;
 	}
@@ -30,7 +30,7 @@ public final class ShapelessBigRecipe implements IBigRecipe
 	}
 
 	@Override
-	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offsetX, final int offsetY)
+	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
 		return null;
 	}

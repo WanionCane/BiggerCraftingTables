@@ -23,7 +23,7 @@ public final class ShapelessHugeRecipe implements IHugeRecipe
 	}
 
 	@Override
-	public int getRecipeKey()
+	public long getRecipeKey()
 	{
 		return 0;
 	}
@@ -35,7 +35,7 @@ public final class ShapelessHugeRecipe implements IHugeRecipe
 	}
 
 	@Override
-	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offsetX, final int offsetY)
+	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
 		return null;
 	}

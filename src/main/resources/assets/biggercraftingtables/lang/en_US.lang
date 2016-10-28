@@ -1,0 +1,7 @@
+itemGroup.biggercraftingtables=Bigger Crafting Tables
+
+tile.biggercraftingtables:Big.name=Big Crafting Table
+tile.biggercraftingtables:Huge.name=Huge Crafting Table
+
+container.BigCraftingTable=Big Crafting Table
+container.HugeCraftingTable=Huge Crafting Table

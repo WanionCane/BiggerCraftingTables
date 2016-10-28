@@ -9,7 +9,9 @@ package wanion.biggercraftingtables.recipe;
  */
 
 import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 
@@ -19,12 +21,12 @@ import java.util.List;
 
 public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 {
-	public final TIntObjectMap<List<R>> shapedRecipes = new TIntObjectHashMap<>();
+	public final TLongObjectMap<List<R>> shapedRecipes = new TLongObjectHashMap<>();
 	public final TIntObjectMap<List<R>> shapelessRecipes = new TIntObjectHashMap<>();
 
 	public final void addRecipe(@Nonnull final R recipe)
 	{
-		final int recipeKey = recipe.getRecipeKey();
+		final long recipeKey = recipe.getRecipeKey();
 		if (recipeKey != 0) {
 			if (!shapedRecipes.containsKey(recipeKey))
 				shapedRecipes.put(recipeKey, new ArrayList<>());
@@ -32,10 +34,13 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 		} else {
 			final int recipeSize = recipe.getRecipeSize();
 			if (!shapelessRecipes.containsKey(recipeSize))
-				shapelessRecipes.put(recipeSize, new ArrayList<R>());
+				shapelessRecipes.put(recipeSize, new ArrayList<>());
 			shapelessRecipes.get(recipeSize).add(recipe);
 		}
 	}
 
-	public abstract ItemStack findMatchingRecipe(final InventoryCrafting matrix);
+	public final ItemStack findMatchingRecipe(final InventoryCrafting matrix)
+	{
+		return null;
+	}
 }

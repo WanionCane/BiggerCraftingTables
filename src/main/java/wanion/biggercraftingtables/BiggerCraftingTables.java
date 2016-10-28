@@ -53,7 +53,7 @@ public class BiggerCraftingTables
 	public void preInit(final FMLPreInitializationEvent event)
 	{
 		proxy.preInit();
-		new ShapedBigRecipe(new ItemStack(Items.furnace_minecart), "T T", "D", "    ",  "DD DD", 'T', OreDictionary.getOres("blockIron"), 'D', "blockGold");
+		new ShapedBigRecipe(new ItemStack(Items.furnace_minecart), "", "", "TTTTT", "DDD", "DDD",'T', OreDictionary.getOres("blockIron"), 'D', "blockGold");
 	}
 
 	@NetworkCheckHandler

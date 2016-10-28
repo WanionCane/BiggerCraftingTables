@@ -1,0 +1,5 @@
+tile.biggercraftingtables:Big.name=Bancada de Trabalho Grande
+tile.biggercraftingtables:Huge.name=Bancada de Trabalho Enorme
+
+container.BigCraftingTable=Bancada de Trabalho Grande
+container.HugeCraftingTable=Bancada de Trabalho Enorme

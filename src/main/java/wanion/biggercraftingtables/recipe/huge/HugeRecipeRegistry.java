@@ -8,8 +8,6 @@ package wanion.biggercraftingtables.recipe.huge;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.recipe.AbstractRecipeRegistry;
 
 public final class HugeRecipeRegistry extends AbstractRecipeRegistry<IHugeRecipe>
@@ -17,10 +15,4 @@ public final class HugeRecipeRegistry extends AbstractRecipeRegistry<IHugeRecipe
 	public static final HugeRecipeRegistry instance = new HugeRecipeRegistry();
 
 	private HugeRecipeRegistry() {}
-
-	@Override
-	public ItemStack findMatchingRecipe(InventoryCrafting matrix)
-	{
-		return null;
-	}
 }

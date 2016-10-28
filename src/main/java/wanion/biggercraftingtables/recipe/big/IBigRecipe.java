@@ -10,6 +10,4 @@ package wanion.biggercraftingtables.recipe.big;
 
 import wanion.biggercraftingtables.recipe.IAdvancedRecipe;
 
-public interface IBigRecipe extends IAdvancedRecipe
-{
-}
+public interface IBigRecipe extends IAdvancedRecipe {}
