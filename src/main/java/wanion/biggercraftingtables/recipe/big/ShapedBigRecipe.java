@@ -20,15 +20,15 @@ import java.util.List;
 public final class ShapedBigRecipe implements IBigRecipe
 {
 	private final ItemStack output;
+	private final long recipeKey;
+	private final int recipeSize;
 	public final Object[] inputs;
 	public final int width;
 	public final int height;
-	private final long recipeKey;
-	private final int recipeSize;
 
 	public ShapedBigRecipe(@Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{
-		this.output = output;
+		this.output = output.copy();
 		int dictionaryIndex = 0, height = 0, width = 0;
 		for (int i = 0; i < inputs.length; i++) {
 			if (!(inputs[i] instanceof String)) {
@@ -145,6 +145,6 @@ public final class ShapedBigRecipe implements IBigRecipe
 	@Override
 	public ItemStack getOutput()
 	{
-		return output;
+		return output.copy();
 	}
 }

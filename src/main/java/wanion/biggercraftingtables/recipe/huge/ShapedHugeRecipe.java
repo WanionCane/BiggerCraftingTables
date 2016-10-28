@@ -20,15 +20,15 @@ import java.util.List;
 public final class ShapedHugeRecipe implements IHugeRecipe
 {
 	private final ItemStack output;
+	private final long recipeKey;
+	private final int recipeSize;
 	public final Object[] inputs;
 	public final int width;
 	public final int height;
-	private final long recipeKey;
-	private final int recipeSize;
 
 	public ShapedHugeRecipe(@Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{
-		this.output = output;
+		this.output = output.copy();
 		int dictionaryIndex = 0, height = 0, width = 0;
 		for (int i = 0; i < inputs.length; i++) {
 			if (!(inputs[i] instanceof String)) {
@@ -38,7 +38,7 @@ public final class ShapedHugeRecipe implements IHugeRecipe
 				height++;
 		}
 		if (dictionaryIndex == 0 || dictionaryIndex > 7)
-			throw new RuntimeException("Invalid ShapedBigRecipe");
+			throw new RuntimeException("Invalid ShapedHugeRecipe");
 		final TCharObjectMap<Object> charDictionary = new TCharObjectHashMap<>();
 		for (int i = dictionaryIndex; i < inputs.length; i++)
 			charDictionary.put((char) inputs[i], inputs[++i]);
@@ -145,6 +145,6 @@ public final class ShapedHugeRecipe implements IHugeRecipe
 	@Override
 	public ItemStack getOutput()
 	{
-		return output;
+		return output.copy();
 	}
 }

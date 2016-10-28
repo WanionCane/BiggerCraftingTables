@@ -10,16 +10,42 @@ package wanion.biggercraftingtables.recipe.huge;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ShapelessHugeRecipe implements IHugeRecipe
 {
-	private final int recipeSize = 0;
+	private final ItemStack output;
+	private final int recipeSize;
+	public final List<Object> inputs = new ArrayList<>();
 
-	public ShapelessHugeRecipe()
+	public ShapelessHugeRecipe(@Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{
-
+		this.output = output.copy();
+		int recipeSize = 0;
+		for (final Object input : inputs) {
+			if (input instanceof ItemStack) {
+				if (((ItemStack) input).getItem() == null)
+					continue;
+				final ItemStack newInput = ((ItemStack) input).copy();
+				newInput.stackSize = 0;
+				this.inputs.add(newInput);
+			} else if (input instanceof String) {
+				final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
+				if (oreList != null && !oreList.isEmpty())
+					this.inputs.add(oreList);
+			} else if (input instanceof List) {
+				if (!((List) input).isEmpty())
+					this.inputs.add(input);
+			} else continue;
+			recipeSize++;
+		}
+		if (recipeSize == 0 || recipeSize > 49)
+			throw new RuntimeException("Invalid ShapelessHugeRecipe");
+		this.recipeSize = recipeSize;
 	}
 
 	@Override
@@ -44,6 +70,6 @@ public final class ShapelessHugeRecipe implements IHugeRecipe
 	@Override
 	public ItemStack getOutput()
 	{
-		return null;
+		return output.copy();
 	}
 }
