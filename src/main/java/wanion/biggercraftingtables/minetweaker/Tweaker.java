@@ -17,9 +17,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public final class Tweaker
 {
-	private Tweaker()
-	{
-	}
+	private Tweaker() {}
 
 	public static void init()
 	{
