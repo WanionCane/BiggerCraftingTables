@@ -59,7 +59,7 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 	public final ItemStack findMatchingRecipe(final InventoryCrafting matrix)
 	{
 		final int root = (int) Math.sqrt(matrix.getSizeInventory());
-		int offSetX = 0, offSetY = 0, recipeSize = 0;
+		int offSetX = 0, offSetY = 0, width = 0, height = 0,recipeSize = 0;
 		long recipeKey = 0;
 		boolean foundX = false, foundY = false;
 		for (int x = 0; !foundX && x < root; x++) {
@@ -77,14 +77,27 @@ public abstract class AbstractRecipeRegistry<R extends IAdvancedRecipe>
 					offSetY = y;
 			}
 		}
-		for (int y = 0; true; y++) {
+		for (int y = 0; y < root; y++) {
+			int x = 0;
+			while (true) {
+				final int actualY = offSetY + y;
+				if (actualY < root) {
+					final int actualX = offSetX + x++;
+					if (actualX < root && matrix.getStackInSlot(actualY * root + actualX) != null) {
+						final int xDifference = actualX - (offSetX - 1);
+						final int yDifference = actualY - (offSetY - 1);
+						if (xDifference > width)
+							width = xDifference;
+						if (yDifference > height)
+							height = yDifference;
+					} else break;
+				} else break;
+			}
+		}
+		for (int y = 0; y < height; y++) {
 			final int actualY = offSetY + y;
-			if (root < actualY)
-				break;
-			for (int x = 0; true; x++) {
+			for (int x = 0; x < width; x++) {
 				final int actualX = offSetX + x;
-				if (root < actualX)
-					break;
 				if (matrix.getStackInSlot(actualY * root + actualX) != null) {
 					recipeKey |= 1 << (y * root + x);
 					recipeSize++;

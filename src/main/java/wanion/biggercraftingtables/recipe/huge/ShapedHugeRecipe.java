@@ -138,7 +138,35 @@ public final class ShapedHugeRecipe implements IHugeRecipe
 	@Override
 	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
-		return null;
+		boolean matches = true;
+		for (int y = 0; matches && y < height; y++) {
+			final int actualY = offSetY + y;
+			for (int x = 0; matches && x < width; x++) {
+				final int actualX = offSetX + y;
+				final Object input = inputs[y * height + x];
+				final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(actualY * 7 + actualX);
+				if (slotItemStack != input) {
+					if (input instanceof ItemStack) {
+						if (!(((ItemStack) input).isItemEqual(slotItemStack)))
+							matches = false;
+					} else if (input instanceof List) {
+						boolean found = false;
+						final List inputList = (List) input;
+						for (final Object object : inputList) {
+							if (found)
+								break;
+							if (object instanceof ItemStack) {
+								if (((ItemStack) object).isItemEqual(slotItemStack))
+									found = true;
+							} else break;
+						}
+						if (!found)
+							matches = false;
+					} else matches = false;
+				}
+			}
+		}
+		return matches ? getOutput() : null;
 	}
 
 	@Nonnull
