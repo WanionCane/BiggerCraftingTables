@@ -14,6 +14,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public final class ShapelessBigRecipe implements IBigRecipe
@@ -37,10 +38,15 @@ public final class ShapelessBigRecipe implements IBigRecipe
 				final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
 				if (oreList != null && !oreList.isEmpty())
 					this.inputs.add(oreList);
-			} else if (input instanceof List) {
+				else
+					continue;
+			} else if (input instanceof List)
 				if (!((List) input).isEmpty())
 					this.inputs.add(input);
-			} else continue;
+				else
+					continue;
+			else
+				continue;
 			recipeSize++;
 		}
 		if (recipeSize == 0 || recipeSize > 25)
@@ -60,10 +66,50 @@ public final class ShapelessBigRecipe implements IBigRecipe
 		return recipeSize;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
-		return null;
+		final List<Object> inputs = new ArrayList<>(this.inputs);
+		final List<ItemStack> slotItemStacks = new ArrayList<>();
+		for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
+			final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(i);
+			if (slotItemStack != null)
+				slotItemStacks.add(slotItemStack);
+		}
+		for (final Iterator<Object> inputsIterator = inputs.iterator(); inputsIterator.hasNext(); ) {
+			final Object input = inputsIterator.next();
+			boolean found = false;
+			if (input instanceof ItemStack) {
+				for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); !found && slotItemStackIterator.hasNext(); ) {
+					final ItemStack slotItemStack = slotItemStackIterator.next();
+					if (((ItemStack) input).isItemEqual(slotItemStack)) {
+						slotItemStackIterator.remove();
+						found = true;
+					}
+				}
+				if (found)
+					break;
+			} else if (input instanceof List) {
+				final List<ItemStack> oreDict = (List<ItemStack>) input;
+				for (final ItemStack entry : oreDict) {
+					for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); !found && slotItemStackIterator.hasNext(); ) {
+						final ItemStack slotItemStack = slotItemStackIterator.next();
+						if (entry.isItemEqual(slotItemStack)) {
+							slotItemStackIterator.remove();
+							found = true;
+						}
+					}
+					if (found)
+						break;
+				}
+			}
+			if (found)
+				inputsIterator.remove();
+			else
+				break;
+		}
+		return inputs.isEmpty() && slotItemStacks.isEmpty() ? getOutput() : null;
 	}
 
 	@Nonnull

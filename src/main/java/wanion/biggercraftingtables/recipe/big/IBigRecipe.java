@@ -8,6 +8,6 @@ package wanion.biggercraftingtables.recipe.big;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.biggercraftingtables.recipe.IAdvancedRecipe;
+import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 public interface IBigRecipe extends IAdvancedRecipe {}

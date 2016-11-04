@@ -14,6 +14,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public final class ShapelessHugeRecipe implements IHugeRecipe
@@ -37,10 +38,15 @@ public final class ShapelessHugeRecipe implements IHugeRecipe
 				final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
 				if (oreList != null && !oreList.isEmpty())
 					this.inputs.add(oreList);
-			} else if (input instanceof List) {
+				else
+					continue;
+			} else if (input instanceof List)
 				if (!((List) input).isEmpty())
 					this.inputs.add(input);
-			} else continue;
+				else
+					continue;
+			else
+				continue;
 			recipeSize++;
 		}
 		if (recipeSize == 0 || recipeSize > 49)
@@ -60,10 +66,40 @@ public final class ShapelessHugeRecipe implements IHugeRecipe
 		return recipeSize;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
-		return null;
+		final List<Object> inputs = new ArrayList<>(this.inputs);
+		final List<ItemStack> slotItemStacks = new ArrayList<>();
+		for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++)
+			slotItemStacks.add(inventoryCrafting.getStackInSlot(i));
+		for (final Iterator<Object> inputsIterator = inputs.iterator(); inputsIterator.hasNext(); ) {
+			final Object input = inputsIterator.next();
+			boolean found = false;
+			if (input instanceof ItemStack) {
+				for (final ItemStack slotItemStack : slotItemStacks)
+					if (((ItemStack) input).isItemEqual(slotItemStack))
+						found = true;
+			} else if (input instanceof List) {
+				final List<ItemStack> oreDict = (List<ItemStack>) input;
+				for (final ItemStack entry : oreDict) {
+					for (final ItemStack slotItemStack : slotItemStacks) {
+						if (entry.isItemEqual(slotItemStack))
+							found = true;
+						if (found)
+							break;
+					}
+					if (found)
+						break;
+				}
+			}
+			if (found)
+				inputsIterator.remove();
+			else
+				break;
+		}
+		return inputs.isEmpty() ? getOutput() : null;
 	}
 
 	@Nonnull

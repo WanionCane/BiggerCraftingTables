@@ -142,8 +142,8 @@ public final class ShapedHugeRecipe implements IHugeRecipe
 		for (int y = 0; matches && y < height; y++) {
 			final int actualY = offSetY + y;
 			for (int x = 0; matches && x < width; x++) {
-				final int actualX = offSetX + y;
-				final Object input = inputs[y * height + x];
+				final int actualX = offSetX + x;
+				final Object input = inputs[y * width + x];
 				final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(actualY * 7 + actualX);
 				if (slotItemStack != input) {
 					if (input instanceof ItemStack) {

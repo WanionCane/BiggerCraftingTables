@@ -8,7 +8,7 @@ package wanion.biggercraftingtables.recipe.huge;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.biggercraftingtables.recipe.AbstractRecipeRegistry;
+import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 
 public final class HugeRecipeRegistry extends AbstractRecipeRegistry<IHugeRecipe>
 {

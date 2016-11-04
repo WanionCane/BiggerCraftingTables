@@ -19,6 +19,7 @@ import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 import wanion.biggercraftingtables.recipe.huge.IHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
+import wanion.lib.common.MineTweakerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -40,20 +41,20 @@ public final class HugeCrafting
 		int x = 0;
 		for (final IIngredient[] row : inputs)
 			for (IIngredient ingredient : row)
-				input[x++] = Tweaker.toActualObject(ingredient);
-		MineTweakerAPI.apply(new Add(new ShapedHugeRecipe(Tweaker.toStack(output), input, width, height)));
+				input[x++] = MineTweakerHelper.toActualObject(ingredient);
+		MineTweakerAPI.apply(new Add(new ShapedHugeRecipe(MineTweakerHelper.toStack(output), input, width, height)));
 	}
 
 	@ZenMethod
 	public static void addShapeless(@Nonnull final IItemStack output, @Nonnull final IIngredient[] inputs)
 	{
-		MineTweakerAPI.apply(new Add(new ShapelessHugeRecipe(Tweaker.toStack(output), Tweaker.toObjects(inputs))));
+		MineTweakerAPI.apply(new Add(new ShapelessHugeRecipe(MineTweakerHelper.toStack(output), MineTweakerHelper.toObjects(inputs))));
 	}
 
 	@ZenMethod
 	public static void remove(final IItemStack target)
 	{
-		MineTweakerAPI.apply(new Remove(Tweaker.toStack(target)));
+		MineTweakerAPI.apply(new Remove(MineTweakerHelper.toStack(target)));
 	}
 
 	private static class Add implements IUndoableAction
