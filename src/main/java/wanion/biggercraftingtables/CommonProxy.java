@@ -17,19 +17,25 @@ import wanion.biggercraftingtables.block.HugeCraftingTable.TileEntityHugeCraftin
 import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTables;
 import wanion.biggercraftingtables.core.GuiHandler;
 import wanion.biggercraftingtables.minetweaker.Tweaker;
+import wanion.biggercraftingtables.nei.NEI;
 
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 public class CommonProxy
 {
-	public void preInit()
+	public final void preInit()
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(BiggerCraftingTables.instance, GuiHandler.instance);
 		GameRegistry.registerBlock(BlockBiggerCraftingTables.instance, ItemBlockBiggerCraftingTables.class, "BiggerCraftingTables");
 		GameRegistry.registerTileEntity(TileEntityBigCraftingTable.class, MOD_ID + ":BigTable");
 		GameRegistry.registerTileEntity(TileEntityHugeCraftingTable.class, MOD_ID + ":HugeTable");
+	}
+
+	public final void postInit()
+	{
 		if (Loader.isModLoaded("MineTweaker3"))
 			Tweaker.init();
-		//if (Loader.isModLoaded("NotEnoughItems"))
+		if (Loader.isModLoaded("NotEnoughItems"))
+			NEI.init();
 	}
 }

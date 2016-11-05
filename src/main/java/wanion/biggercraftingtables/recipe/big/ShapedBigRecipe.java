@@ -101,7 +101,7 @@ public final class ShapedBigRecipe implements IBigRecipe
 				if (actualX < code.length()) {
 					Object input = charDictionary.get(code.charAt(x));
 					if (input != null && (input instanceof ItemStack || input instanceof String || input instanceof List)) {
-						final int pos = 5 * y + x;
+						final int pos = width * y + x;
 						if (input instanceof ItemStack) {
 							if (((ItemStack) input).getItem() != null)
 								((ItemStack) (this.inputs[pos] = ((ItemStack) input).copy())).stackSize = 1;
@@ -112,7 +112,7 @@ public final class ShapedBigRecipe implements IBigRecipe
 						} else if (!((List) input).isEmpty())
 							this.inputs[pos] = input;
 						if (this.inputs[pos] != null) {
-							recipeKey |= 1 << pos;
+							recipeKey |= 1L << pos;
 							recipeSize++;
 						}
 					}

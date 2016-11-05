@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block.BigCraftingTable;
+package wanion.biggercraftingtables.block.HugeCraftingTable;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -14,29 +14,29 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public final class CraftingBigCraftingTable extends InventoryCrafting
+public final class CraftingHugeCraftingTable extends InventoryCrafting
 {
-	private final TileEntityBigCraftingTable tileEntityBigCraftingTable;
+	private final TileEntityHugeCraftingTable tileEntityHugeCraftingTable;
 	private final Container container;
 
-	public CraftingBigCraftingTable(@Nonnull final Container container, @Nonnull final TileEntityBigCraftingTable tileEntityBigCraftingTable)
+	public CraftingHugeCraftingTable(@Nonnull final Container container, @Nonnull final TileEntityHugeCraftingTable tileEntityBigCraftingTable)
 	{
-		super(container, 5, 5);
-		this.tileEntityBigCraftingTable = tileEntityBigCraftingTable;
+		super(container, 7, 7);
+		this.tileEntityHugeCraftingTable = tileEntityBigCraftingTable;
 		this.container = container;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(final int slot)
 	{
-		return slot >= getSizeInventory() ? null : tileEntityBigCraftingTable.getStackInSlot(slot);
+		return slot >= getSizeInventory() ? null : tileEntityHugeCraftingTable.getStackInSlot(slot);
 	}
 
 	@Override
 	public ItemStack getStackInRowAndColumn(final int row, final int column)
 	{
-		final int slot = row * 5 + column;
-		return slot < 25 ? getStackInSlot(slot) : null;
+		final int slot = row * 7 + column;
+		return slot < 49 ? getStackInSlot(slot) : null;
 	}
 
 	@Override
@@ -48,12 +48,12 @@ public final class CraftingBigCraftingTable extends InventoryCrafting
 	@Override
 	public ItemStack decrStackSize(final int slot, final int decrement)
 	{
-		final ItemStack stack = tileEntityBigCraftingTable.getStackInSlot(slot);
+		final ItemStack stack = tileEntityHugeCraftingTable.getStackInSlot(slot);
 		if (stack != null) {
 			ItemStack itemstack;
 			if (stack.stackSize <= decrement) {
 				itemstack = stack.copy();
-				tileEntityBigCraftingTable.setInventorySlotContents(slot, null);
+				tileEntityHugeCraftingTable.setInventorySlotContents(slot, null);
 				container.onCraftMatrixChanged(this);
 				return itemstack;
 			} else {
@@ -69,7 +69,7 @@ public final class CraftingBigCraftingTable extends InventoryCrafting
 	@Override
 	public void setInventorySlotContents(final int slot, final ItemStack itemstack)
 	{
-		tileEntityBigCraftingTable.setInventorySlotContents(slot, itemstack);
+		tileEntityHugeCraftingTable.setInventorySlotContents(slot, itemstack);
 		container.onCraftMatrixChanged(this);
 	}
 }

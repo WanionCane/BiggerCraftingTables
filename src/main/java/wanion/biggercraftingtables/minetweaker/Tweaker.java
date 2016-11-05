@@ -9,11 +9,6 @@ package wanion.biggercraftingtables.minetweaker;
  */
 
 import minetweaker.MineTweakerAPI;
-import minetweaker.api.item.IIngredient;
-import minetweaker.api.item.IItemStack;
-import minetweaker.api.oredict.IOreDictEntry;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public final class Tweaker
 {

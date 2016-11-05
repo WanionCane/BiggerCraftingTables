@@ -20,6 +20,7 @@ import wanion.biggercraftingtables.recipe.huge.IHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
 import wanion.lib.common.MineTweakerHelper;
+import wanion.lib.recipe.RecipeHelper;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -37,12 +38,11 @@ public final class HugeCrafting
 		for (final IIngredient[] row : inputs)
 			if (width < row.length)
 				width = row.length;
-		final Object[] input = new Object[width * height];
-		int x = 0;
-		for (final IIngredient[] row : inputs)
-			for (IIngredient ingredient : row)
-				input[x++] = MineTweakerHelper.toActualObject(ingredient);
-		MineTweakerAPI.apply(new Add(new ShapedHugeRecipe(MineTweakerHelper.toStack(output), input, width, height)));
+		final Object[][] input = new Object[height][width];
+		for (int y = 0; y < height; y++)
+			for (int x = 0; x < width; x++)
+				input[y][x] = MineTweakerHelper.toActualObject(inputs[y][x]);
+		MineTweakerAPI.apply(new Add(new ShapedHugeRecipe(MineTweakerHelper.toStack(output), RecipeHelper.rawShapeToShape(input, 7))));
 	}
 
 	@ZenMethod

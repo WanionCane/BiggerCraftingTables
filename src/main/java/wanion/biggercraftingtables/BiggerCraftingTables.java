@@ -10,22 +10,17 @@ package wanion.biggercraftingtables;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkCheckHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTables;
-import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
-import wanion.biggercraftingtables.recipe.big.ShapedBigRecipe;
-import wanion.biggercraftingtables.recipe.big.ShapelessBigRecipe;
 
 import java.util.Map;
 
@@ -56,8 +51,14 @@ public class BiggerCraftingTables
 	public void preInit(final FMLPreInitializationEvent event)
 	{
 		proxy.preInit();
-		BigRecipeRegistry.instance.addRecipe(new ShapedBigRecipe(new ItemStack(Blocks.iron_bars), "", "", "TTTTT", "DDD", "DDD",'T', OreDictionary.getOres("blockIron"), 'D', "blockGold"));
-		BigRecipeRegistry.instance.addRecipe(new ShapelessBigRecipe(new ItemStack(Blocks.brick_block), "nuggetIron", "ingotIron", "blockIron", "nuggetGold", "ingotGold", "blockGold"));
+		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 0, 1), "CC", "CC", 'C', Blocks.crafting_table);
+		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTables.instance, 0, 1));
+	}
+
+	@Mod.EventHandler
+	public void postInit(final FMLPostInitializationEvent event)
+	{
+		proxy.postInit();
 	}
 
 	@NetworkCheckHandler
