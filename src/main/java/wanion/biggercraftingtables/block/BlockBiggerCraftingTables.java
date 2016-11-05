@@ -48,7 +48,7 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	private BlockBiggerCraftingTables()
 	{
 		super(Material.wood);
-		setCreativeTab(BiggerCraftingTables.creativeTabs);
+		setHardness(2.5F).setStepSound(soundTypeWood).setCreativeTab(BiggerCraftingTables.creativeTabs);
 	}
 
 	@Override
