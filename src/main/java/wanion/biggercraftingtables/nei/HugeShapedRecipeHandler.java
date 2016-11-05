@@ -8,7 +8,6 @@ package wanion.biggercraftingtables.nei;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;

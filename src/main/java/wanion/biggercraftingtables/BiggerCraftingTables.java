@@ -26,7 +26,7 @@ import java.util.Map;
 
 import static wanion.biggercraftingtables.Reference.*;
 
-@Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, acceptedMinecraftVersions = TARGET_MC_VERSION)
+@Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = DEPENDENCIES, acceptedMinecraftVersions = TARGET_MC_VERSION)
 public class BiggerCraftingTables
 {
 	@Mod.Instance

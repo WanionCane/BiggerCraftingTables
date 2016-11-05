@@ -2,8 +2,8 @@
 {
   "modid": "biggercraftingtables",
   "name": "Bigger Crafting Tables",
-  "description": "A mod that allow Bigger Recipes!",
-  "version": "1.7.10-1.0",
+  "description": "Adding more Crafting Tables!",
+  "version": "1.7.10-1.1",
   "mcversion": "${mcversion}",
   "url": "http://minecraft.curseforge.com/projects/bigger-crafting-tables",
   "updateUrl": "",
