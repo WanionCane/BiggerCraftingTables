@@ -90,7 +90,7 @@ public final class HugeShapedRecipeHandler extends ShapedRecipeHandler
 	@Override
 	public void loadTransferRects()
 	{
-		transferRects.add(new RecipeTransferRect(new Rectangle(116, 61, 3, 6), "huge"));
+		transferRects.add(new RecipeTransferRect(new Rectangle(132, 64, 3, 6), "huge"));
 	}
 
 	@Override
