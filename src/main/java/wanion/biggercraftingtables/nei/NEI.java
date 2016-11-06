@@ -9,6 +9,11 @@ package wanion.biggercraftingtables.nei;
  */
 
 import codechicken.nei.api.API;
+import codechicken.nei.recipe.*;
+import wanion.biggercraftingtables.block.BigCraftingTable.GuiBigCraftingTable;
+import wanion.biggercraftingtables.block.HugeCraftingTable.GuiHugeCraftingTable;
+
+import javax.annotation.Nonnull;
 
 public final class NEI
 {
@@ -16,17 +21,17 @@ public final class NEI
 
 	public static void init()
 	{
-		final BigShapedRecipeHandler bigShapedRecipeHandler = new BigShapedRecipeHandler();
-		final BigShapelessRecipeHandler bigShapelessRecipeHandler = new BigShapelessRecipeHandler();
-		final HugeShapedRecipeHandler hugeShapedRecipeHandler = new HugeShapedRecipeHandler();
-		final HugeShapelessRecipeHandler hugeShapelessRecipeHandler = new HugeShapelessRecipeHandler();
-		API.registerRecipeHandler(bigShapedRecipeHandler);
-		API.registerUsageHandler(bigShapedRecipeHandler);
-		API.registerUsageHandler(bigShapelessRecipeHandler);
-		API.registerUsageHandler(bigShapelessRecipeHandler);
-		API.registerRecipeHandler(hugeShapedRecipeHandler);
-		API.registerUsageHandler(hugeShapedRecipeHandler);
-		API.registerRecipeHandler(hugeShapelessRecipeHandler);
-		API.registerUsageHandler(hugeShapelessRecipeHandler);
+		registerHandler(new BigShapedRecipeHandler());
+		registerHandler(new BigShapelessRecipeHandler());
+		API.setGuiOffset(GuiBigCraftingTable.class, 20, -2);
+		registerHandler(new HugeShapedRecipeHandler());
+		registerHandler(new HugeShapelessRecipeHandler());
+		API.setGuiOffset(GuiHugeCraftingTable.class, 4, 13);
+	}
+
+	private static void registerHandler(@Nonnull final TemplateRecipeHandler templateRecipeHandler)
+	{
+		API.registerRecipeHandler(templateRecipeHandler);
+		API.registerUsageHandler(templateRecipeHandler);
 	}
 }

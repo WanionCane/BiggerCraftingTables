@@ -51,8 +51,8 @@ public class BiggerCraftingTables
 	public void preInit(final FMLPreInitializationEvent event)
 	{
 		proxy.preInit();
-		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 0, 1), "CC", "CC", 'C', Blocks.crafting_table);
-		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTables.instance, 0, 1));
+		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 1), "CC", "CC", 'C', Blocks.crafting_table);
+		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTables.instance, 1));
 	}
 
 	@Mod.EventHandler
