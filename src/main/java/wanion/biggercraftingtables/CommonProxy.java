@@ -31,11 +31,9 @@ public class CommonProxy
 		GameRegistry.registerTileEntity(TileEntityHugeCraftingTable.class, MOD_ID + ":HugeTable");
 	}
 
-	public final void postInit()
+	public void postInit()
 	{
 		if (Loader.isModLoaded("MineTweaker3"))
 			Tweaker.init();
-		if (Loader.isModLoaded("NotEnoughItems"))
-			NEI.init();
 	}
 }

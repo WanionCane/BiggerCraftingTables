@@ -8,6 +8,17 @@ package wanion.biggercraftingtables.client;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import cpw.mods.fml.common.Loader;
 import wanion.biggercraftingtables.CommonProxy;
+import wanion.biggercraftingtables.nei.NEI;
 
-public final class ClientProxy extends CommonProxy {}
+public final class ClientProxy extends CommonProxy
+{
+	@Override
+	public void postInit()
+	{
+		super.postInit();
+		if (Loader.isModLoaded("NotEnoughItems"))
+			NEI.init();
+	}
+}
