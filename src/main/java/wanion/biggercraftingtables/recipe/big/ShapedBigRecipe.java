@@ -77,7 +77,9 @@ public final class ShapedBigRecipe implements IBigRecipe
 				if (actualY < oldHeight) {
 					final String code = (String) inputs[actualY];
 					final int actualX = offSetX + x++;
-					if (actualX < code.length() && charDictionary.get(code.charAt(actualX)) != null) {
+					if (actualX < code.length()) {
+						if (charDictionary.get(code.charAt(actualX)) == null)
+							continue;
 						final int xDifference = actualX - (offSetX - 1);
 						final int yDifference = actualY - (offSetY - 1);
 						if (xDifference > width)
