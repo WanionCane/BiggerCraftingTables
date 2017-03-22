@@ -11,11 +11,20 @@ package wanion.biggercraftingtables.block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 
-public class ContainerBiggerCraftingTables extends Container
+import javax.annotation.Nonnull;
+
+public abstract class ContainerAutoBiggerCraftingTable extends Container
 {
+	private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
+
+	public ContainerAutoBiggerCraftingTable(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable)
+	{
+		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
+	}
+
 	@Override
 	public boolean canInteractWith(final EntityPlayer entityPlayer)
 	{
-		return true;
+		return tileEntityAutoBiggerCraftingTable.isUseableByPlayer(entityPlayer);
 	}
 }

@@ -26,26 +26,23 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.block.BigCraftingTable.TileEntityBigCraftingTable;
-import wanion.biggercraftingtables.block.HugeCraftingTable.TileEntityHugeCraftingTable;
+import wanion.biggercraftingtables.Reference;
+import wanion.biggercraftingtables.block.big.TileEntityAutoBigCraftingTable;
+import wanion.biggercraftingtables.block.huge.TileEntityAutoHugeCraftingTable;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
-public final class BlockBiggerCraftingTables extends BlockContainer
+public final class BlockAutoBiggerCraftingTable extends BlockContainer
 {
-	private final static Random rand = new Random();
-
-	public static final BlockBiggerCraftingTables instance = new BlockBiggerCraftingTables();
-	public static final List<String> types = Arrays.asList("Big", "Huge");
+	public static final BlockAutoBiggerCraftingTable instance = new BlockAutoBiggerCraftingTable();
 	@SideOnly(Side.CLIENT)
 	private static IIcon[][] textures;
 
-	private BlockBiggerCraftingTables()
+	private BlockAutoBiggerCraftingTable()
 	{
 		super(Material.wood);
 		setHardness(2.5F).setStepSound(soundTypeWood).setCreativeTab(BiggerCraftingTables.creativeTabs);
@@ -56,9 +53,9 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	{
 		switch (metadata) {
 			case 0:
-				return new TileEntityBigCraftingTable();
+				return new TileEntityAutoBigCraftingTable();
 			case 1:
-				return new TileEntityHugeCraftingTable();
+				return new TileEntityAutoHugeCraftingTable();
 			default:
 				return null;
 		}
@@ -68,10 +65,11 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	public void registerBlockIcons(@Nonnull final IIconRegister iIconRegister)
 	{
 		textures = new IIcon[2][3];
-		for (int i = 0; i < 2; i++) {
-			textures[i][0] = iIconRegister.registerIcon(MOD_ID + ":" + types.get(i) + "CraftingTableTop");
-			textures[i][1] = iIconRegister.registerIcon(MOD_ID + ":" + types.get(i) + "CraftingTableBottom");
-			textures[i][2] = iIconRegister.registerIcon(MOD_ID + ":" + types.get(i) + "CraftingTableSides");
+		for (int i = 0; i < Reference.TYPES.size(); i++) {
+			final String type = Reference.TYPES.get(i);
+			textures[i][0] = iIconRegister.registerIcon(MOD_ID + ":Auto" + type + "AjCraftingTableTop");
+			textures[i][1] = iIconRegister.registerIcon(MOD_ID + ":Auto" + type + "CraftingTableBottom");
+			textures[i][2] = iIconRegister.registerIcon(MOD_ID + ":Auto" + type + "CraftingTableSides");
 		}
 	}
 
@@ -103,10 +101,10 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	{
 		if (!world.isRemote) {
 			final TileEntity tileEntity = world.getTileEntity(x, y, z);
-			if (tileEntity instanceof TileEntityBigCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_BIG_CRAFTING_TABLE, world, x, y, z);
-			else if (tileEntity instanceof TileEntityHugeCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE, world, x, y, z);
+			if (tileEntity instanceof TileEntityAutoBigCraftingTable)
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_BIG_CRAFTING_TABLE, world, x, y, z);
+			else if (tileEntity instanceof TileEntityAutoHugeCraftingTable)
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_HUGE_CRAFTING_TABLE, world, x, y, z);
 			else
 				return false;
 		}
@@ -122,11 +120,13 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	@Override
 	public final void breakBlock(final World world, final int x, final int y, final int z, final Block block, final int metadata)
 	{
-		final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables = (TileEntityBiggerCraftingTables) world.getTileEntity(x, y, z);
-		if (tileEntityBiggerCraftingTables != null) {
+		final TileEntityAutoBiggerCraftingTable tileEntityBiggerCraftingTable = (TileEntityAutoBiggerCraftingTable) world.getTileEntity(x, y, z);
+		if (tileEntityBiggerCraftingTable != null) {
 			final ItemStack droppedStack = new ItemStack(block, 1, metadata);
-			droppedStack.setTagCompound(tileEntityBiggerCraftingTables.writeCustomNBT(new NBTTagCompound()));
-			world.spawnEntityInWorld(new EntityItem(world, x + rand.nextFloat() * 0.8F + 0.1F, y + rand.nextFloat() * 0.8F + 0.1F, z + rand.nextFloat() * 0.8F + 0.1F, droppedStack));
+			final NBTTagCompound nbtTagCompound = tileEntityBiggerCraftingTable.writeCustomNBT(new NBTTagCompound());
+			if (nbtTagCompound.getTagList("Contents", 10).tagCount() > 0)
+				droppedStack.setTagCompound(nbtTagCompound);
+			world.spawnEntityInWorld(new EntityItem(world, x + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, y + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, z + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, droppedStack));
 			world.func_147453_f(x, y, z, block);
 		}
 		world.removeTileEntity(x, y, z);
@@ -141,9 +141,8 @@ public final class BlockBiggerCraftingTables extends BlockContainer
 	@Override
 	public final void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack)
 	{
-		final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables = (TileEntityBiggerCraftingTables) world.getTileEntity(x, y, z);
-		if (tileEntityBiggerCraftingTables != null)
-			if (itemStack.stackTagCompound != null)
-				tileEntityBiggerCraftingTables.readCustomNBT(itemStack.stackTagCompound);
+		final TileEntity tileEntity = world.getTileEntity(x, y, z);
+		if (tileEntity instanceof TileEntityAutoBiggerCraftingTable && itemStack.stackTagCompound != null)
+			((TileEntityAutoBiggerCraftingTable) tileEntity).readCustomNBT(itemStack.stackTagCompound);
 	}
 }

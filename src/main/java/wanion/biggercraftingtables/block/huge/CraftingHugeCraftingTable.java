@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block.HugeCraftingTable;
+package wanion.biggercraftingtables.block.huge;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).

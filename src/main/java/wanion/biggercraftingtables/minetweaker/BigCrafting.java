@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
-import wanion.biggercraftingtables.recipe.big.IBigRecipe;
+import wanion.biggercraftingtables.recipe.big.BigRecipe;
 import wanion.biggercraftingtables.recipe.big.ShapedBigRecipe;
 import wanion.biggercraftingtables.recipe.big.ShapelessBigRecipe;
 import wanion.lib.common.MineTweakerHelper;
@@ -59,9 +59,9 @@ public final class BigCrafting
 
 	private static class Add implements IUndoableAction
 	{
-		private final IBigRecipe recipe;
+		private final BigRecipe recipe;
 
-		public Add(@Nonnull final IBigRecipe recipe)
+		public Add(@Nonnull final BigRecipe recipe)
 		{
 			this.recipe = recipe;
 		}
@@ -81,6 +81,7 @@ public final class BigCrafting
 		@Override
 		public void undo()
 		{
+			recipe.setRemoved(true);
 			BigRecipeRegistry.instance.removeRecipe(recipe);
 		}
 
@@ -106,31 +107,29 @@ public final class BigCrafting
 	private static class Remove implements IUndoableAction
 	{
 		private final ItemStack itemStackToRemove;
-		private final IBigRecipe recipe;
+		private final BigRecipe recipe;
 
 		private Remove(@Nonnull final ItemStack itemStackToRemove)
 		{
 			this.itemStackToRemove = itemStackToRemove;
-			IBigRecipe recipe = null;
-			for (final List<IBigRecipe> bigRecipeList : BigRecipeRegistry.instance.shapedRecipes.valueCollection()) {
+			BigRecipe recipe = null;
+			for (final List<BigRecipe> bigRecipeList : BigRecipeRegistry.instance.shapedRecipes.valueCollection()) {
 				if (bigRecipeList == null)
 					continue;
-				for (final IBigRecipe bigRecipe : bigRecipeList) {
+				for (final BigRecipe bigRecipe : bigRecipeList) {
 					if (bigRecipe.getOutput().isItemEqual(itemStackToRemove)) {
-						recipe = bigRecipe;
-						BigRecipeRegistry.instance.removeRecipe(recipe);
+						BigRecipeRegistry.instance.removeRecipe(recipe = bigRecipe);
 						break;
 					}
 				}
 			}
 			if (recipe == null) {
-				for (final List<IBigRecipe> bigRecipeList : BigRecipeRegistry.instance.shapelessRecipes.valueCollection()) {
+				for (final List<BigRecipe> bigRecipeList : BigRecipeRegistry.instance.shapelessRecipes.valueCollection()) {
 					if (bigRecipeList == null)
 						continue;
-					for (final IBigRecipe bigRecipe : bigRecipeList) {
+					for (final BigRecipe bigRecipe : bigRecipeList) {
 						if (bigRecipe.getOutput().isItemEqual(itemStackToRemove)) {
-							recipe = bigRecipe;
-							BigRecipeRegistry.instance.removeRecipe(recipe);
+							BigRecipeRegistry.instance.removeRecipe(recipe = bigRecipe);
 							break;
 						}
 					}
@@ -142,6 +141,8 @@ public final class BigCrafting
 		@Override
 		public void apply()
 		{
+			if (recipe != null)
+				recipe.setRemoved(true);
 			BigRecipeRegistry.instance.removeRecipe(recipe);
 		}
 
@@ -154,6 +155,7 @@ public final class BigCrafting
 		@Override
 		public void undo()
 		{
+			recipe.setRemoved(false);
 			BigRecipeRegistry.instance.addRecipe(recipe);
 		}
 

@@ -17,7 +17,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public final class ShapedHugeRecipe implements IHugeRecipe
+public final class ShapedHugeRecipe extends HugeRecipe
 {
 	private final ItemStack output;
 	private final long recipeKey;
@@ -101,7 +101,7 @@ public final class ShapedHugeRecipe implements IHugeRecipe
 			for (int x = 0; x < width; x++) {
 				final int actualX = offSetX + x;
 				if (actualX < code.length()) {
-					Object input = charDictionary.get(code.charAt(x));
+					final Object input = charDictionary.get(code.charAt(actualX));
 					if (input != null && (input instanceof ItemStack || input instanceof String || input instanceof List)) {
 						final int pos = width * y + x;
 						if (input instanceof ItemStack) {
@@ -111,7 +111,7 @@ public final class ShapedHugeRecipe implements IHugeRecipe
 							final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
 							if (oreList != null && !oreList.isEmpty())
 								this.inputs[pos] = oreList;
-						} else if (!((List) input).isEmpty())
+						} else if (!((List) input).isEmpty() && ((List) input).get(0) instanceof ItemStack)
 							this.inputs[pos] = input;
 						if (this.inputs[pos] != null) {
 							recipeKey |= 1L << pos;
@@ -149,7 +149,7 @@ public final class ShapedHugeRecipe implements IHugeRecipe
 				final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(actualY * 7 + actualX);
 				if (slotItemStack != input) {
 					if (input instanceof ItemStack) {
-						if (!(((ItemStack) input).isItemEqual(slotItemStack)))
+						if (!(slotItemStack.getItem() == ((ItemStack) input).getItem() && (!((ItemStack) input).getHasSubtypes() || ((ItemStack) input).getItemDamage() == slotItemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(((ItemStack) input), slotItemStack)))
 							matches = false;
 					} else if (input instanceof List) {
 						boolean found = false;

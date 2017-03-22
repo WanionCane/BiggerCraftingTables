@@ -20,19 +20,20 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import wanion.biggercraftingtables.block.BlockBiggerCraftingTables;
+import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
 
 import java.util.Map;
 
 import static wanion.biggercraftingtables.Reference.*;
 
+@SuppressWarnings("unused")
 @Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = DEPENDENCIES, acceptedMinecraftVersions = TARGET_MC_VERSION)
 public class BiggerCraftingTables
 {
 	@Mod.Instance
 	public static BiggerCraftingTables instance;
 
-	public static final int GUI_ID_BIG_CRAFTING_TABLE = 0, GUI_ID_HUGE_CRAFTING_TABLE = 1;
+	public static final int GUI_ID_BIG_CRAFTING_TABLE = 0, GUI_ID_HUGE_CRAFTING_TABLE = 1, GUI_ID_AUTO_BIG_CRAFTING_TABLE = 2, GUI_ID_AUTO_HUGE_CRAFTING_TABLE = 3;
 
 	@SidedProxy(clientSide = CLIENT_PROXY, serverSide = SERVER_PROXY)
 	public static CommonProxy proxy;
@@ -43,7 +44,7 @@ public class BiggerCraftingTables
 		@Override
 		public Item getTabIconItem()
 		{
-			return Item.getItemFromBlock(BlockBiggerCraftingTables.instance);
+			return Item.getItemFromBlock(BlockBiggerCraftingTable.instance);
 		}
 	};
 
@@ -51,8 +52,8 @@ public class BiggerCraftingTables
 	public void preInit(final FMLPreInitializationEvent event)
 	{
 		proxy.preInit();
-		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 1), "CC", "CC", 'C', Blocks.crafting_table);
-		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTables.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTables.instance, 1));
+		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1), "CC", "CC", 'C', Blocks.crafting_table);
+		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTable.instance, 1));
 	}
 
 	@Mod.EventHandler

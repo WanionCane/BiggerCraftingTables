@@ -10,8 +10,8 @@ package wanion.biggercraftingtables.nei;
 
 import codechicken.nei.api.API;
 import codechicken.nei.recipe.*;
-import wanion.biggercraftingtables.block.BigCraftingTable.GuiBigCraftingTable;
-import wanion.biggercraftingtables.block.HugeCraftingTable.GuiHugeCraftingTable;
+import wanion.biggercraftingtables.block.big.GuiBigCraftingTable;
+import wanion.biggercraftingtables.block.huge.GuiHugeCraftingTable;
 
 import javax.annotation.Nonnull;
 
@@ -24,9 +24,14 @@ public final class NEI
 		registerHandler(new BigShapedRecipeHandler());
 		registerHandler(new BigShapelessRecipeHandler());
 		API.setGuiOffset(GuiBigCraftingTable.class, 20, -2);
+		API.registerGuiOverlay(GuiBigCraftingTable.class, "big", 20, -2);
+		API.registerGuiOverlayHandler(GuiBigCraftingTable.class, new DefaultOverlayHandler(20, -2), "big");
 		registerHandler(new HugeShapedRecipeHandler());
 		registerHandler(new HugeShapelessRecipeHandler());
 		API.setGuiOffset(GuiHugeCraftingTable.class, 4, 13);
+		API.registerGuiOverlay(GuiHugeCraftingTable.class, "huge", 4, 13);
+		API.registerGuiOverlayHandler(GuiHugeCraftingTable.class, new DefaultOverlayHandler(4, 13), "huge");
+
 	}
 
 	private static void registerHandler(@Nonnull final TemplateRecipeHandler templateRecipeHandler)

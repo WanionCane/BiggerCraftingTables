@@ -18,14 +18,9 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class TileEntityBiggerCraftingTables extends TileEntity implements ISidedInventory
+public abstract class TileEntityBiggerCraftingTable extends TileEntity implements ISidedInventory
 {
-	private final ItemStack[] slots;
-
-	public TileEntityBiggerCraftingTables()
-	{
-		slots = new ItemStack[getSizeInventory()];
-	}
+	private final ItemStack[] slots = new ItemStack[getSizeInventory()];
 
 	@Override
 	public boolean canUpdate()
@@ -75,7 +70,8 @@ public abstract class TileEntityBiggerCraftingTables extends TileEntity implemen
 	public NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
 		final NBTTagList nbtTagList = new NBTTagList();
-		for (int i = 0; i < getSizeInventory() - 1; i++) {
+		final int max = getSizeInventory() - 1;
+		for (int i = 0; i < max; i++) {
 			final ItemStack itemStack = getStackInSlot(i);
 			if (itemStack != null) {
 				final NBTTagCompound slotCompound = new NBTTagCompound();
@@ -133,7 +129,7 @@ public abstract class TileEntityBiggerCraftingTables extends TileEntity implemen
 	@Override
 	public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
 	{
-		return true;
+		return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this && entityPlayer.getDistanceSq((double) this.xCoord + 0.5D, (double) this.yCoord + 0.5D, (double) this.zCoord + 0.5D) <= 64.0D;
 	}
 
 	@Override

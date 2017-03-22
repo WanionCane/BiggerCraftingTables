@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public final class ShapelessBigRecipe implements IBigRecipe
+public final class ShapelessBigRecipe extends BigRecipe
 {
 	private final ItemStack output;
 	private final int recipeSize;
@@ -32,7 +32,7 @@ public final class ShapelessBigRecipe implements IBigRecipe
 				if (((ItemStack) input).getItem() == null)
 					continue;
 				final ItemStack newInput = ((ItemStack) input).copy();
-				newInput.stackSize = 0;
+				newInput.stackSize = 1;
 				this.inputs.add(newInput);
 			} else if (input instanceof String) {
 				final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
@@ -41,7 +41,7 @@ public final class ShapelessBigRecipe implements IBigRecipe
 				else
 					continue;
 			} else if (input instanceof List)
-				if (!((List) input).isEmpty())
+				if (!((List) input).isEmpty() && ((List) input).get(0) instanceof ItemStack)
 					this.inputs.add(input);
 				else
 					continue;
@@ -81,33 +81,32 @@ public final class ShapelessBigRecipe implements IBigRecipe
 			final Object input = inputsIterator.next();
 			boolean found = false;
 			if (input instanceof ItemStack) {
-				for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); !found && slotItemStackIterator.hasNext(); ) {
+				for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); slotItemStackIterator.hasNext(); ) {
 					final ItemStack slotItemStack = slotItemStackIterator.next();
-					if (((ItemStack) input).isItemEqual(slotItemStack)) {
+					if (slotItemStack.getItem() == ((ItemStack) input).getItem() && (!((ItemStack) input).getHasSubtypes() || ((ItemStack) input).getItemDamage() == slotItemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(((ItemStack) input), slotItemStack)) {
 						slotItemStackIterator.remove();
 						found = true;
+						break;
 					}
 				}
-				if (found)
-					break;
 			} else if (input instanceof List) {
 				final List<ItemStack> oreDict = (List<ItemStack>) input;
 				for (final ItemStack entry : oreDict) {
-					for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); !found && slotItemStackIterator.hasNext(); ) {
+					for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); slotItemStackIterator.hasNext(); ) {
 						final ItemStack slotItemStack = slotItemStackIterator.next();
 						if (entry.isItemEqual(slotItemStack)) {
 							slotItemStackIterator.remove();
 							found = true;
+							break;
 						}
 					}
 					if (found)
 						break;
 				}
 			}
-			if (found)
-				inputsIterator.remove();
-			else
+			if (!found)
 				break;
+			inputsIterator.remove();
 		}
 		return inputs.isEmpty() && slotItemStacks.isEmpty() ? getOutput() : null;
 	}

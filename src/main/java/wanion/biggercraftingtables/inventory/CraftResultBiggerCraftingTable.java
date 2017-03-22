@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block;
+package wanion.biggercraftingtables.inventory;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -11,17 +11,18 @@ package wanion.biggercraftingtables.block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
 
 import javax.annotation.Nonnull;
 
-public final class CraftResultBiggerCraftingTables implements IInventory
+public final class CraftResultBiggerCraftingTable implements IInventory
 {
-	private final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables;
+	private final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable;
 	private final int slot;
 
-	public CraftResultBiggerCraftingTables(@Nonnull final TileEntityBiggerCraftingTables tileEntityBiggerCraftingTables, final int slot)
+	public CraftResultBiggerCraftingTable(@Nonnull final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable, final int slot)
 	{
-		this.tileEntityBiggerCraftingTables = tileEntityBiggerCraftingTables;
+		this.tileEntityBiggerCraftingTable = tileEntityBiggerCraftingTable;
 		this.slot = slot;
 	}
 
@@ -34,13 +35,13 @@ public final class CraftResultBiggerCraftingTables implements IInventory
 	@Override
 	public ItemStack getStackInSlot(final int slot)
 	{
-		return tileEntityBiggerCraftingTables.getStackInSlot(this.slot);
+		return tileEntityBiggerCraftingTable.getStackInSlot(this.slot);
 	}
 
 	@Override
 	public ItemStack decrStackSize(final int slot, int howMuch)
 	{
-		return tileEntityBiggerCraftingTables.decrStackSize(this.slot, howMuch);
+		return tileEntityBiggerCraftingTable.decrStackSize(this.slot, howMuch);
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public final class CraftResultBiggerCraftingTables implements IInventory
 	@Override
 	public void setInventorySlotContents(final int slot, final ItemStack itemStack)
 	{
-		tileEntityBiggerCraftingTables.setInventorySlotContents(this.slot, itemStack);
+		tileEntityBiggerCraftingTable.setInventorySlotContents(this.slot, itemStack);
 	}
 
 	@Override
@@ -76,13 +77,13 @@ public final class CraftResultBiggerCraftingTables implements IInventory
 	@Override
 	public void markDirty()
 	{
-		tileEntityBiggerCraftingTables.markDirty();
+		tileEntityBiggerCraftingTable.markDirty();
 	}
 
 	@Override
 	public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
 	{
-		return tileEntityBiggerCraftingTables.isUseableByPlayer(entityPlayer);
+		return tileEntityBiggerCraftingTable.isUseableByPlayer(entityPlayer);
 	}
 
 	@Override
@@ -94,6 +95,6 @@ public final class CraftResultBiggerCraftingTables implements IInventory
 	@Override
 	public boolean isItemValidForSlot(final int slot, final ItemStack itemStack)
 	{
-		return tileEntityBiggerCraftingTables.isItemValidForSlot(slot, itemStack);
+		return tileEntityBiggerCraftingTable.isItemValidForSlot(slot, itemStack);
 	}
 }

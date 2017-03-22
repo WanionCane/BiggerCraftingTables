@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block.HugeCraftingTable;
+package wanion.biggercraftingtables.block.huge;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -8,9 +8,9 @@ package wanion.biggercraftingtables.block.HugeCraftingTable;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTables;
+import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
 
-public final class TileEntityHugeCraftingTable extends TileEntityBiggerCraftingTables
+public final class TileEntityHugeCraftingTable extends TileEntityBiggerCraftingTable
 {
 	@Override
 	public int getSizeInventory()

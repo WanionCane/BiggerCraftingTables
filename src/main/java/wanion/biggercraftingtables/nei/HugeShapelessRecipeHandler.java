@@ -17,9 +17,9 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import wanion.biggercraftingtables.block.HugeCraftingTable.GuiHugeCraftingTable;
+import wanion.biggercraftingtables.block.huge.GuiHugeCraftingTable;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
-import wanion.biggercraftingtables.recipe.huge.IHugeRecipe;
+import wanion.biggercraftingtables.recipe.huge.HugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
 
 import javax.annotation.Nonnull;
@@ -63,7 +63,7 @@ public final class HugeShapelessRecipeHandler extends ShapelessRecipeHandler
 	@Override
 	public void loadCraftingRecipes(final ItemStack result)
 	{
-		final List<IHugeRecipe> matchingRecipes = new ArrayList<>();
+		final List<HugeRecipe> matchingRecipes = new ArrayList<>();
 		HugeRecipeRegistry.instance.shapelessRecipes.valueCollection().forEach(iHugeRecipes -> iHugeRecipes.stream().filter(iHugeRecipe -> NEIServerUtils.areStacksSameTypeCrafting(iHugeRecipe.getOutput(), result)).forEach(matchingRecipes::add));
 		matchingRecipes.forEach(iHugeRecipe -> {
 			final CachedShapelessHugeRecipe cachedShapelessHugeRecipe = new CachedShapelessHugeRecipe((ShapelessHugeRecipe) iHugeRecipe);

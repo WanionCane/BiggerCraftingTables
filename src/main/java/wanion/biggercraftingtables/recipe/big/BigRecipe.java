@@ -8,6 +8,22 @@ package wanion.biggercraftingtables.recipe.big;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import wanion.biggercraftingtables.recipe.IRemovable;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
-public interface IBigRecipe extends IAdvancedRecipe {}
+public abstract class BigRecipe implements IAdvancedRecipe, IRemovable
+{
+	private boolean removed = false;
+
+	@Override
+	public final boolean removed()
+	{
+		return removed;
+	}
+
+	@Override
+	public final void setRemoved(final boolean removed)
+	{
+		this.removed = removed;
+	}
+}

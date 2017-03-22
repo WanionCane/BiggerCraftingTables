@@ -18,9 +18,9 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import wanion.biggercraftingtables.block.HugeCraftingTable.GuiHugeCraftingTable;
+import wanion.biggercraftingtables.block.huge.GuiHugeCraftingTable;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
-import wanion.biggercraftingtables.recipe.huge.IHugeRecipe;
+import wanion.biggercraftingtables.recipe.huge.HugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
 
 import javax.annotation.Nonnull;
@@ -64,7 +64,7 @@ public final class HugeShapedRecipeHandler extends ShapedRecipeHandler
 	@Override
 	public void loadCraftingRecipes(final ItemStack result)
 	{
-		final List<IHugeRecipe> matchingRecipes = new ArrayList<>();
+		final List<HugeRecipe> matchingRecipes = new ArrayList<>();
 		HugeRecipeRegistry.instance.shapedRecipes.valueCollection().forEach(iHugeRecipes -> iHugeRecipes.stream().filter(iHugeRecipe -> NEIServerUtils.areStacksSameTypeCrafting(iHugeRecipe.getOutput(), result)).forEach(matchingRecipes::add));
 		matchingRecipes.forEach(iHugeRecipe -> {
 			final CachedShapedHugeRecipe cachedShapedHugeRecipe = new CachedShapedHugeRecipe((ShapedHugeRecipe) iHugeRecipe);

@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block.HugeCraftingTable;
+package wanion.biggercraftingtables.block.huge;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -15,21 +15,22 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
-import wanion.biggercraftingtables.block.ContainerBiggerCraftingTables;
-import wanion.biggercraftingtables.block.CraftResultBiggerCraftingTables;
+import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
+import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 
 import javax.annotation.Nonnull;
 
-public final class ContainerHugeCraftingTable extends ContainerBiggerCraftingTables
+public final class ContainerHugeCraftingTable extends ContainerBiggerCraftingTable
 {
 	private final InventoryCrafting craftingMatrix;
 	private final IInventory craftingResult;
 
 	public ContainerHugeCraftingTable(@Nonnull final TileEntityHugeCraftingTable tileEntityHugeCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
+		super(tileEntityHugeCraftingTable);
 		craftingMatrix = new CraftingHugeCraftingTable(this, tileEntityHugeCraftingTable);
-		craftingResult = new CraftResultBiggerCraftingTables(tileEntityHugeCraftingTable, 49);
+		craftingResult = new CraftResultBiggerCraftingTable(tileEntityHugeCraftingTable, 49);
 		for (int y = 0; y < 7; y++)
 			for (int x = 0; x < 7; x++)
 				addSlotToContainer(new Slot(craftingMatrix, y * 7 + x, 8 + (18 * x), 18 + (18 * y)));
@@ -60,7 +61,7 @@ public final class ContainerHugeCraftingTable extends ContainerBiggerCraftingTab
 				if (!mergeItemStack(itemstack1, 0, 49, false))
 					return null;
 			} else if (slot == 49) {
-				if (!this.mergeItemStack(itemstack1, 50, 86, true))
+				if (!mergeItemStack(itemstack1, 50, 86, true))
 					return null;
 				actualSlot.onSlotChange(itemstack1, itemstack);
 			} else if (!mergeItemStack(itemstack1, 50, 86, true))

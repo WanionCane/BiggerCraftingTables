@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block.BigCraftingTable;
+package wanion.biggercraftingtables.block.big;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -15,21 +15,22 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
-import wanion.biggercraftingtables.block.ContainerBiggerCraftingTables;
-import wanion.biggercraftingtables.block.CraftResultBiggerCraftingTables;
+import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
+import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
 import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
 
 import javax.annotation.Nonnull;
 
-public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTables
+public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTable
 {
 	private final InventoryCrafting craftingMatrix;
 	private final IInventory craftingResult;
 
 	public ContainerBigCraftingTable(@Nonnull final TileEntityBigCraftingTable tileEntityBigCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
+		super(tileEntityBigCraftingTable);
 		craftingMatrix = new CraftingBigCraftingTable(this, tileEntityBigCraftingTable);
-		craftingResult = new CraftResultBiggerCraftingTables(tileEntityBigCraftingTable, 25);
+		craftingResult = new CraftResultBiggerCraftingTable(tileEntityBigCraftingTable, 25);
 		for (int y = 0; y < 5; y++)
 			for (int x = 0; x < 5; x++)
 				addSlotToContainer(new Slot(craftingMatrix, y * 5 + x, 44 + (18 * x), 18 + (18 * y)));
@@ -60,7 +61,7 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 				if (!mergeItemStack(itemstack1, 0, 25, false))
 					return null;
 			} else if (slot == 25) {
-				if (!this.mergeItemStack(itemstack1, 26, 62, true))
+				if (!mergeItemStack(itemstack1, 26, 62, true))
 					return null;
 				actualSlot.onSlotChange(itemstack1, itemstack);
 			} else if (!mergeItemStack(itemstack1, 26, 62, true))

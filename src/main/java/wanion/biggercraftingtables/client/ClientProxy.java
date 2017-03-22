@@ -18,7 +18,7 @@ public final class ClientProxy extends CommonProxy
 	public void postInit()
 	{
 		super.postInit();
-		if (Loader.isModLoaded("NotEnoughItems"))
+		if (Loader.isModLoaded(	"NotEnoughItems"))
 			NEI.init();
 	}
 }

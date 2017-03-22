@@ -14,9 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import wanion.biggercraftingtables.Reference;
 
-public final class ItemBlockBiggerCraftingTables extends ItemBlockWithMetadata
+public final class ItemBlockBiggerCraftingTable extends ItemBlockWithMetadata
 {
-	public ItemBlockBiggerCraftingTables(final Block block)
+	public ItemBlockBiggerCraftingTable(final Block block)
 	{
 		super(block, block);
 	}
@@ -24,6 +24,6 @@ public final class ItemBlockBiggerCraftingTables extends ItemBlockWithMetadata
 	@Override
 	public String getUnlocalizedName(final ItemStack itemStack)
 	{
-		return "tile." + Reference.MOD_ID + ":" + BlockBiggerCraftingTables.types.get(MathHelper.clamp_int(getDamage(itemStack), 0, BlockBiggerCraftingTables.types.size()));
+		return "tile." + Reference.MOD_ID + ":" + Reference.TYPES.get(MathHelper.clamp_int(getDamage(itemStack), 0, Reference.TYPES.size()));
 	}
 }

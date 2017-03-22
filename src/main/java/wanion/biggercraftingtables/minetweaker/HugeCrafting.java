@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
-import wanion.biggercraftingtables.recipe.huge.IHugeRecipe;
+import wanion.biggercraftingtables.recipe.huge.HugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
 import wanion.lib.common.MineTweakerHelper;
@@ -59,9 +59,9 @@ public final class HugeCrafting
 
 	private static class Add implements IUndoableAction
 	{
-		private final IHugeRecipe recipe;
+		private final HugeRecipe recipe;
 
-		public Add(@Nonnull final IHugeRecipe recipe)
+		public Add(@Nonnull final HugeRecipe recipe)
 		{
 			this.recipe = recipe;
 		}
@@ -81,6 +81,7 @@ public final class HugeCrafting
 		@Override
 		public void undo()
 		{
+			recipe.setRemoved(true);
 			HugeRecipeRegistry.instance.removeRecipe(recipe);
 		}
 
@@ -106,31 +107,29 @@ public final class HugeCrafting
 	private static class Remove implements IUndoableAction
 	{
 		private final ItemStack itemStackToRemove;
-		private final IHugeRecipe recipe;
+		private final HugeRecipe recipe;
 
 		private Remove(@Nonnull final ItemStack itemStackToRemove)
 		{
 			this.itemStackToRemove = itemStackToRemove;
-			IHugeRecipe recipe = null;
-			for (final List<IHugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapedRecipes.valueCollection()) {
+			HugeRecipe recipe = null;
+			for (final List<HugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapedRecipes.valueCollection()) {
 				if (hugeRecipeList == null)
 					continue;
-				for (final IHugeRecipe hugeRecipe : hugeRecipeList) {
+				for (final HugeRecipe hugeRecipe : hugeRecipeList) {
 					if (hugeRecipe.getOutput().isItemEqual(itemStackToRemove)) {
-						recipe = hugeRecipe;
-						HugeRecipeRegistry.instance.removeRecipe(recipe);
+						HugeRecipeRegistry.instance.removeRecipe(recipe = hugeRecipe);
 						break;
 					}
 				}
 			}
 			if (recipe == null) {
-				for (final List<IHugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapelessRecipes.valueCollection()) {
+				for (final List<HugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapelessRecipes.valueCollection()) {
 					if (hugeRecipeList == null)
 						continue;
-					for (final IHugeRecipe hugeRecipe : hugeRecipeList) {
+					for (final HugeRecipe hugeRecipe : hugeRecipeList) {
 						if (hugeRecipe.getOutput().isItemEqual(itemStackToRemove)) {
-							recipe = hugeRecipe;
-							HugeRecipeRegistry.instance.removeRecipe(recipe);
+							HugeRecipeRegistry.instance.removeRecipe(recipe = hugeRecipe);
 							break;
 						}
 					}
@@ -142,6 +141,8 @@ public final class HugeCrafting
 		@Override
 		public void apply()
 		{
+			if (recipe != null)
+				recipe.setRemoved(true);
 			HugeRecipeRegistry.instance.removeRecipe(recipe);
 		}
 
@@ -154,6 +155,7 @@ public final class HugeCrafting
 		@Override
 		public void undo()
 		{
+			recipe.setRemoved(false);
 			HugeRecipeRegistry.instance.addRecipe(recipe);
 		}
 
