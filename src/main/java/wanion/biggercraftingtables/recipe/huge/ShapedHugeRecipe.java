@@ -138,7 +138,7 @@ public final class ShapedHugeRecipe extends HugeRecipe
 	}
 
 	@Override
-	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
+	public boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
 		boolean matches = true;
 		for (int y = 0; matches && y < height; y++) {
@@ -168,7 +168,7 @@ public final class ShapedHugeRecipe extends HugeRecipe
 				}
 			}
 		}
-		return matches ? getOutput() : null;
+		return matches;
 	}
 
 	@Nonnull

@@ -9,8 +9,13 @@ package wanion.biggercraftingtables.block.big;
  */
 
 import wanion.biggercraftingtables.block.TileEntityAutoBiggerCraftingTable;
+import wanion.biggercraftingtables.recipe.big.BigRecipe;
+import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
+import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 
-public final class TileEntityAutoBigCraftingTable extends TileEntityAutoBiggerCraftingTable
+import javax.annotation.Nonnull;
+
+public final class TileEntityAutoBigCraftingTable extends TileEntityAutoBiggerCraftingTable<BigRecipe>
 {
 	@Override
 	public int getSizeInventory()
@@ -24,9 +29,10 @@ public final class TileEntityAutoBigCraftingTable extends TileEntityAutoBiggerCr
 		return "container.AutoBigCraftingTable";
 	}
 
+	@Nonnull
 	@Override
-	public void recipeShapeChanged()
+	public AbstractRecipeRegistry<BigRecipe> getRecipeRegistry()
 	{
-
+		return BigRecipeRegistry.instance;
 	}
 }

@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.block.ContainerAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.inventory.DeadSlot;
 import wanion.biggercraftingtables.inventory.ShapeSlot;
+import wanion.biggercraftingtables.inventory.SpecialSlot;
 
 import javax.annotation.Nonnull;
 
@@ -30,7 +31,7 @@ public final class ContainerAutoBigCraftingTable extends ContainerAutoBiggerCraf
 			for (int x = 0; x < 5; x++)
 				addSlotToContainer(new ShapeSlot(tileEntityAutoBiggerCraftingTable, 25 + (y * 5 + x), 103 + (18 * x), 18 + (18 * y)));
 		addSlotToContainer(new DeadSlot(tileEntityAutoBiggerCraftingTable, 51, 202, 54));
-		addSlotToContainer(new Slot(tileEntityAutoBiggerCraftingTable, 50, 202, 82));
+		addSlotToContainer(new SpecialSlot(tileEntityAutoBiggerCraftingTable, 50, 202, 82));
 		for (int y = 0; y < 3; y++)
 			for (int x = 0; x < 9; x++)
 				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, 8 + (18 * x), 122 + (18 * y)));

@@ -68,7 +68,7 @@ public final class ShapelessBigRecipe extends BigRecipe
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ItemStack recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
+	public boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
 		final List<Object> inputs = new ArrayList<>(this.inputs);
 		final List<ItemStack> slotItemStacks = new ArrayList<>();
@@ -108,7 +108,7 @@ public final class ShapelessBigRecipe extends BigRecipe
 				break;
 			inputsIterator.remove();
 		}
-		return inputs.isEmpty() && slotItemStacks.isEmpty() ? getOutput() : null;
+		return inputs.isEmpty() && slotItemStacks.isEmpty();
 	}
 
 	@Nonnull

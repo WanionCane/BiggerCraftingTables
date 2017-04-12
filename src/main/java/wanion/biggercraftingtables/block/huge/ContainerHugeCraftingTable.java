@@ -17,6 +17,7 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
 import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
+import wanion.biggercraftingtables.recipe.huge.HugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 
 import javax.annotation.Nonnull;
@@ -46,7 +47,8 @@ public final class ContainerHugeCraftingTable extends ContainerBiggerCraftingTab
 	@Override
 	public void onCraftMatrixChanged(final IInventory inventory)
 	{
-		craftingResult.setInventorySlotContents(0, HugeRecipeRegistry.instance.findMatchingRecipe(craftingMatrix));
+		final HugeRecipe hugeRecipe = HugeRecipeRegistry.instance.findMatchingRecipe(craftingMatrix);
+		craftingResult.setInventorySlotContents(0, hugeRecipe != null ? hugeRecipe.getOutput() : null);
 	}
 
 	@Override
