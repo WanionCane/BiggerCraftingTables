@@ -77,6 +77,9 @@ public final class ContainerAutoBigCraftingTable extends ContainerAutoBiggerCraf
 				if (modifier == 1) {
 					actualSlot.putStack(null);
 					return null;
+				} else if (slotHasStack && playerStack.isItemEqual(actualSlot.getStack())) {
+					actualSlot.putStack(null);
+					return null;
 				}
 				final ItemStack slotStack = playerStack.copy();
 				slotStack.stackSize = 0;
