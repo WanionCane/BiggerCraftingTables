@@ -20,6 +20,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
 
 import java.util.Map;
@@ -54,6 +55,8 @@ public class BiggerCraftingTables
 		proxy.preInit();
 		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1), "CC", "CC", 'C', Blocks.crafting_table);
 		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTable.instance, 1));
+		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1), Blocks.redstone_block, new ItemStack(BlockAutoBiggerCraftingTable.instance, 1));
+		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1, 1), Blocks.redstone_block, new ItemStack(BlockAutoBiggerCraftingTable.instance, 1, 1));
 	}
 
 	@Mod.EventHandler
