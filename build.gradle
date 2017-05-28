@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.7.10-1.4b"
+version = "1.7.10-1.5"
 group= "wanion.biggercraftingtables" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "BiggerCraftingTables"
 
