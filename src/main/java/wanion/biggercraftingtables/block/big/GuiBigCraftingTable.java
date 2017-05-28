@@ -8,6 +8,8 @@ package wanion.biggercraftingtables.block.big;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -18,6 +20,7 @@ import javax.annotation.Nonnull;
 
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
+@SideOnly(Side.CLIENT)
 public final class GuiBigCraftingTable extends GuiContainer
 {
 	private static final ResourceLocation bigCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/bigCraftingTable.png");

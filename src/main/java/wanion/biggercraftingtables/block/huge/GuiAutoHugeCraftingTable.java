@@ -8,6 +8,8 @@ package wanion.biggercraftingtables.block.huge;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
@@ -19,6 +21,7 @@ import javax.annotation.Nonnull;
 
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
+@SideOnly(Side.CLIENT)
 public final class GuiAutoHugeCraftingTable extends GuiContainer
 {
 	private static final ResourceLocation autoHugeCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/autoHugeCraftingTable.png");

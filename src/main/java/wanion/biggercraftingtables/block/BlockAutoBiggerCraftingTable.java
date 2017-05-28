@@ -68,8 +68,8 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 		for (int i = 0; i < Reference.TYPES.size(); i++) {
 			final String type = Reference.TYPES.get(i);
 			textures[i][0] = iIconRegister.registerIcon(MOD_ID + ":Auto" + type + "CraftingTableTop");
-			textures[i][1] = iIconRegister.registerIcon(MOD_ID + ":" + type + "CraftingTableBottom");
-			textures[i][2] = iIconRegister.registerIcon(MOD_ID + ":" + type + "CraftingTableSides");
+			textures[i][1] = iIconRegister.registerIcon(MOD_ID + ":AutoBiggerCraftingTablesBottom");
+			textures[i][2] = iIconRegister.registerIcon(MOD_ID + ":AutoBiggerCraftingTablesSides");
 		}
 	}
 

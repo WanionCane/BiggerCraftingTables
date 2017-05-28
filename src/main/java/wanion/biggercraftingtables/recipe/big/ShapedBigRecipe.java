@@ -20,16 +20,15 @@ import java.util.List;
 public final class ShapedBigRecipe extends BigRecipe
 {
 	private final ItemStack output;
-	private final long recipeKey;
-	private final int recipeSize;
+	private final short recipeKey, recipeSize;
+	public final short width, height;
 	public final Object[] inputs;
-	public final int width;
-	public final int height;
 
 	public ShapedBigRecipe(@Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{
 		this.output = output.copy();
-		int dictionaryIndex = 0, height = 0, width = 0;
+		int dictionaryIndex = 0;
+		short height = 0, width = 0;
 		for (int i = 0; i < inputs.length; i++) {
 			if (!(inputs[i] instanceof String)) {
 				dictionaryIndex = i;
@@ -83,9 +82,9 @@ public final class ShapedBigRecipe extends BigRecipe
 						final int xDifference = actualX - (offSetX - 1);
 						final int yDifference = actualY - (offSetY - 1);
 						if (xDifference > width)
-							width = xDifference;
+							width = (short) xDifference;
 						if (yDifference > height)
-							height = yDifference;
+							height = (short) yDifference;
 					} else break;
 				} else break;
 			}
@@ -93,8 +92,7 @@ public final class ShapedBigRecipe extends BigRecipe
 		this.inputs = new Object[height * width];
 		this.width = width;
 		this.height = height;
-		long recipeKey = 0;
-		int recipeSize = 0;
+		short recipeSize = 0;
 		for (int y = 0; y < height; y++) {
 			final int actualY = offSetY + y;
 			final String code = (String) inputs[actualY];
@@ -113,26 +111,23 @@ public final class ShapedBigRecipe extends BigRecipe
 								this.inputs[pos] = oreList;
 						} else if (!((List) input).isEmpty() && ((List) input).get(0) instanceof ItemStack)
 							this.inputs[pos] = input;
-						if (this.inputs[pos] != null) {
-							recipeKey |= 1L << pos;
+						if (this.inputs[pos] != null)
 							recipeSize++;
-						}
 					}
 				}
 			}
 		}
-		this.recipeKey = recipeKey;
-		this.recipeSize = recipeSize;
+		this.recipeKey = (short) ((this.recipeSize = recipeSize) | (width << 8) | (height << 12));
 	}
 
 	@Override
-	public long getRecipeKey()
+	public short getRecipeKey()
 	{
 		return recipeKey;
 	}
 
 	@Override
-	public int getRecipeSize()
+	public short getRecipeSize()
 	{
 		return recipeSize;
 	}
@@ -148,23 +143,21 @@ public final class ShapedBigRecipe extends BigRecipe
 				final Object input = inputs[y * width + x];
 				final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(actualY * 5 + actualX);
 				if (slotItemStack != input) {
-					if (input instanceof ItemStack) {
-						if (!(slotItemStack.getItem() == ((ItemStack) input).getItem() && (!((ItemStack) input).getHasSubtypes() || ((ItemStack) input).getItemDamage() == slotItemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(((ItemStack) input), slotItemStack)))
-							matches = false;
-					} else if (input instanceof List) {
+					if (input instanceof List) {
 						boolean found = false;
 						final List inputList = (List) input;
 						for (final Object object : inputList) {
 							if (found)
 								break;
-							if (object instanceof ItemStack) {
-								if (((ItemStack) object).isItemEqual(slotItemStack))
-									found = true;
-							} else break;
+							if (object instanceof ItemStack && (((ItemStack)object).getItem() == slotItemStack.getItem() && (((ItemStack)object).getItemDamage() == OreDictionary.WILDCARD_VALUE || ((ItemStack)object).getItemDamage() == slotItemStack.getItemDamage())))
+								found = true;
+							else break;
 						}
 						if (!found)
 							matches = false;
-					} else matches = false;
+					} else if (input instanceof ItemStack && !(slotItemStack.getItem() == ((ItemStack) input).getItem() && (!((ItemStack) input).getHasSubtypes() || ((ItemStack) input).getItemDamage() == slotItemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(((ItemStack) input), slotItemStack)))
+						matches = false;
+					else matches = false;
 				}
 			}
 		}

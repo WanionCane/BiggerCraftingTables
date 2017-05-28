@@ -20,13 +20,13 @@ import java.util.List;
 public final class ShapelessBigRecipe extends BigRecipe
 {
 	private final ItemStack output;
-	private final int recipeSize;
+	private final short recipeSize;
 	public final List<Object> inputs = new ArrayList<>();
 
 	public ShapelessBigRecipe(@Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{
 		this.output = output.copy();
-		int recipeSize = 0;
+		short recipeSize = 0;
 		for (final Object input : inputs) {
 			if (input instanceof ItemStack) {
 				if (((ItemStack) input).getItem() == null)
@@ -55,13 +55,13 @@ public final class ShapelessBigRecipe extends BigRecipe
 	}
 
 	@Override
-	public long getRecipeKey()
+	public short getRecipeKey()
 	{
 		return 0;
 	}
 
 	@Override
-	public int getRecipeSize()
+	public short getRecipeSize()
 	{
 		return recipeSize;
 	}
@@ -94,7 +94,7 @@ public final class ShapelessBigRecipe extends BigRecipe
 				for (final ItemStack entry : oreDict) {
 					for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); slotItemStackIterator.hasNext(); ) {
 						final ItemStack slotItemStack = slotItemStackIterator.next();
-						if (entry.isItemEqual(slotItemStack)) {
+						if (entry.getItem() == slotItemStack.getItem() && entry.getItemDamage() == OreDictionary.WILDCARD_VALUE || (entry.getItemDamage() == slotItemStack.getItemDamage())) {
 							slotItemStackIterator.remove();
 							found = true;
 							break;
@@ -104,9 +104,8 @@ public final class ShapelessBigRecipe extends BigRecipe
 						break;
 				}
 			}
-			if (!found)
-				break;
-			inputsIterator.remove();
+			if (found)
+				inputsIterator.remove();
 		}
 		return inputs.isEmpty() && slotItemStacks.isEmpty();
 	}
