@@ -55,8 +55,8 @@ public class BiggerCraftingTables
 		proxy.preInit();
 		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1), "CC", "CC", 'C', Blocks.crafting_table);
 		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTable.instance, 1));
-		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1), Blocks.redstone_block, new ItemStack(BlockAutoBiggerCraftingTable.instance, 1));
-		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1, 1), Blocks.redstone_block, new ItemStack(BlockAutoBiggerCraftingTable.instance, 1, 1));
+		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1), Blocks.redstone_block, new ItemStack(BlockBiggerCraftingTable.instance, 1));
+		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1, 1), Blocks.redstone_block, new ItemStack(BlockBiggerCraftingTable.instance, 1, 1));
 	}
 
 	@Mod.EventHandler
