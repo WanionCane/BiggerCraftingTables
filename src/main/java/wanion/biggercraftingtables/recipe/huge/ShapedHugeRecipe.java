@@ -149,15 +149,19 @@ public final class ShapedHugeRecipe extends HugeRecipe
 						for (final Object object : inputList) {
 							if (found)
 								break;
-							if (object instanceof ItemStack && (((ItemStack)object).getItem() == slotItemStack.getItem() && (((ItemStack)object).getItemDamage() == OreDictionary.WILDCARD_VALUE || ((ItemStack)object).getItemDamage() == slotItemStack.getItemDamage())))
+							if (object instanceof ItemStack && (((ItemStack) object).getItem() == slotItemStack.getItem() && (((ItemStack) object).getItemDamage() == OreDictionary.WILDCARD_VALUE || ((ItemStack) object).getItemDamage() == slotItemStack.getItemDamage())))
 								found = true;
 							else break;
 						}
-						if (!found)
-							matches = false;
-					} else if (input instanceof ItemStack && !(slotItemStack.getItem() == ((ItemStack) input).getItem() && (!((ItemStack) input).getHasSubtypes() || ((ItemStack) input).getItemDamage() == slotItemStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(((ItemStack) input), slotItemStack)))
-						matches = false;
-					else matches = false;
+						if (found)
+							continue;
+					} else if (input instanceof ItemStack) {
+						if (((ItemStack) input).hasTagCompound() && ((ItemStack) input).getItem() == ((ItemStack) input).getItem() && (!((ItemStack) input).getHasSubtypes() || (((ItemStack) input).getItemDamage() == slotItemStack.getItemDamage())) && ItemStack.areItemStackTagsEqual(((ItemStack) input), slotItemStack))
+							continue;
+						else if (((ItemStack) input).getItem() == ((ItemStack) input).getItem() && (!((ItemStack) input).getHasSubtypes() || ((ItemStack) input).getItemDamage() == OreDictionary.WILDCARD_VALUE || (((ItemStack) input).getItemDamage() == slotItemStack.getItemDamage())))
+							continue;
+					}
+					matches = false;
 				}
 			}
 		}
