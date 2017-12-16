@@ -13,18 +13,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.block.big.ContainerAutoBigCraftingTable;
-import wanion.biggercraftingtables.block.big.GuiAutoBigCraftingTable;
-import wanion.biggercraftingtables.block.big.TileEntityAutoBigCraftingTable;
-import wanion.biggercraftingtables.block.huge.ContainerAutoHugeCraftingTable;
-import wanion.biggercraftingtables.block.huge.GuiAutoHugeCraftingTable;
-import wanion.biggercraftingtables.block.huge.TileEntityAutoHugeCraftingTable;
-import wanion.biggercraftingtables.block.big.ContainerBigCraftingTable;
-import wanion.biggercraftingtables.block.big.GuiBigCraftingTable;
-import wanion.biggercraftingtables.block.big.TileEntityBigCraftingTable;
-import wanion.biggercraftingtables.block.huge.ContainerHugeCraftingTable;
-import wanion.biggercraftingtables.block.huge.GuiHugeCraftingTable;
-import wanion.biggercraftingtables.block.huge.TileEntityHugeCraftingTable;
+import wanion.biggercraftingtables.block.big.*;
+import wanion.biggercraftingtables.block.huge.*;
 
 public final class GuiHandler implements IGuiHandler
 {

@@ -9,7 +9,8 @@ package wanion.biggercraftingtables.nei;
  */
 
 import codechicken.nei.api.API;
-import codechicken.nei.recipe.*;
+import codechicken.nei.recipe.DefaultOverlayHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import wanion.biggercraftingtables.block.big.GuiAutoBigCraftingTable;
 import wanion.biggercraftingtables.block.big.GuiBigCraftingTable;
 import wanion.biggercraftingtables.block.huge.GuiAutoHugeCraftingTable;

@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
-import wanion.biggercraftingtables.recipe.huge.HugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
 import wanion.lib.common.MineTweakerHelper;
@@ -24,6 +23,8 @@ import wanion.lib.recipe.RecipeHelper;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+
+import static wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry.IHugeRecipe;
 
 @ZenClass("mods.biggercraftingtables.Huge")
 public final class HugeCrafting
@@ -59,9 +60,9 @@ public final class HugeCrafting
 
 	private static class Add implements IUndoableAction
 	{
-		private final HugeRecipe recipe;
+		private final IHugeRecipe recipe;
 
-		public Add(@Nonnull final HugeRecipe recipe)
+		public Add(@Nonnull final IHugeRecipe recipe)
 		{
 			this.recipe = recipe;
 		}
@@ -107,16 +108,16 @@ public final class HugeCrafting
 	private static class Remove implements IUndoableAction
 	{
 		private final ItemStack itemStackToRemove;
-		private final HugeRecipe recipe;
+		private final IHugeRecipe recipe;
 
 		private Remove(@Nonnull final ItemStack itemStackToRemove)
 		{
 			this.itemStackToRemove = itemStackToRemove;
-			HugeRecipe recipe = null;
-			for (final List<HugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapedRecipes.valueCollection()) {
+			IHugeRecipe recipe = null;
+			for (final List<IHugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapedRecipes.valueCollection()) {
 				if (hugeRecipeList == null)
 					continue;
-				for (final HugeRecipe hugeRecipe : hugeRecipeList) {
+				for (final IHugeRecipe hugeRecipe : hugeRecipeList) {
 					if (hugeRecipe.getOutput().isItemEqual(itemStackToRemove)) {
 						HugeRecipeRegistry.instance.removeRecipe(recipe = hugeRecipe);
 						break;
@@ -124,10 +125,10 @@ public final class HugeCrafting
 				}
 			}
 			if (recipe == null) {
-				for (final List<HugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapelessRecipes.valueCollection()) {
+				for (final List<IHugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapelessRecipes.valueCollection()) {
 					if (hugeRecipeList == null)
 						continue;
-					for (final HugeRecipe hugeRecipe : hugeRecipeList) {
+					for (final IHugeRecipe hugeRecipe : hugeRecipeList) {
 						if (hugeRecipe.getOutput().isItemEqual(itemStackToRemove)) {
 							HugeRecipeRegistry.instance.removeRecipe(recipe = hugeRecipe);
 							break;

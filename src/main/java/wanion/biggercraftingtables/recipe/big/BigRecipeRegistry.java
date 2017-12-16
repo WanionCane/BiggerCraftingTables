@@ -9,10 +9,13 @@ package wanion.biggercraftingtables.recipe.big;
  */
 
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
+import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
-public final class BigRecipeRegistry extends AbstractRecipeRegistry<BigRecipe>
+public final class BigRecipeRegistry extends AbstractRecipeRegistry<BigRecipeRegistry.IBigRecipe>
 {
 	public static final BigRecipeRegistry instance = new BigRecipeRegistry();
 
 	private BigRecipeRegistry() {}
+
+	public interface IBigRecipe extends IAdvancedRecipe {}
 }

@@ -20,13 +20,14 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 import wanion.biggercraftingtables.block.big.GuiBigCraftingTable;
 import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
-import wanion.biggercraftingtables.recipe.big.BigRecipe;
 import wanion.biggercraftingtables.recipe.big.ShapedBigRecipe;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static wanion.biggercraftingtables.recipe.big.BigRecipeRegistry.IBigRecipe;
 
 public final class BigShapedRecipeHandler extends ShapedRecipeHandler
 {
@@ -64,7 +65,7 @@ public final class BigShapedRecipeHandler extends ShapedRecipeHandler
 	@Override
 	public void loadCraftingRecipes(final ItemStack result)
 	{
-		final List<BigRecipe> matchingRecipes = new ArrayList<>();
+		final List<IBigRecipe> matchingRecipes = new ArrayList<>();
 		BigRecipeRegistry.instance.shapedRecipes.valueCollection().forEach(iBigRecipes -> iBigRecipes.stream().filter(iBigRecipe -> NEIServerUtils.areStacksSameTypeCrafting(iBigRecipe.getOutput(), result)).forEach(matchingRecipes::add));
 		matchingRecipes.forEach(iBigRecipe -> {
 			final CachedShapedBigRecipe cachedShapedBigRecipe = new CachedShapedBigRecipe((ShapedBigRecipe) iBigRecipe);

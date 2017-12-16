@@ -16,7 +16,7 @@ public final class Reference
 {
 	public static final String MOD_ID = "biggercraftingtables";
 	public static final String MOD_NAME = "Bigger Crafting Tables";
-	public static final String MOD_VERSION = "1.7.10-1.5";
+	public static final String MOD_VERSION = "1.7.10-1.6";
 	public static final String DEPENDENCIES = "required-after:wanionlib@[1.7.10-1.7,)";
 	public static final String TARGET_MC_VERSION = "[1.7.10]";
 	public static final String CLIENT_PROXY = "wanion.biggercraftingtables.client.ClientProxy";

@@ -12,13 +12,13 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
-import wanion.biggercraftingtables.block.ItemBlockAutoBiggerCraftingTable;
-import wanion.biggercraftingtables.block.big.TileEntityAutoBigCraftingTable;
-import wanion.biggercraftingtables.block.huge.TileEntityAutoHugeCraftingTable;
-import wanion.biggercraftingtables.block.big.TileEntityBigCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
-import wanion.biggercraftingtables.block.huge.TileEntityHugeCraftingTable;
+import wanion.biggercraftingtables.block.ItemBlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;
+import wanion.biggercraftingtables.block.big.TileEntityAutoBigCraftingTable;
+import wanion.biggercraftingtables.block.big.TileEntityBigCraftingTable;
+import wanion.biggercraftingtables.block.huge.TileEntityAutoHugeCraftingTable;
+import wanion.biggercraftingtables.block.huge.TileEntityHugeCraftingTable;
 import wanion.biggercraftingtables.core.GuiHandler;
 import wanion.biggercraftingtables.minetweaker.Tweaker;
 
