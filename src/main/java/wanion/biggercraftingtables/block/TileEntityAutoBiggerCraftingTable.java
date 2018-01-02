@@ -59,6 +59,8 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Override
 	public final void updateEntity()
 	{
+		if (worldObj == null || worldObj.isRemote)
+			return;
 		if (cachedRecipe != null && cachedRecipe.removed()) {
 			cachedRecipe = null;
 			patternMap = null;

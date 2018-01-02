@@ -151,11 +151,16 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 	@Override
 	public boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
+		return recipeMatch(inventoryCrafting, offSetX, offSetY, false) || recipeMatch(inventoryCrafting, offSetX, offSetY, true);
+	}
+
+	private boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY, final boolean mirror)
+	{
 		boolean matches = true;
 		for (int y = 0; matches && y < height; y++) {
 			final int actualY = offSetY + y;
 			for (int x = 0; matches && x < width; x++) {
-				final int actualX = offSetX + x;
+				final int actualX = mirror ? (offSetX + x) : (offSetX + width - x - 1);
 				final Object input = inputs[y * width + x];
 				final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(actualY * squareRoot + actualX);
 				if ((slotItemStack == null && input != null) || (slotItemStack != null && input == null))
