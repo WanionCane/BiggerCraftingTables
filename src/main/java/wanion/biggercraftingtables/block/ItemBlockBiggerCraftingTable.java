@@ -8,22 +8,31 @@ package wanion.biggercraftingtables.block;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlockWithMetadata;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import wanion.biggercraftingtables.Reference;
 
-public final class ItemBlockBiggerCraftingTable extends ItemBlockWithMetadata
+public final class ItemBlockBiggerCraftingTable extends ItemBlock
 {
-	public ItemBlockBiggerCraftingTable(final Block block)
+	public static final ItemBlockBiggerCraftingTable INSTANCE = new ItemBlockBiggerCraftingTable();
+
+	public ItemBlockBiggerCraftingTable()
 	{
-		super(block, block);
+		super(BlockBiggerCraftingTable.INSTANCE);
+		setRegistryName(new ResourceLocation(Reference.MOD_ID, "biggercraftingtable"));
 	}
 
 	@Override
 	public String getUnlocalizedName(final ItemStack itemStack)
 	{
-		return "tile." + Reference.MOD_ID + ":" + Reference.TYPES.get(MathHelper.clamp_int(getDamage(itemStack), 0, Reference.TYPES.size()));
+		return "tile." + Reference.MOD_ID + "." + Reference.TableTypes.getName(getDamage(itemStack)) + "table";
+	}
+
+	@Override
+	public int getMetadata(final int damage)
+	{
+		return MathHelper.clamp(damage, 0, Reference.TableTypes.values().length);
 	}
 }

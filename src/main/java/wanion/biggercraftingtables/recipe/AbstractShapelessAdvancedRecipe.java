@@ -20,7 +20,6 @@ import java.util.List;
 
 public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 {
-	private boolean removed = false;
 	private final ItemStack output;
 	private final short recipeSize;
 	public final List<Object> inputs = new ArrayList<>();
@@ -31,10 +30,10 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 		short recipeSize = 0;
 		for (final Object input : inputs) {
 			if (input instanceof ItemStack) {
-				if (((ItemStack) input).getItem() == null)
+				if (((ItemStack) input).isEmpty())
 					continue;
 				final ItemStack newInput = ((ItemStack) input).copy();
-				newInput.stackSize = 1;
+				newInput.setCount(1);
 				this.inputs.add(newInput);
 			} else if (input instanceof String) {
 				final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
@@ -57,18 +56,6 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 	}
 
 	@Override
-	public final boolean removed()
-	{
-		return removed;
-	}
-
-	@Override
-	public final void setRemoved(final boolean removed)
-	{
-		this.removed = removed;
-	}
-
-	@Override
 	public short getRecipeKey()
 	{
 		return 0;
@@ -82,13 +69,13 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
+	public boolean recipeMatches(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
 		final List<Object> inputs = new ArrayList<>(this.inputs);
 		final List<ItemStack> slotItemStacks = new ArrayList<>();
 		for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
 			final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(i);
-			if (slotItemStack != null)
+			if (!slotItemStack.isEmpty())
 				slotItemStacks.add(slotItemStack);
 		}
 		for (final Iterator<Object> inputsIterator = inputs.iterator(); inputsIterator.hasNext(); ) {

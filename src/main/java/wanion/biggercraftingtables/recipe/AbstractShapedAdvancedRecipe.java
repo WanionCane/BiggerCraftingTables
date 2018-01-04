@@ -13,6 +13,7 @@ import gnu.trove.map.hash.TCharObjectHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import wanion.lib.common.Util;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,6 @@ import java.util.List;
 
 public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 {
-	private boolean removed = false;
 	private final ItemStack output;
 	private final short recipeKey, recipeSize;
 	public final short width, height;
@@ -93,7 +93,7 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 				} else break;
 			}
 		}
-		this.inputs = new Object[height * width];
+		Util.fillArray(this.inputs = new Object[height * width], ItemStack.EMPTY);
 		this.width = width;
 		this.height = height;
 		short recipeSize = 0;
@@ -107,8 +107,8 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 					if (input != null && (input instanceof ItemStack || input instanceof String || input instanceof List)) {
 						final int pos = width * y + x;
 						if (input instanceof ItemStack) {
-							if (((ItemStack) input).getItem() != null)
-								((ItemStack) (this.inputs[pos] = ((ItemStack) input).copy())).stackSize = 1;
+							if (!((ItemStack) input).isEmpty())
+								((ItemStack) (this.inputs[pos] = ((ItemStack) input).copy())).setCount(1);
 						} else if (input instanceof String) {
 							final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
 							if (oreList != null && !oreList.isEmpty())
@@ -125,18 +125,6 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 	}
 
 	@Override
-	public final boolean removed()
-	{
-		return removed;
-	}
-
-	@Override
-	public final void setRemoved(final boolean removed)
-	{
-		this.removed = removed;
-	}
-
-	@Override
 	public short getRecipeKey()
 	{
 		return recipeKey;
@@ -149,12 +137,12 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 	}
 
 	@Override
-	public boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
+	public boolean recipeMatches(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
-		return recipeMatch(inventoryCrafting, offSetX, offSetY, false) || recipeMatch(inventoryCrafting, offSetX, offSetY, true);
+		return recipeMatches(inventoryCrafting, offSetX, offSetY, false) || recipeMatches(inventoryCrafting, offSetX, offSetY, true);
 	}
 
-	private boolean recipeMatch(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY, final boolean mirror)
+	private boolean recipeMatches(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY, final boolean mirror)
 	{
 		boolean matches = true;
 		for (int y = 0; matches && y < height; y++) {

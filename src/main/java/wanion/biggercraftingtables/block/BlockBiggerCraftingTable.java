@@ -8,48 +8,51 @@ package wanion.biggercraftingtables.block;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.big.TileEntityBigCraftingTable;
 import wanion.biggercraftingtables.block.huge.TileEntityHugeCraftingTable;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import javax.annotation.Nullable;
 import java.util.Random;
-
-import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 public final class BlockBiggerCraftingTable extends BlockContainer
 {
-	public static final BlockBiggerCraftingTable instance = new BlockBiggerCraftingTable();
-	@SideOnly(Side.CLIENT)
-	private static IIcon[][] textures;
+	public static final BlockBiggerCraftingTable INSTANCE = new BlockBiggerCraftingTable();
 
 	private BlockBiggerCraftingTable()
 	{
-		super(Material.wood);
-		setHardness(2.5F).setStepSound(soundTypeWood).setCreativeTab(BiggerCraftingTables.creativeTabs);
+		super(Material.WOOD);
+		setHardness(2.5F).setCreativeTab(BiggerCraftingTables.creativeTabs);
+		setRegistryName(new ResourceLocation(Reference.MOD_ID, "biggercraftingtable"));
+		setDefaultState(blockState.getBaseState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.BIG));
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(final World world, final int metadata)
+	public TileEntity createNewTileEntity(@Nonnull final World world, final int metadata)
 	{
 		switch (metadata) {
 			case 0:
@@ -61,50 +64,22 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(@Nonnull final IIconRegister iIconRegister)
-	{
-		textures = new IIcon[2][3];
-		for (int i = 0; i < Reference.TYPES.size(); i++) {
-			final String type = Reference.TYPES.get(i);
-			textures[i][0] = iIconRegister.registerIcon(MOD_ID + ":" + type + "CraftingTableTop");
-			textures[i][1] = iIconRegister.registerIcon(MOD_ID + ":BiggerCraftingTablesBottom");
-			textures[i][2] = iIconRegister.registerIcon(MOD_ID + ":BiggerCraftingTablesSides");
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(final int side, int metadata)
-	{
-		if (metadata < 0 || metadata > 1)
-			metadata = 0;
-		switch (side) {
-			case 0:
-				return textures[metadata][1];
-			case 1:
-				return textures[metadata][0];
-			default:
-				return textures[metadata][2];
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(final Item block, final CreativeTabs creativeTabs, final List list)
+	@Override
+	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
 	{
 		for (int i = 0; i < 2; i++)
-			list.add(new ItemStack(block, 1, i));
+			items.add(new ItemStack(this, 1, i));
 	}
 
 	@Override
-	public boolean onBlockActivated(final World world, final int x, final int y, final int z, final EntityPlayer entityPlayer, final int side, final float hitX, final float hitY, final float hitZ)
+	public boolean onBlockActivated(final World world, final BlockPos blockPos, final IBlockState state, final EntityPlayer entityPlayer, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
 	{
-		if (!world.isRemote) {
-			final TileEntity tileEntity = world.getTileEntity(x, y, z);
+		if (world != null && !world.isRemote) {
+			final TileEntity tileEntity = world.getTileEntity(blockPos);
 			if (tileEntity instanceof TileEntityBigCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_BIG_CRAFTING_TABLE, world, x, y, z);
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_BIG_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 			else if (tileEntity instanceof TileEntityHugeCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE, world, x, y, z);
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 			else
 				return false;
 		}
@@ -112,37 +87,65 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 	}
 
 	@Override
-	public int damageDropped(final int metadata)
+	@Nonnull
+	public Item getItemDropped(final IBlockState blockState, final Random random, final int fortune)
 	{
-		return metadata;
+		return Items.AIR;
 	}
 
 	@Override
-	public final void breakBlock(final World world, final int x, final int y, final int z, final Block block, final int metadata)
+	public int damageDropped(IBlockState state)
 	{
-		final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable = (TileEntityBiggerCraftingTable) world.getTileEntity(x, y, z);
+		return 0;
+	}
+
+	@Override
+	@Nonnull
+	public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity)
+	{
+		return SoundType.WOOD;
+	}
+
+	@Override
+	public void breakBlock(final World world, @Nonnull final BlockPos blockPos, @Nonnull final IBlockState blockState)
+	{
+		if (world == null)
+			return;
+		final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable = (TileEntityBiggerCraftingTable) world.getTileEntity(blockPos);
 		if (tileEntityBiggerCraftingTable != null) {
-			final ItemStack droppedStack = new ItemStack(block, 1, metadata);
+			final ItemStack droppedStack = new ItemStack(this, 1, getMetaFromState(blockState));
 			final NBTTagCompound nbtTagCompound = tileEntityBiggerCraftingTable.writeCustomNBT(new NBTTagCompound());
 			if (nbtTagCompound.getTagList("Contents", 10).tagCount() > 0)
 				droppedStack.setTagCompound(nbtTagCompound);
-			world.spawnEntityInWorld(new EntityItem(world, x + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, y + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, z + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, droppedStack));
-			world.func_147453_f(x, y, z, block);
+			world.spawnEntity(new EntityItem(world, blockPos.getX() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, blockPos.getY() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, blockPos.getZ() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, droppedStack));
 		}
-		world.removeTileEntity(x, y, z);
+		super.breakBlock(world, blockPos, blockState);
 	}
 
 	@Override
-	public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+	public void onBlockPlacedBy(final World world, final BlockPos blockPos, final IBlockState blockState, final EntityLivingBase entityLivingBase, final ItemStack itemStack)
 	{
-		return null;
+		if (world == null)
+			return;
+		final TileEntity tileEntity = world.getTileEntity(blockPos);
+		if (tileEntity instanceof TileEntityBiggerCraftingTable && itemStack.hasTagCompound())
+			((TileEntityBiggerCraftingTable) tileEntity).readCustomNBT(itemStack.getTagCompound());
+	}
+
+	public BlockStateContainer createBlockState()
+	{
+		return new BlockStateContainer(this, Reference.TABLE_TYPES);
 	}
 
 	@Override
-	public final void onBlockPlacedBy(final World world, final int x, final int y, final int z, final EntityLivingBase entity, final ItemStack itemStack)
+	public int getMetaFromState(final IBlockState blockState)
 	{
-		final TileEntity tileEntity = world.getTileEntity(x, y, z);
-		if (tileEntity instanceof TileEntityBiggerCraftingTable && itemStack.stackTagCompound != null)
-			((TileEntityBiggerCraftingTable) tileEntity).readCustomNBT(itemStack.stackTagCompound);
+		return blockState.getValue(Reference.TABLE_TYPES).metadata;
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(final int metadata)
+	{
+		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getValue(metadata));
 	}
 }

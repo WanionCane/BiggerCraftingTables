@@ -14,32 +14,41 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import wanion.lib.common.Util;
+
+import javax.annotation.Nonnull;
 
 public abstract class TileEntityBiggerCraftingTable extends TileEntity implements ISidedInventory
 {
 	private final ItemStack[] slots = new ItemStack[getSizeInventory()];
 
-	@Override
-	public boolean canUpdate()
+	public TileEntityBiggerCraftingTable()
 	{
-		return false;
+		Util.fillArray(slots, ItemStack.EMPTY);
 	}
 
 	@Override
-	public final Packet getDescriptionPacket()
+	@Nonnull
+	public NBTTagCompound getUpdateTag()
+	{
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
+	public final SPacketUpdateTileEntity getUpdatePacket()
 	{
 		final NBTTagCompound nbttagcompound = new NBTTagCompound();
 		writeToNBT(nbttagcompound);
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 3, nbttagcompound);
+		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
 	}
 
 	@Override
-	public final void onDataPacket(final NetworkManager networkManager, final S35PacketUpdateTileEntity packet)
+	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
 	{
-		readFromNBT(packet.func_148857_g());
+		readFromNBT(packet.getNbtCompound());
 	}
 
 	@Override
@@ -50,74 +59,86 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	}
 
 	@Override
-	public final void writeToNBT(final NBTTagCompound nbtTagCompound)
+	@Nonnull
+	public NBTTagCompound writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		super.writeToNBT(nbtTagCompound);
 		writeCustomNBT(nbtTagCompound);
+		return nbtTagCompound;
 	}
 
-	public void readCustomNBT(final NBTTagCompound nbtTagCompound)
+	void readCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
 		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
 		for (int i = 0; i < nbtTagList.tagCount(); i++) {
 			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
 			final int slot = slotCompound.getShort("Slot");
 			if (slot >= 0 && slot < getSizeInventory())
-				setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(slotCompound));
+				setInventorySlotContents(slot, new ItemStack(slotCompound));
 		}
 	}
 
-	public NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
+	NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
 		final NBTTagList nbtTagList = new NBTTagList();
 		final int max = getSizeInventory() - 1;
 		for (int i = 0; i < max; i++) {
 			final ItemStack itemStack = getStackInSlot(i);
-			if (itemStack != null) {
-				final NBTTagCompound slotCompound = new NBTTagCompound();
-				slotCompound.setShort("Slot", (short) i);
-				nbtTagList.appendTag(itemStack.writeToNBT(slotCompound));
-			}
+			final NBTTagCompound slotCompound = new NBTTagCompound();
+			slotCompound.setShort("Slot", (short) i);
+			nbtTagList.appendTag(itemStack.writeToNBT(slotCompound));
 		}
 		nbtTagCompound.setTag("Contents", nbtTagList);
 		return nbtTagCompound;
 	}
 
 	@Override
+	public int getSizeInventory()
+	{
+		return 0;
+	}
+
+	@Override
+	public boolean isEmpty()
+	{
+		return false;
+	}
+
+	@Override
+	@Nonnull
 	public ItemStack getStackInSlot(final int slot)
 	{
 		return slots[slot];
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack decrStackSize(final int slot, final int howMuch)
 	{
 		final ItemStack slotStack = slots[slot];
-		if (slotStack == null)
-			return null;
+		if (slotStack.isEmpty())
+			return ItemStack.EMPTY;
 		final ItemStack newStack = slotStack.copy();
-		newStack.stackSize = howMuch;
-		if ((slotStack.stackSize -= howMuch) == 0)
-			slots[slot] = null;
+		newStack.setCount(howMuch);
+		slotStack.setCount(slotStack.getCount() - howMuch);
+		if ((slotStack.getCount()) == 0)
+			slots[slot] = ItemStack.EMPTY;
 		return newStack;
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot)
+	@Nonnull
+	public ItemStack removeStackFromSlot(final int index)
 	{
-		return null;
+		final ItemStack itemStack = slots[index];
+		slots[index] = ItemStack.EMPTY;
+		return itemStack;
 	}
 
 	@Override
-	public void setInventorySlotContents(final int slot, final ItemStack itemStack)
+	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		slots[slot] = itemStack;
-	}
-
-	@Override
-	public boolean hasCustomInventoryName()
-	{
-		return false;
 	}
 
 	@Override
@@ -127,37 +148,62 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	}
 
 	@Override
-	public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
+	public boolean isUsableByPlayer(@Nonnull final EntityPlayer entityPlayer)
 	{
-		return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this && entityPlayer.getDistanceSq((double) this.xCoord + 0.5D, (double) this.yCoord + 0.5D, (double) this.zCoord + 0.5D) <= 64.0D;
+		return world.getTileEntity(pos) == this && entityPlayer.getDistanceSq((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) getPos().getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(final int slot, final ItemStack itemStack)
+	public void openInventory(@Nonnull final EntityPlayer player) {}
+
+	@Override
+	public void closeInventory(@Nonnull final EntityPlayer player) {}
+
+	@Override
+	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		return true;
 	}
 
 	@Override
-	public void openInventory() {}
+	public int getField(final int id)
+	{
+		return 0;
+	}
 
 	@Override
-	public void closeInventory() {}
+	public void setField(final int id, final int value) {}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int p_94128_1_)
+	public int getFieldCount()
+	{
+		return 0;
+	}
+
+	@Override
+	public void clear() { }
+
+	@Override
+	@Nonnull
+	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
 	{
 		return new int[0];
 	}
 
 	@Override
-	public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_, int p_102007_3_)
+	public boolean canInsertItem(int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
 	{
 		return false;
 	}
 
 	@Override
-	public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_, int p_102008_3_)
+	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
+	{
+		return false;
+	}
+
+	@Override
+	public boolean hasCustomName()
 	{
 		return false;
 	}

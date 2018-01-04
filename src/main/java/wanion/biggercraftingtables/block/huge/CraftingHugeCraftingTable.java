@@ -27,33 +27,30 @@ public final class CraftingHugeCraftingTable extends InventoryCrafting
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack getStackInSlot(final int slot)
 	{
-		return slot >= getSizeInventory() ? null : tileEntityHugeCraftingTable.getStackInSlot(slot);
+		return slot >= getSizeInventory() ? ItemStack.EMPTY : tileEntityHugeCraftingTable.getStackInSlot(slot);
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack getStackInRowAndColumn(final int row, final int column)
 	{
 		final int slot = row * 7 + column;
-		return slot < 49 ? getStackInSlot(slot) : null;
+		return slot < 49 ? getStackInSlot(slot) : ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int par1)
-	{
-		return null;
-	}
-
-	@Override
+	@Nonnull
 	public ItemStack decrStackSize(final int slot, final int decrement)
 	{
 		final ItemStack stack = tileEntityHugeCraftingTable.getStackInSlot(slot);
-		if (stack != null) {
+		if (!stack.isEmpty()) {
 			ItemStack itemstack;
-			if (stack.stackSize <= decrement) {
+			if (stack.getCount() <= decrement) {
 				itemstack = stack.copy();
-				tileEntityHugeCraftingTable.setInventorySlotContents(slot, null);
+				tileEntityHugeCraftingTable.setInventorySlotContents(slot, ItemStack.EMPTY);
 				container.onCraftMatrixChanged(this);
 				return itemstack;
 			} else {
@@ -62,12 +59,12 @@ public final class CraftingHugeCraftingTable extends InventoryCrafting
 				return itemstack;
 			}
 		} else {
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
 	@Override
-	public void setInventorySlotContents(final int slot, final ItemStack itemstack)
+	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemstack)
 	{
 		tileEntityHugeCraftingTable.setInventorySlotContents(slot, itemstack);
 		container.onCraftMatrixChanged(this);

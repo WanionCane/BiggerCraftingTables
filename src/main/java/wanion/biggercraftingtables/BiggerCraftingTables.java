@@ -8,20 +8,22 @@ package wanion.biggercraftingtables;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkCheckHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkCheckHandler;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
+import wanion.biggercraftingtables.proxy.CommonProxy;
 
 import java.util.Map;
 
@@ -41,11 +43,11 @@ public class BiggerCraftingTables
 
 	public static final CreativeTabs creativeTabs = new CreativeTabs(MOD_ID)
 	{
-		@SideOnly(Side.CLIENT)
 		@Override
-		public Item getTabIconItem()
+		@SideOnly(Side.CLIENT)
+		public ItemStack getTabIconItem()
 		{
-			return Item.getItemFromBlock(BlockBiggerCraftingTable.instance);
+			return new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 0);
 		}
 	};
 
@@ -53,16 +55,16 @@ public class BiggerCraftingTables
 	public void preInit(final FMLPreInitializationEvent event)
 	{
 		proxy.preInit();
-		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1), "CC", "CC", 'C', Blocks.crafting_table);
-		GameRegistry.addShapedRecipe(new ItemStack(BlockBiggerCraftingTable.instance, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTable.instance, 1));
-		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1), Blocks.redstone_block, new ItemStack(BlockBiggerCraftingTable.instance, 1));
-		GameRegistry.addShapelessRecipe(new ItemStack(BlockAutoBiggerCraftingTable.instance, 1, 1), Blocks.redstone_block, new ItemStack(BlockBiggerCraftingTable.instance, 1, 1));
+		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
+		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4BigCraftingTableToHugeCraftingTable"), null, new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1));
+		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "bigCraftingTableToAutoBigCraftingTable"), null, new ItemStack(BlockAutoBiggerCraftingTable.INSTANCE, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(BlockBiggerCraftingTable.INSTANCE)));
+		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "hugeCraftingTableToAutoHugeCraftingTable"), null, new ItemStack(BlockAutoBiggerCraftingTable.INSTANCE, 1, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 1)));
 	}
 
 	@Mod.EventHandler
-	public void postInit(final FMLPostInitializationEvent event)
+	public void init(final FMLInitializationEvent event)
 	{
-		proxy.postInit();
+		proxy.init();
 	}
 
 	@NetworkCheckHandler

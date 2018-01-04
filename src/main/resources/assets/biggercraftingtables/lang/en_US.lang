@@ -1,16 +1,16 @@
 itemGroup.biggercraftingtables=Bigger Crafting Tables
 
-tile.biggercraftingtables:Big.name=Big Crafting Table
-tile.biggercraftingtables:Huge.name=Huge Crafting Table
+tile.biggercraftingtables.bigtable.name=Big Crafting Table
+tile.biggercraftingtables:hugetable.name=Huge Crafting Table
 
-tile.biggercraftingtables:AutoBig.name=Auto Big Crafting Table
-tile.biggercraftingtables:AutoHuge.name=Auto Huge Crafting Table
+tile.biggercraftingtables.autobigtable.name=Auto Big Crafting Table
+tile.biggercraftingtables.autohugetable.name=Auto Huge Crafting Table
 
-container.BigCraftingTable=Big Crafting Table
-container.HugeCraftingTable=Huge Crafting Table
+container.bigcraftingtable=Big Crafting Table
+container.hugecraftingtable=Huge Crafting Table
 
-container.AutoBigCraftingTable=Auto Big Crafting Table
-container.AutoHugeCraftingTable=Auto Huge Crafting Table
+container.autobigcraftingtable=Auto Big Crafting Table
+container.autohugecraftingtable=Auto Huge Crafting Table
 
 crafting.big.shaped=Big Shaped
 crafting.big.shapeless=Big Shapeless

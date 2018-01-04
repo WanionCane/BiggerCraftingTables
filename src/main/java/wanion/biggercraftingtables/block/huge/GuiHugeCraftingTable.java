@@ -8,12 +8,17 @@ package wanion.biggercraftingtables.block.huge;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -23,7 +28,7 @@ import static wanion.biggercraftingtables.Reference.MOD_ID;
 @SideOnly(Side.CLIENT)
 public final class GuiHugeCraftingTable extends GuiContainer
 {
-	private static final ResourceLocation hugeCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/hugeCraftingTable.png");
+	private static final ResourceLocation hugeCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/hugecraftingtable.png");
 	private final TileEntityHugeCraftingTable tileEntityHugeCraftingTable;
 
 	public GuiHugeCraftingTable(@Nonnull final TileEntityHugeCraftingTable tileEntityHugeCraftingTable, final InventoryPlayer inventoryPlayer)
@@ -35,17 +40,18 @@ public final class GuiHugeCraftingTable extends GuiContainer
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_)
+	protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(hugeCraftingTexture);
 		drawTexturedModalRect((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
+
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(final int p_146979_1_, final int p_146979_2_)
+	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
 	{
-		fontRendererObj.drawString(I18n.format(tileEntityHugeCraftingTable.getInventoryName()), 7, 7, 0x404040);
-		fontRendererObj.drawString(I18n.format("container.inventory"), 7, 147, 0x404040);
+		fontRenderer.drawString(I18n.format(tileEntityHugeCraftingTable.getName()), 7, 7, 0x404040);
+		fontRenderer.drawString(I18n.format("container.inventory"), 7, 147, 0x404040);
 	}
 }

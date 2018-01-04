@@ -23,8 +23,8 @@ public abstract class ContainerAutoBiggerCraftingTable extends Container
 	}
 
 	@Override
-	public boolean canInteractWith(final EntityPlayer entityPlayer)
+	public boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
 	{
-		return tileEntityAutoBiggerCraftingTable.isUseableByPlayer(entityPlayer);
+		return tileEntityAutoBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 }

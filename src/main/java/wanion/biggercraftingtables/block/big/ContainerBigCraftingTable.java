@@ -49,33 +49,34 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 	public void onCraftMatrixChanged(final IInventory inventory)
 	{
 		final IBigRecipe IBigRecipe = BigRecipeRegistry.instance.findMatchingRecipe(craftingMatrix);
-		craftingResult.setInventorySlotContents(0, IBigRecipe != null ? IBigRecipe.getOutput() : null);
+		craftingResult.setInventorySlotContents(0, IBigRecipe != null ? IBigRecipe.getOutput() : ItemStack.EMPTY);
 	}
 
 	@Override
+	@Nonnull
 	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
 	{
 		ItemStack itemstack = null;
-		final Slot actualSlot = (Slot) inventorySlots.get(slot);
+		final Slot actualSlot = inventorySlots.get(slot);
 		if (actualSlot != null && actualSlot.getHasStack()) {
 			ItemStack itemstack1 = actualSlot.getStack();
 			itemstack = itemstack1.copy();
 			if (slot > 25) {
 				if (!mergeItemStack(itemstack1, 0, 25, false))
-					return null;
+					return ItemStack.EMPTY;
 			} else if (slot == 25) {
 				if (!mergeItemStack(itemstack1, 26, 62, true))
-					return null;
+					return ItemStack.EMPTY;
 				actualSlot.onSlotChange(itemstack1, itemstack);
 			} else if (!mergeItemStack(itemstack1, 26, 62, true))
-				return null;
-			if (itemstack1.stackSize == 0)
-				actualSlot.putStack(null);
+				return ItemStack.EMPTY;
+			if (itemstack1.getCount() == 0)
+				actualSlot.putStack(ItemStack.EMPTY);
 			else
 				actualSlot.onSlotChanged();
-			if (itemstack1.stackSize != itemstack.stackSize)
-				actualSlot.onPickupFromSlot(entityPlayer, itemstack1);
+			if (itemstack1.getCount() != itemstack.getCount())
+				actualSlot.onTake(entityPlayer, itemstack1);
 		}
-		return itemstack;
+		return itemstack != null ? itemstack : ItemStack.EMPTY;
 	}
 }

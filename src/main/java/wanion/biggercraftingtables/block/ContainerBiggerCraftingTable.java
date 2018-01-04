@@ -23,8 +23,8 @@ public abstract class ContainerBiggerCraftingTable extends Container
 	}
 
 	@Override
-	public boolean canInteractWith(final EntityPlayer entityPlayer)
+	public boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
 	{
-		return tileEntityBiggerCraftingTable.isUseableByPlayer(entityPlayer);
+		return tileEntityBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 }

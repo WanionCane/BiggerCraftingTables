@@ -25,7 +25,7 @@ public final class ShapeSlot extends Slot
 		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
 	}
 
-	public void putStack(final ItemStack itemStack)
+	public void putStack(@Nonnull final ItemStack itemStack)
 	{
 		super.putStack(itemStack);
 		tileEntityAutoBiggerCraftingTable.recipeShapeChanged();

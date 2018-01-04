@@ -11,9 +11,12 @@ package wanion.biggercraftingtables.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.management.ThreadInfo;
 
 public final class CraftResultBiggerCraftingTable implements IInventory
 {
@@ -33,45 +36,62 @@ public final class CraftResultBiggerCraftingTable implements IInventory
 	}
 
 	@Override
+	public boolean isEmpty()
+	{
+		return tileEntityBiggerCraftingTable.isEmpty();
+	}
+
+	@Override
+	@Nonnull
 	public ItemStack getStackInSlot(final int slot)
 	{
 		return tileEntityBiggerCraftingTable.getStackInSlot(this.slot);
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack decrStackSize(final int slot, int howMuch)
 	{
 		return tileEntityBiggerCraftingTable.decrStackSize(this.slot, howMuch);
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot)
+	@Nonnull
+	public ItemStack removeStackFromSlot(final int index)
 	{
-		return null;
+		return tileEntityBiggerCraftingTable.removeStackFromSlot(index);
 	}
 
 	@Override
-	public void setInventorySlotContents(final int slot, final ItemStack itemStack)
+	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		tileEntityBiggerCraftingTable.setInventorySlotContents(this.slot, itemStack);
 	}
 
 	@Override
-	public String getInventoryName()
+	@Nonnull
+	public String getName()
 	{
-		return null;
+		return tileEntityBiggerCraftingTable.getName();
 	}
 
 	@Override
-	public boolean hasCustomInventoryName()
+	public boolean hasCustomName()
 	{
-		return false;
+		return tileEntityBiggerCraftingTable.hasCustomName();
+	}
+
+	@Override
+	@Nullable
+	public ITextComponent getDisplayName()
+	{
+		return tileEntityBiggerCraftingTable.getDisplayName();
 	}
 
 	@Override
 	public int getInventoryStackLimit()
 	{
-		return 64;
+		return tileEntityBiggerCraftingTable.getInventoryStackLimit();
 	}
 
 	@Override
@@ -81,20 +101,38 @@ public final class CraftResultBiggerCraftingTable implements IInventory
 	}
 
 	@Override
-	public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
+	public boolean isUsableByPlayer(@Nonnull final EntityPlayer entityPlayer)
 	{
-		return tileEntityBiggerCraftingTable.isUseableByPlayer(entityPlayer);
+		return tileEntityBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 
 	@Override
-	public void openInventory() {}
+	public void openInventory(@Nonnull final EntityPlayer player) {}
 
 	@Override
-	public void closeInventory() {}
+	public void closeInventory(@Nonnull final EntityPlayer player) {}
 
 	@Override
-	public boolean isItemValidForSlot(final int slot, final ItemStack itemStack)
+	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		return tileEntityBiggerCraftingTable.isItemValidForSlot(slot, itemStack);
 	}
+
+	@Override
+	public int getField(int id)
+	{
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {}
+
+	@Override
+	public int getFieldCount()
+	{
+		return 0;
+	}
+
+	@Override
+	public void clear() {}
 }

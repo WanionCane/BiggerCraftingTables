@@ -10,6 +10,7 @@ package wanion.biggercraftingtables.block.huge;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.block.ContainerAutoBiggerCraftingTable;
@@ -40,53 +41,55 @@ public final class ContainerAutoHugeCraftingTable extends ContainerAutoBiggerCra
 	}
 
 	@Override
+	@Nonnull
 	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
 	{
 		ItemStack itemstack = null;
-		final Slot actualSlot = (Slot) this.inventorySlots.get(slot);
+		final Slot actualSlot = this.inventorySlots.get(slot);
 		if (actualSlot != null && actualSlot.getHasStack()) {
 			ItemStack itemstack1 = actualSlot.getStack();
 			itemstack = itemstack1.copy();
 			if (slot > 99) {
 				if (!mergeItemStack(itemstack1, 0, 49, false))
-					return null;
+					return ItemStack.EMPTY;
 			} else if (slot < 49 || slot == 99) {
 				if (!mergeItemStack(itemstack1, 100, 136, true))
-					return null;
+					return ItemStack.EMPTY;
 			}
-			if (itemstack1.stackSize == 0)
-				actualSlot.putStack(null);
+			if (itemstack1.getCount() == 0)
+				actualSlot.putStack(ItemStack.EMPTY);
 			actualSlot.onSlotChanged();
 		}
-		return itemstack;
+		return itemstack != null ? itemstack : ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack slotClick(final int slot, final int mouseButton, final int modifier, final EntityPlayer entityPlayer)
+	@Nonnull
+	public ItemStack slotClick(final int slot, final int mouseButton, final ClickType clickType, final EntityPlayer entityPlayer)
 	{
 		if (slot > 48 && slot < 98) {
-			if (modifier == 2)
-				return null;
+			if (clickType == ClickType.QUICK_MOVE)
+				return ItemStack.EMPTY;
 			final ItemStack playerStack = entityPlayer.inventory.getItemStack();
-			final Slot actualSlot = (Slot) inventorySlots.get(slot);
+			final Slot actualSlot = inventorySlots.get(slot);
 			final boolean slotHasStack = actualSlot.getHasStack();
-			if (slotHasStack && playerStack == null) {
-				actualSlot.putStack(null);
-				return null;
-			} else if (playerStack != null) {
-				if (modifier == 1) {
-					actualSlot.putStack(null);
-					return null;
+			if (slotHasStack && !playerStack.isEmpty()) {
+				actualSlot.putStack(ItemStack.EMPTY);
+				return ItemStack.EMPTY;
+			} else if (playerStack.isEmpty()) {
+				if (clickType == ClickType.PICKUP) {
+					actualSlot.putStack(ItemStack.EMPTY);
+					return ItemStack.EMPTY;
 				} else if (slotHasStack && playerStack.isItemEqual(actualSlot.getStack())) {
-					actualSlot.putStack(null);
-					return null;
+					actualSlot.putStack(ItemStack.EMPTY);
+					return ItemStack.EMPTY;
 				}
 				final ItemStack slotStack = playerStack.copy();
-				slotStack.stackSize = 0;
-				actualSlot.putStack(slotStack);
+				slotStack.setCount(0);
+				actualSlot.putStack(ItemStack.EMPTY);
 				return slotStack;
 			}
-			return null;
-		} else return super.slotClick(slot, mouseButton, modifier, entityPlayer);
+			return ItemStack.EMPTY;
+		} else return super.slotClick(slot, mouseButton, clickType, entityPlayer);
 	}
 }

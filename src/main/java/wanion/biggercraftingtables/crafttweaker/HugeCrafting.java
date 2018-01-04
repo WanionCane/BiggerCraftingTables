@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.minetweaker;
+package wanion.biggercraftingtables.crafttweaker;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -8,17 +8,19 @@ package wanion.biggercraftingtables.minetweaker;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import minetweaker.IUndoableAction;
-import minetweaker.MineTweakerAPI;
-import minetweaker.api.item.IIngredient;
-import minetweaker.api.item.IItemStack;
+import crafttweaker.CraftTweakerAPI;
+import crafttweaker.IAction;
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.item.IIngredient;
+import crafttweaker.api.item.IItemStack;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
-import wanion.lib.common.MineTweakerHelper;
+import wanion.lib.common.CraftTweakerHelper;
+import wanion.lib.common.Util;
 import wanion.lib.recipe.RecipeHelper;
 
 import javax.annotation.Nonnull;
@@ -26,6 +28,8 @@ import java.util.List;
 
 import static wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry.IHugeRecipe;
 
+@SuppressWarnings("unused")
+@ZenRegister
 @ZenClass("mods.biggercraftingtables.Huge")
 public final class HugeCrafting
 {
@@ -42,23 +46,23 @@ public final class HugeCrafting
 		final Object[][] input = new Object[height][width];
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++)
-				input[y][x] = MineTweakerHelper.toActualObject(inputs[y][x]);
-		MineTweakerAPI.apply(new Add(new ShapedHugeRecipe(MineTweakerHelper.toStack(output), RecipeHelper.rawShapeToShape(input, 7))));
+				input[y][x] = CraftTweakerHelper.toActualObject(inputs[y][x]);
+		CraftTweakerAPI.apply(new Add(new ShapedHugeRecipe(CraftTweakerHelper.toStack(output), RecipeHelper.rawShapeToShape(Util.treeDimArrayToTwoDimArray(input)))));
 	}
 
 	@ZenMethod
 	public static void addShapeless(@Nonnull final IItemStack output, @Nonnull final IIngredient[] inputs)
 	{
-		MineTweakerAPI.apply(new Add(new ShapelessHugeRecipe(MineTweakerHelper.toStack(output), MineTweakerHelper.toObjects(inputs))));
+		CraftTweakerAPI.apply(new Add(new ShapelessHugeRecipe(CraftTweakerHelper.toStack(output), CraftTweakerHelper.toObjects(inputs))));
 	}
 
 	@ZenMethod
 	public static void remove(final IItemStack target)
 	{
-		MineTweakerAPI.apply(new Remove(MineTweakerHelper.toStack(target)));
+		CraftTweakerAPI.apply(new Remove(CraftTweakerHelper.toStack(target)));
 	}
 
-	private static class Add implements IUndoableAction
+	private static class Add implements IAction
 	{
 		private final IHugeRecipe recipe;
 
@@ -74,38 +78,13 @@ public final class HugeCrafting
 		}
 
 		@Override
-		public boolean canUndo()
-		{
-			return true;
-		}
-
-		@Override
-		public void undo()
-		{
-			recipe.setRemoved(true);
-			HugeRecipeRegistry.instance.removeRecipe(recipe);
-		}
-
-		@Override
 		public String describe()
 		{
 			return "Adding HugeRecipe for " + recipe.getOutput().getDisplayName();
 		}
-
-		@Override
-		public String describeUndo()
-		{
-			return "Un-adding HugeRecipe Recipe for " + recipe.getOutput().getDisplayName();
-		}
-
-		@Override
-		public Object getOverrideKey()
-		{
-			return null;
-		}
 	}
 
-	private static class Remove implements IUndoableAction
+	private static class Remove implements IAction
 	{
 		private final ItemStack itemStackToRemove;
 		private final IHugeRecipe recipe;
@@ -142,40 +121,13 @@ public final class HugeCrafting
 		@Override
 		public void apply()
 		{
-			if (recipe != null)
-				recipe.setRemoved(true);
 			HugeRecipeRegistry.instance.removeRecipe(recipe);
-		}
-
-		@Override
-		public boolean canUndo()
-		{
-			return recipe != null;
-		}
-
-		@Override
-		public void undo()
-		{
-			recipe.setRemoved(false);
-			HugeRecipeRegistry.instance.addRecipe(recipe);
 		}
 
 		@Override
 		public String describe()
 		{
 			return "Removing HugeRecipe for " + itemStackToRemove.getDisplayName();
-		}
-
-		@Override
-		public String describeUndo()
-		{
-			return "Un-removing HugeRecipe for " + itemStackToRemove.getDisplayName();
-		}
-
-		@Override
-		public Object getOverrideKey()
-		{
-			return null;
 		}
 	}
 }
