@@ -1,0 +1,44 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-block",
+    "model": "biggercraftingtables:six_sides_cube",
+    "textures": {
+      "bottom": "biggercraftingtables:blocks/biggercraftingtablesbottom",
+      "north": "biggercraftingtables:blocks/biggercraftingtablessides",
+      "south": "biggercraftingtables:blocks/biggercraftingtablessides",
+      "west": "biggercraftingtables:blocks/biggercraftingtablessides",
+      "east": "biggercraftingtables:blocks/biggercraftingtablessides"
+    }
+  },
+  "variants": {
+    "inventory,tabletypes=big": [
+      {
+        "textures": {
+          "top": "biggercraftingtables:blocks/bigcraftingtabletop"
+        }
+      }
+    ],
+    "inventory,tabletypes=huge": [
+      {
+        "textures": {
+          "top": "biggercraftingtables:blocks/hugecraftingtabletop"
+        }
+      }
+    ],
+    "tabletypes": {
+      "big": {
+        "model": "biggercraftingtables:six_sides_cube",
+        "texture": {
+          "top": "biggercraftingtables:blocks/bigcraftingtabletop"
+        }
+      },
+      "huge": {
+        "model": "biggercraftingtables:six_sides_cube",
+        "texture": {
+          "top": "biggercraftingtables:blocks/hugecraftingtabletop"
+        }
+      }
+    }
+  }
+}
