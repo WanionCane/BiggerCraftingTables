@@ -64,8 +64,10 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 	@Override
 	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
 	{
-		for (int i = 0; i < 2; i++)
-			items.add(new ItemStack(this, 1, i));
+		if (creativeTabs == this.getCreativeTabToDisplayOn()){
+			for (int i = 0; i < 2; i++)
+				items.add(new ItemStack(this, 1, i));
+		}
 	}
 
 	@Override
