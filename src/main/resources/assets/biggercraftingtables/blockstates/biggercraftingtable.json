@@ -1,0 +1,29 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "biggercraftingtables:block_bigger_table"
+  },
+  "variants": {
+    "tabletypes": {
+      "big": {
+
+      },
+      "huge": {
+
+      }
+    },
+    "tabletypes=big": [
+      {
+        "textures": {
+
+        }
+      }
+    ],
+    "tabletypes=huge": [
+      {}
+    ],
+    "inventory": [
+      {}
+    ]
+  }
+}
