@@ -44,8 +44,7 @@ repositories {
 
 
 dependencies {
-    compile files('lib/WanionLib-1.12.2-1.4.jar')
-    runtime files('lib/WanionLib-1.12.2-1.4.jar')
+
     deobfCompile ('CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.+')
 }
 

@@ -1,44 +1,30 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "transform": "forge:default-block",
-    "model": "biggercraftingtables:six_sides_cube",
+    "model": "biggercraftingtables:block_bigger_table",
     "textures": {
-      "bottom": "biggercraftingtables:blocks/autobiggercraftingtablesbottom",
-      "north": "biggercraftingtables:blocks/autobiggercraftingtablessides",
-      "south": "biggercraftingtables:blocks/autobiggercraftingtablessides",
-      "west": "biggercraftingtables:blocks/autobiggercraftingtablessides",
-      "east": "biggercraftingtables:blocks/autobiggercraftingtablessides"
+      "side": "biggercraftingtables:blocks/auto_bigger_crafting_tables_sides",
+      "bottom": "biggercraftingtables:blocks/auto_bigger_crafting_tables_bottom",
+      "top": "biggercraftingtables:blocks/auto_big_crafting_table_top"
     }
   },
   "variants": {
-    "inventory,tabletypes=big": [
-      {
-        "textures": {
-          "top": "biggercraftingtables:blocks/autobigcraftingtablestop"
-        }
-      }
-    ],
-    "inventory,tabletypes=huge": [
-      {
-        "textures": {
-          "top": "biggercraftingtables:blocks/autogiantcraftingtablestop"
-        }
-      }
-    ],
     "tabletypes": {
       "big": {
-        "model": "biggercraftingtables:six_sides_cube",
-        "texture": {
-          "top": "biggercraftingtables:blocks/autobigcraftingtablestop"
+        "textures": {
+          "top": "biggercraftingtables:blocks/auto_big_crafting_table_top"
         }
       },
       "huge": {
-        "model": "biggercraftingtables:six_sides_cube",
-        "texture": {
-          "top": "biggercraftingtables:blocks/autobigcraftingtablestop"
+        "textures": {
+          "top": "biggercraftingtables:blocks/auto_huge_crafting_table_top"
         }
       }
-    }
+    },
+    "normal": [
+    ],
+    "inventory": [
+      {}
+    ]
   }
 }
