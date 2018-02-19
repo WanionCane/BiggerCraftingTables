@@ -22,6 +22,7 @@ public final class ItemBlockBiggerCraftingTable extends ItemBlock
 	{
 		super(BlockBiggerCraftingTable.INSTANCE);
 		setRegistryName(new ResourceLocation(Reference.MOD_ID, "biggercraftingtable"));
+		setHasSubtypes(true);
 	}
 
 	@Override

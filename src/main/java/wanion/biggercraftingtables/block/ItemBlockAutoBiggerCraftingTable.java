@@ -22,6 +22,7 @@ public final class ItemBlockAutoBiggerCraftingTable extends ItemBlock
 	{
 		super(BlockAutoBiggerCraftingTable.INSTANCE);
 		setRegistryName(new ResourceLocation(Reference.MOD_ID, "autobiggercraftingtable"));
+		setHasSubtypes(true);
 	}
 
 	@Override

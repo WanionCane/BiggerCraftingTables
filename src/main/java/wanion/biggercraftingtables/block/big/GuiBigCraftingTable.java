@@ -23,7 +23,7 @@ import static wanion.biggercraftingtables.Reference.MOD_ID;
 @SideOnly(Side.CLIENT)
 public final class GuiBigCraftingTable extends GuiContainer
 {
-	private static final ResourceLocation bigCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/bigcraftingtable.png");
+	private static final ResourceLocation bigCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/big_crafting_table.png");
 	private final TileEntityBigCraftingTable tileEntityBigCraftingTable;
 
 	public GuiBigCraftingTable(@Nonnull final TileEntityBigCraftingTable tileEntityBigCraftingTable, final InventoryPlayer inventoryPlayer)

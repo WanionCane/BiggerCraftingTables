@@ -8,3 +8,5 @@ src/META-INF/
 /*.iws
 /*.ipr
 /*.iml
+/.idea/
+/classes/

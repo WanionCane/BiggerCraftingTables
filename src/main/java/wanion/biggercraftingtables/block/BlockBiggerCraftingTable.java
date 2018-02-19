@@ -23,10 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
@@ -67,8 +64,10 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 	@Override
 	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
 	{
-		for (int i = 0; i < 2; i++)
-			items.add(new ItemStack(this, 1, i));
+		if (creativeTabs == this.getCreativeTabToDisplayOn()){
+			for (int i = 0; i < 2; i++)
+				items.add(new ItemStack(this, 1, i));
+		}
 	}
 
 	@Override
@@ -147,5 +146,10 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 	public IBlockState getStateFromMeta(final int metadata)
 	{
 		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getValue(metadata));
+	}
+
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.MODEL;
 	}
 }
