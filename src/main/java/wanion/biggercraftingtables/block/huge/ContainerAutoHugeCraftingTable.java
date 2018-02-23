@@ -14,9 +14,9 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.block.ContainerAutoBiggerCraftingTable;
-import wanion.biggercraftingtables.inventory.DeadSlot;
-import wanion.biggercraftingtables.inventory.ShapeSlot;
-import wanion.biggercraftingtables.inventory.SpecialSlot;
+import wanion.biggercraftingtables.inventory.slot.DeadSlot;
+import wanion.biggercraftingtables.inventory.slot.ShapeSlot;
+import wanion.biggercraftingtables.inventory.slot.SpecialSlot;
 
 import javax.annotation.Nonnull;
 
@@ -68,26 +68,19 @@ public final class ContainerAutoHugeCraftingTable extends ContainerAutoBiggerCra
 	public ItemStack slotClick(final int slot, final int mouseButton, final ClickType clickType, final EntityPlayer entityPlayer)
 	{
 		if (slot > 48 && slot < 98) {
-			if (clickType == ClickType.QUICK_MOVE)
-				return ItemStack.EMPTY;
-			final ItemStack playerStack = entityPlayer.inventory.getItemStack();
 			final Slot actualSlot = inventorySlots.get(slot);
-			final boolean slotHasStack = actualSlot.getHasStack();
-			if (slotHasStack && !playerStack.isEmpty()) {
+			if (clickType == ClickType.QUICK_MOVE) {
 				actualSlot.putStack(ItemStack.EMPTY);
-				return ItemStack.EMPTY;
-			} else if (playerStack.isEmpty()) {
-				if (clickType == ClickType.PICKUP) {
+			} else if (clickType == ClickType.PICKUP) {
+				final ItemStack playerStack = entityPlayer.inventory.getItemStack();
+				final boolean slotHasStack = actualSlot.getHasStack();
+				if (!playerStack.isEmpty() && !slotHasStack) {
+					final ItemStack newSlotStack = playerStack.copy();
+					newSlotStack.setCount(1);
+					actualSlot.putStack(newSlotStack);
+				} else if ((playerStack.isEmpty() && slotHasStack) || (!playerStack.isEmpty() && slotHasStack && playerStack.isItemEqual(actualSlot.getStack()))) {
 					actualSlot.putStack(ItemStack.EMPTY);
-					return ItemStack.EMPTY;
-				} else if (slotHasStack && playerStack.isItemEqual(actualSlot.getStack())) {
-					actualSlot.putStack(ItemStack.EMPTY);
-					return ItemStack.EMPTY;
 				}
-				final ItemStack slotStack = playerStack.copy();
-				slotStack.setCount(0);
-				actualSlot.putStack(ItemStack.EMPTY);
-				return slotStack;
 			}
 			return ItemStack.EMPTY;
 		} else return super.slotClick(slot, mouseButton, clickType, entityPlayer);

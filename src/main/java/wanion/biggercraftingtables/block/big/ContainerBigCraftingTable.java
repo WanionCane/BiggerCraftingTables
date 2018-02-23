@@ -17,6 +17,7 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
 import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
+import wanion.biggercraftingtables.inventory.slot.BiggerCraftingSlot;
 import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
 
 import javax.annotation.Nonnull;
@@ -36,7 +37,7 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 		for (int y = 0; y < 5; y++)
 			for (int x = 0; x < 5; x++)
 				addSlotToContainer(new Slot(craftingMatrix, y * 5 + x, 44 + (18 * x), 18 + (18 * y)));
-		addSlotToContainer(new SlotCrafting(inventoryPlayer.player, craftingMatrix, craftingResult, 0, 147, 54));
+		addSlotToContainer(new BiggerCraftingSlot(this, craftingResult, craftingMatrix, 0, 147, 54));
 		for (int y = 0; y < 3; y++)
 			for (int x = 0; x < 9; x++)
 				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, 8 + (18 * x), 122 + (18 * y)));

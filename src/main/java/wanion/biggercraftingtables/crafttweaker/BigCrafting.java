@@ -46,7 +46,7 @@ public final class BigCrafting
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++)
 				input[y][x] = CraftTweakerHelper.toActualObject(inputs[y][x]);
-		CraftTweakerAPI.apply(new Add(new ShapedBigRecipe(CraftTweakerHelper.toStack(output), RecipeHelper.rawShapeToShape(Util.treeDimArrayToTwoDimArray(input)))));
+		CraftTweakerAPI.apply(new Add(new ShapedBigRecipe(CraftTweakerHelper.toStack(output), RecipeHelper.rawShapeToShape(Util.treeDimArrayToTwoDimArray(input)).actualShape)));
 	}
 
 	@ZenMethod

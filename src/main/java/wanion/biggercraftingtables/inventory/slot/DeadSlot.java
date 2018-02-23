@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.inventory;
+package wanion.biggercraftingtables.inventory.slot;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).

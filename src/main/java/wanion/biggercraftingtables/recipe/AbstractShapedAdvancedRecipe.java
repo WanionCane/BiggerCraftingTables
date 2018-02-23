@@ -93,7 +93,7 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 				} else break;
 			}
 		}
-		Util.fillArray(this.inputs = new Object[height * width], ItemStack.EMPTY);
+		this.inputs = new Object[height * width];
 		this.width = width;
 		this.height = height;
 		short recipeSize = 0;
@@ -151,9 +151,9 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 				final int actualX = mirror ? (offSetX + x) : (offSetX + width - x - 1);
 				final Object input = inputs[y * width + x];
 				final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(actualY * squareRoot + actualX);
-				if ((slotItemStack == null && input != null) || (slotItemStack != null && input == null))
+				if ((slotItemStack.isEmpty() && input != null) || (!slotItemStack.isEmpty() && input == null))
 					matches = false;
-				if (!matches || slotItemStack == input)
+				if (!matches || slotItemStack == input || (input == null && slotItemStack.isEmpty()))
 					continue;
 				if (input instanceof List) {
 					boolean found = false;
@@ -163,7 +163,6 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 							break;
 						if (object instanceof ItemStack && (((ItemStack) object).getItem() == slotItemStack.getItem() && (((ItemStack) object).getItemDamage() == OreDictionary.WILDCARD_VALUE || ((ItemStack) object).getItemDamage() == slotItemStack.getItemDamage())))
 							found = true;
-						else break;
 					}
 					if (found)
 						continue;

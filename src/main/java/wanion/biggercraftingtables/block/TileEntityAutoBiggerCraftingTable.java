@@ -65,10 +65,9 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	{
 		if (world == null || world.isRemote)
 			return;
-		if (cachedRecipe != null) {
-			cachedRecipe = null;
-			patternMap = null;
-			recipeShapeChanged();
+		if (cachedRecipe == null) {
+			if (patternMap != null)
+				patternMap = null;
 			return;
 		}
 		final ItemStack recipeStack = itemStacks[getSizeInventory() - 1];
@@ -81,8 +80,10 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return;
 		else if (outputStack != null && outputStack.getCount() + recipeStack.getCount() > outputStack.getMaxStackSize() || !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
 			return;
-		cleanInput();
 		if (outputStack == null)
+			return;
+		cleanInput();
+		if (outputStack.isEmpty())
 			itemStacks[getSizeInventory() - 2] = recipeStack.copy();
 		else
 			outputStack.setCount(outputStack.getCount() + recipeStack.getCount());
@@ -162,6 +163,9 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	void readCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
 		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
+		final int max = getSizeInventory() - 1;
+		for (int i = 0; i < max; i++)
+			setInventorySlotContents(i, ItemStack.EMPTY);
 		for (int i = 0; i < nbtTagList.tagCount(); i++) {
 			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
 			final int slot = slotCompound.getShort("Slot");
@@ -176,6 +180,8 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		final int max = getSizeInventory() - 1;
 		for (int i = 0; i < max; i++) {
 			final ItemStack itemStack = getStackInSlot(i);
+			if (itemStack.isEmpty())
+				continue;
 			final NBTTagCompound slotCompound = new NBTTagCompound();
 			slotCompound.setShort("Slot", (short) i);
 			nbtTagList.appendTag(itemStack.writeToNBT(slotCompound));

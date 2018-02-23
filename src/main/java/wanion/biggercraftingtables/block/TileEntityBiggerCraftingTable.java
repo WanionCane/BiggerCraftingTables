@@ -70,6 +70,9 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	void readCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
 		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
+		final int max = getSizeInventory() - 1;
+		for (int i = 0; i < max; i++)
+			setInventorySlotContents(i, ItemStack.EMPTY);
 		for (int i = 0; i < nbtTagList.tagCount(); i++) {
 			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
 			final int slot = slotCompound.getShort("Slot");
@@ -84,6 +87,8 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		final int max = getSizeInventory() - 1;
 		for (int i = 0; i < max; i++) {
 			final ItemStack itemStack = getStackInSlot(i);
+			if (itemStack.isEmpty())
+				continue;
 			final NBTTagCompound slotCompound = new NBTTagCompound();
 			slotCompound.setShort("Slot", (short) i);
 			nbtTagList.appendTag(itemStack.writeToNBT(slotCompound));

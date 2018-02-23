@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.inventory;
+package wanion.biggercraftingtables.inventory.slot;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public final class SpecialSlot extends Slot
+public class SpecialSlot extends Slot
 {
 	public SpecialSlot(final IInventory inventory, final int id, final int x, final int y)
 	{
@@ -39,6 +39,6 @@ public final class SpecialSlot extends Slot
 	{
 		final ItemStack slotStack = getStack();
 		final ItemStack playerStack = entityPlayer.inventory.getItemStack();
-		return slotStack.getCount() > 0 && slotStack.getItem() == playerStack.getItem() && (!playerStack.getHasSubtypes() || playerStack.getItemDamage() == slotStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(playerStack, slotStack);
+		return playerStack.isEmpty() || (slotStack.isItemEqual(playerStack) && ItemStack.areItemStackTagsEqual(playerStack, slotStack));
 	}
 }
