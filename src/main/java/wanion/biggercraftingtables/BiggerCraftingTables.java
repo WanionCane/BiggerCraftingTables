@@ -23,6 +23,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
+import wanion.biggercraftingtables.block.ItemBlockAutoBiggerCraftingTable;
+import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;
 import wanion.biggercraftingtables.proxy.CommonProxy;
 
 import java.util.Map;
@@ -55,10 +57,10 @@ public class BiggerCraftingTables
 	public void preInit(final FMLPreInitializationEvent event)
 	{
 		proxy.preInit();
-		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
-		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4BigCraftingTableToHugeCraftingTable"), null, new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 1), "CC", "CC", 'C', new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1));
-		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "bigCraftingTableToAutoBigCraftingTable"), null, new ItemStack(BlockAutoBiggerCraftingTable.INSTANCE, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(BlockBiggerCraftingTable.INSTANCE)));
-		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "hugeCraftingTableToAutoHugeCraftingTable"), null, new ItemStack(BlockAutoBiggerCraftingTable.INSTANCE, 1, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 1)));
+		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
+		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4BigCraftingTableToHugeCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1, 1), "CC", "CC", 'C', new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1));
+		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "bigCraftingTableToAutoBigCraftingTable"), null, new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE)));
+		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "hugeCraftingTableToAutoHugeCraftingTable"), null, new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1, 1)));
 	}
 
 	@Mod.EventHandler

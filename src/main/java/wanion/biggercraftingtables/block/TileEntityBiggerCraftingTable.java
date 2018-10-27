@@ -17,18 +17,15 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import wanion.lib.common.Util;
+import net.minecraft.util.NonNullList;
 
 import javax.annotation.Nonnull;
 
 public abstract class TileEntityBiggerCraftingTable extends TileEntity implements ISidedInventory
 {
-	private final ItemStack[] slots = new ItemStack[getSizeInventory()];
+	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
-	public TileEntityBiggerCraftingTable()
-	{
-		Util.fillArray(slots, ItemStack.EMPTY);
-	}
+	public TileEntityBiggerCraftingTable() {}
 
 	@Override
 	@Nonnull
@@ -98,36 +95,33 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	}
 
 	@Override
-	public int getSizeInventory()
-	{
-		return 0;
-	}
-
-	@Override
 	public boolean isEmpty()
 	{
-		return false;
+		for (final ItemStack itemStack : itemStacks)
+			if (!itemStack.isEmpty())
+				return false;
+		return true;
 	}
 
 	@Override
 	@Nonnull
 	public ItemStack getStackInSlot(final int slot)
 	{
-		return slots[slot];
+		return itemStacks.get(slot);
 	}
 
 	@Override
 	@Nonnull
 	public ItemStack decrStackSize(final int slot, final int howMuch)
 	{
-		final ItemStack slotStack = slots[slot];
+		final ItemStack slotStack = itemStacks.get(slot);
 		if (slotStack.isEmpty())
 			return ItemStack.EMPTY;
 		final ItemStack newStack = slotStack.copy();
 		newStack.setCount(howMuch);
 		slotStack.setCount(slotStack.getCount() - howMuch);
 		if ((slotStack.getCount()) == 0)
-			slots[slot] = ItemStack.EMPTY;
+			itemStacks.set(slot, ItemStack.EMPTY);
 		return newStack;
 	}
 
@@ -135,15 +129,15 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	@Nonnull
 	public ItemStack removeStackFromSlot(final int index)
 	{
-		final ItemStack itemStack = slots[index];
-		slots[index] = ItemStack.EMPTY;
+		final ItemStack itemStack = itemStacks.get(index);
+		itemStacks.set(index, ItemStack.EMPTY);
 		return itemStack;
 	}
 
 	@Override
 	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemStack)
 	{
-		slots[slot] = itemStack;
+		itemStacks.set(slot, itemStack);
 	}
 
 	@Override

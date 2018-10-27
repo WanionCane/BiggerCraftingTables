@@ -19,4 +19,16 @@ public final class ShapelessBigRecipe extends AbstractShapelessAdvancedRecipe im
 	{
 		super(output, inputs);
 	}
+
+	@Override
+	public String getRecipeType()
+	{
+		return "ShapelessBig";
+	}
+
+	@Override
+	public short getMaxRecipeSize()
+	{
+		return 25;
+	}
 }

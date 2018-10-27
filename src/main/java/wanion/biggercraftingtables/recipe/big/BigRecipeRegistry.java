@@ -13,7 +13,7 @@ import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 public final class BigRecipeRegistry extends AbstractRecipeRegistry<BigRecipeRegistry.IBigRecipe>
 {
-	public static final BigRecipeRegistry instance = new BigRecipeRegistry();
+	public static final BigRecipeRegistry INSTANCE = new BigRecipeRegistry();
 
 	private BigRecipeRegistry() {}
 

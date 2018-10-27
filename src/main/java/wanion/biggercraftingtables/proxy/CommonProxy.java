@@ -43,9 +43,7 @@ public class CommonProxy
 
 	public void init() {}
 
-	public void postInit()
-	{
-	}
+	public void postInit() {}
 
 	@SubscribeEvent
 	public void registerItems(final RegistryEvent.Register<Item> event)

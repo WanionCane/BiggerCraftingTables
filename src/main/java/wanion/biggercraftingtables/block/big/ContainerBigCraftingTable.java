@@ -13,7 +13,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
 import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
@@ -49,7 +48,7 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 	@Override
 	public void onCraftMatrixChanged(final IInventory inventory)
 	{
-		final IBigRecipe IBigRecipe = BigRecipeRegistry.instance.findMatchingRecipe(craftingMatrix);
+		final IBigRecipe IBigRecipe = BigRecipeRegistry.INSTANCE.findMatchingRecipe(craftingMatrix);
 		craftingResult.setInventorySlotContents(0, IBigRecipe != null ? IBigRecipe.getOutput() : ItemStack.EMPTY);
 	}
 

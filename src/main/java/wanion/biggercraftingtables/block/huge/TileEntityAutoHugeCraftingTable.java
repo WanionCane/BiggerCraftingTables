@@ -34,6 +34,6 @@ public final class TileEntityAutoHugeCraftingTable extends TileEntityAutoBiggerC
 	@Override
 	public AbstractRecipeRegistry<IHugeRecipe> getRecipeRegistry()
 	{
-		return HugeRecipeRegistry.instance;
+		return HugeRecipeRegistry.INSTANCE;
 	}
 }

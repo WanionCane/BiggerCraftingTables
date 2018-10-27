@@ -9,8 +9,10 @@ package wanion.biggercraftingtables.inventory.slot;
  */
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.UniversalBucket;
 import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
 
 import javax.annotation.Nonnull;
@@ -43,7 +45,10 @@ public final class BiggerCraftingSlot extends SpecialSlot
 			final ItemStack slotStack = craftingMatrix.getStackInSlot(i);
 			if (slotStack.isEmpty())
 				continue;
-			slotStack.setCount(slotStack.getCount() - 1);
+			if (slotStack.getItem() == Items.WATER_BUCKET || slotStack.getItem() == Items.LAVA_BUCKET || slotStack.getItem() instanceof UniversalBucket)
+				craftingMatrix.setInventorySlotContents(i, new ItemStack(Items.BUCKET));
+			else if (!slotStack.getItem().hasContainerItem(slotStack))
+				slotStack.setCount(slotStack.getCount() - 1);
 			if (slotStack.getCount() == 0)
 				craftingMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
 		}

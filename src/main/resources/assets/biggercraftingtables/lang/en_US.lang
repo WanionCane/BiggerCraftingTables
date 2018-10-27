@@ -12,8 +12,6 @@ container.hugecraftingtable=Huge Crafting Table
 container.autobigcraftingtable=Auto Big Crafting Table
 container.autohugecraftingtable=Auto Huge Crafting Table
 
-crafting.big.shaped=Big Shaped
-crafting.big.shapeless=Big Shapeless
+crafting.big=Big Recipe
 
-crafting.huge.shaped=Huge Shaped
-crafting.huge.shapeless=Huge Shapeless
+crafting.huge=Huge Recipe

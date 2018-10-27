@@ -12,8 +12,8 @@ import gnu.trove.map.TCharObjectMap;
 import gnu.trove.map.hash.TCharObjectHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
-import wanion.lib.common.Util;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
@@ -23,8 +23,8 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 {
 	private final ItemStack output;
 	private final short recipeKey, recipeSize;
-	public final short width, height;
-	public final Object[] inputs;
+	private final short width, height;
+	public final List<Object> inputs;
 	public final int squareRoot;
 
 	public AbstractShapedAdvancedRecipe(final int squareRoot, @Nonnull final ItemStack output, @Nonnull final Object... inputs)
@@ -93,7 +93,7 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 				} else break;
 			}
 		}
-		this.inputs = new Object[height * width];
+		this.inputs = NonNullList.withSize(height * width, ItemStack.EMPTY);
 		this.width = width;
 		this.height = height;
 		short recipeSize = 0;
@@ -104,24 +104,32 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 				final int actualX = offSetX + x;
 				if (actualX < code.length()) {
 					final Object input = charDictionary.get(code.charAt(actualX));
-					if (input != null && (input instanceof ItemStack || input instanceof String || input instanceof List)) {
+					if (input instanceof ItemStack || input instanceof String || input instanceof List) {
 						final int pos = width * y + x;
 						if (input instanceof ItemStack) {
-							if (!((ItemStack) input).isEmpty())
-								((ItemStack) (this.inputs[pos] = ((ItemStack) input).copy())).setCount(1);
+							if (!((ItemStack) input).isEmpty()) {
+								((ItemStack) input).setCount(1);
+								this.inputs.set(pos, input);
+							}
 						} else if (input instanceof String) {
 							final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
 							if (oreList != null && !oreList.isEmpty())
-								this.inputs[pos] = oreList;
+								this.inputs.set(pos, oreList);
 						} else if (!((List) input).isEmpty() && ((List) input).get(0) instanceof ItemStack)
-							this.inputs[pos] = input;
-						if (this.inputs[pos] != null)
+							this.inputs.set(pos, input);
+						if (!(this.inputs.get(pos) instanceof ItemStack) || !(((ItemStack) this.inputs.get(pos)).isEmpty()))
 							recipeSize++;
 					}
 				}
 			}
 		}
 		this.recipeKey = (short) ((this.recipeSize = recipeSize) | (width << 8) | (height << 12));
+	}
+
+	@Override
+	public boolean isShaped()
+	{
+		return true;
 	}
 
 	@Override
@@ -137,6 +145,32 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 	}
 
 	@Override
+	public int getWidth()
+	{
+		return width;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return height;
+	}
+
+	@Nonnull
+	@Override
+	public List<Object> getInputs()
+	{
+		return inputs;
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack getOutput()
+	{
+		return output.copy();
+	}
+
+	@Override
 	public boolean recipeMatches(@Nonnull final InventoryCrafting inventoryCrafting, final int offSetX, final int offSetY)
 	{
 		return recipeMatches(inventoryCrafting, offSetX, offSetY, false) || recipeMatches(inventoryCrafting, offSetX, offSetY, true);
@@ -149,11 +183,11 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 			final int actualY = offSetY + y;
 			for (int x = 0; matches && x < width; x++) {
 				final int actualX = mirror ? (offSetX + x) : (offSetX + width - x - 1);
-				final Object input = inputs[y * width + x];
+				final Object input = inputs.get(y * width + x);
 				final ItemStack slotItemStack = inventoryCrafting.getStackInSlot(actualY * squareRoot + actualX);
-				if ((slotItemStack.isEmpty() && input != null) || (!slotItemStack.isEmpty() && input == null))
+				if (slotItemStack.isEmpty() && !(input instanceof ItemStack && ((ItemStack) input).isEmpty()))
 					matches = false;
-				if (!matches || slotItemStack == input || (input == null && slotItemStack.isEmpty()))
+				if (!matches)
 					continue;
 				if (input instanceof List) {
 					boolean found = false;
@@ -176,12 +210,5 @@ public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 			}
 		}
 		return matches;
-	}
-
-	@Nonnull
-	@Override
-	public ItemStack getOutput()
-	{
-		return output.copy();
 	}
 }

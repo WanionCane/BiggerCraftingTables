@@ -10,6 +10,7 @@ package wanion.biggercraftingtables.recipe;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
@@ -22,43 +23,52 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 {
 	private final ItemStack output;
 	private final short recipeSize;
-	public final List<Object> inputs = new ArrayList<>();
+	public final List<Object> inputs;
 
 	public AbstractShapelessAdvancedRecipe(@Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{
 		this.output = output.copy();
 		short recipeSize = 0;
+		final List<Object> temporaryInputs = new ArrayList<>();
 		for (final Object input : inputs) {
 			if (input instanceof ItemStack) {
 				if (((ItemStack) input).isEmpty())
 					continue;
 				final ItemStack newInput = ((ItemStack) input).copy();
 				newInput.setCount(1);
-				this.inputs.add(newInput);
+				temporaryInputs.add(newInput);
 			} else if (input instanceof String) {
 				final List<ItemStack> oreList = OreDictionary.getOres((String) input, false);
 				if (oreList != null && !oreList.isEmpty())
-					this.inputs.add(oreList);
+					temporaryInputs.add(oreList);
 				else
 					continue;
 			} else if (input instanceof List)
 				if (!((List) input).isEmpty() && ((List) input).get(0) instanceof ItemStack)
-					this.inputs.add(input);
+					temporaryInputs.add(input);
 				else
 					continue;
 			else
 				continue;
 			recipeSize++;
 		}
-		if (recipeSize == 0 || recipeSize > 49)
-			throw new RuntimeException("Invalid ShapelessHugeRecipe");
-		this.recipeSize = recipeSize;
+		if (recipeSize == 0 || recipeSize > getMaxRecipeSize())
+			throw new RuntimeException("Invalid " + getRecipeType());
+		this.inputs = NonNullList.withSize(this.recipeSize = recipeSize, ItemStack.EMPTY);
+		for (int i = 0; i < temporaryInputs.size(); i++)
+			this.inputs.set(i, temporaryInputs	.get(i));
+	}
+
+	@Override
+	public boolean isShaped()
+	{
+		return false;
 	}
 
 	@Override
 	public short getRecipeKey()
 	{
-		return 0;
+		return recipeSize;
 	}
 
 	@Override
@@ -66,6 +76,36 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 	{
 		return recipeSize;
 	}
+
+	@Override
+	public int getWidth()
+	{
+		return 0;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return 0;
+	}
+
+	@Nonnull
+	@Override
+	public List<Object> getInputs()
+	{
+		return inputs;
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack getOutput()
+	{
+		return output.copy();
+	}
+
+	public abstract String getRecipeType();
+
+	public abstract short getMaxRecipeSize();
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -95,7 +135,7 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 				for (final ItemStack entry : oreDict) {
 					for (final Iterator<ItemStack> slotItemStackIterator = slotItemStacks.iterator(); slotItemStackIterator.hasNext(); ) {
 						final ItemStack slotItemStack = slotItemStackIterator.next();
-						if (entry.getItem() == slotItemStack.getItem() && entry.getItemDamage() == OreDictionary.WILDCARD_VALUE || (entry.getItemDamage() == slotItemStack.getItemDamage())) {
+						if (entry.getItem() == slotItemStack.getItem() && (entry.getItemDamage() == slotItemStack.getItemDamage() || entry.getItemDamage() == OreDictionary.WILDCARD_VALUE)) {
 							slotItemStackIterator.remove();
 							found = true;
 							break;
@@ -109,12 +149,5 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 				inputsIterator.remove();
 		}
 		return inputs.isEmpty() && slotItemStacks.isEmpty();
-	}
-
-	@Nonnull
-	@Override
-	public ItemStack getOutput()
-	{
-		return output.copy();
 	}
 }

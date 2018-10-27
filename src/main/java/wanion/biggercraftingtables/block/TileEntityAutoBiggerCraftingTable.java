@@ -12,6 +12,7 @@ import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
@@ -23,9 +24,10 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fluids.UniversalBucket;
 import wanion.lib.common.MetaItem;
-import wanion.lib.common.Util;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
@@ -33,7 +35,7 @@ import javax.annotation.Nonnull;
 
 public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements ISidedInventory, ITickable
 {
-	private final ItemStack[] itemStacks = new ItemStack[getSizeInventory()];
+	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private final int full = getSizeInventory() - 2;
 	private final int half = full / 2;
 	private final BiggerCraftingMatrix biggerCraftingMatrix = new BiggerCraftingMatrix((int) Math.sqrt(half));
@@ -47,7 +49,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		for (int i = 0; i < half; i++)
 			slots[i] = i;
 		slots[half] = full;
-		Util.fillArray(itemStacks, ItemStack.EMPTY);
 	}
 
 	@Nonnull
@@ -56,35 +57,33 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	public final void recipeShapeChanged()
 	{
 		R matchedRecipe = getRecipeRegistry().findMatchingRecipe(biggerCraftingMatrix);
-		itemStacks[getSizeInventory() - 1] = (cachedRecipe = matchedRecipe) != null ? cachedRecipe.getOutput().copy() : ItemStack.EMPTY;
+		itemStacks.set(getSizeInventory() - 1, (cachedRecipe = matchedRecipe) != null ? cachedRecipe.getOutput().copy() : ItemStack.EMPTY);
 		patternMap = null;
 	}
 
 	@Override
 	public final void update()
 	{
-		if (world == null || world.isRemote)
+		if (world == null || world.isRemote || world.isBlockPowered(pos))
 			return;
 		if (cachedRecipe == null) {
 			if (patternMap != null)
 				patternMap = null;
 			return;
 		}
-		final ItemStack recipeStack = itemStacks[getSizeInventory() - 1];
-		final ItemStack outputStack = itemStacks[getSizeInventory() - 2];
-		if (recipeStack == null || (outputStack != null && outputStack.getCount() == outputStack.getMaxStackSize()))
+		final ItemStack recipeStack = itemStacks.get(getSizeInventory() - 1);
+		final ItemStack outputStack = itemStacks.get(getSizeInventory() - 2);
+		if (recipeStack.isEmpty() || (!outputStack.isEmpty() && outputStack.getCount() == outputStack.getMaxStackSize()))
 			return;
 		if (patternMap == null)
 			patternMap = MetaItem.getKeySizeMap(half, full, itemStacks);
-		if (outputStack == null && !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
+		if (outputStack.isEmpty() && !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
 			return;
-		else if (outputStack != null && outputStack.getCount() + recipeStack.getCount() > outputStack.getMaxStackSize() || !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
-			return;
-		if (outputStack == null)
+		else if (!outputStack.isEmpty() && outputStack.getCount() + recipeStack.getCount() > outputStack.getMaxStackSize() || !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
 			return;
 		cleanInput();
 		if (outputStack.isEmpty())
-			itemStacks[getSizeInventory() - 2] = recipeStack.copy();
+			itemStacks.set(getSizeInventory() - 2, recipeStack.copy());
 		else
 			outputStack.setCount(outputStack.getCount() + recipeStack.getCount());
 		markDirty();
@@ -105,19 +104,21 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	{
 		final TIntIntMap patternMap = new TIntIntHashMap(this.patternMap);
 		for (int i = 0; i < half && !patternMap.isEmpty(); i++) {
-			final ItemStack itemStack = itemStacks[i];
+			final ItemStack itemStack = itemStacks.get(i);
 			final int key = MetaItem.get(itemStack);
 			if (patternMap.containsKey(key)) {
 				final int total = patternMap.get(key);
 				final int dif = MathHelper.clamp(total, 1, itemStack.getCount());
-				if (!itemStack.getItem().hasContainerItem(itemStack))
+				if (itemStack.getItem() == Items.WATER_BUCKET || itemStack.getItem() == Items.LAVA_BUCKET || itemStack.getItem() instanceof UniversalBucket)
+					setInventorySlotContents(i, new ItemStack(Items.BUCKET));
+				else if (!itemStack.getItem().hasContainerItem(itemStack))
 					itemStack.setCount(itemStack.getCount() - dif);
 				if (dif - total == 0)
 					patternMap.remove(key);
 				else
 					patternMap.put(key, total - dif);
 				if (itemStack.getCount() == 0)
-					itemStacks[i] = ItemStack.EMPTY;
+					itemStacks.set(i, ItemStack.EMPTY);
 			}
 		}
 	}
@@ -195,29 +196,29 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	{
 		for (final ItemStack itemStack : itemStacks)
 			if (!itemStack.isEmpty())
-				return true;
-		return false;
+				return false;
+		return true;
 	}
 
 	@Override
 	@Nonnull
 	public ItemStack getStackInSlot(final int slot)
 	{
-		return itemStacks[slot];
+		return itemStacks.get(slot);
 	}
 
 	@Override
 	@Nonnull
 	public ItemStack decrStackSize(final int slot, final int howMuch)
 	{
-		final ItemStack slotStack = itemStacks[slot];
-		if (slotStack == null)
+		final ItemStack slotStack = itemStacks.get(slot);
+		if (slotStack.isEmpty())
 			return ItemStack.EMPTY;
 		final ItemStack newStack = slotStack.copy();
 		newStack.setCount(howMuch);
 		slotStack.setCount(slotStack.getCount() - howMuch);
 		if (slotStack.getCount() == 0)
-			itemStacks[slot] = ItemStack.EMPTY;
+			itemStacks.set(slot, ItemStack.EMPTY);
 		return newStack;
 	}
 
@@ -225,15 +226,15 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Nonnull
 	public ItemStack removeStackFromSlot(final int index)
 	{
-		final ItemStack itemStack = itemStacks[index];
-		itemStacks[index] = ItemStack.EMPTY;
+		final ItemStack itemStack = itemStacks.get(index);
+		itemStacks.set(index, ItemStack.EMPTY);
 		return itemStack;
 	}
 
 	@Override
 	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemStack)
 	{
-		itemStacks[slot] = itemStack;
+		itemStacks.set(slot, itemStack);
 	}
 
 	@Override
@@ -309,7 +310,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	 */
 	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
 	{
-		return index == full;
+		return index == full || stack.getItem() == Items.BUCKET;
 	}
 
 	@Override
@@ -339,7 +340,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		@Nonnull
 		public ItemStack getStackInSlot(final int slot)
 		{
-			return itemStacks[square + slot];
+			return itemStacks.get(square + slot);
 		}
 	}
 }

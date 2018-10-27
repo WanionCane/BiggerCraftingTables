@@ -95,7 +95,7 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 	@Override
 	public int damageDropped(IBlockState state)
 	{
-		return 0;
+		return getMetaFromState(state);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.crafttweaker;
+package wanion.biggercraftingtables.compat.crafttweaker;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -16,9 +16,9 @@ import crafttweaker.api.item.IItemStack;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
-import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
-import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
-import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
+import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
+import wanion.biggercraftingtables.recipe.big.ShapedBigRecipe;
+import wanion.biggercraftingtables.recipe.big.ShapelessBigRecipe;
 import wanion.lib.common.CraftTweakerHelper;
 import wanion.lib.common.Util;
 import wanion.lib.recipe.RecipeHelper;
@@ -26,14 +26,13 @@ import wanion.lib.recipe.RecipeHelper;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry.IHugeRecipe;
-
 @SuppressWarnings("unused")
+
 @ZenRegister
-@ZenClass("mods.biggercraftingtables.Huge")
-public final class HugeCrafting
+@ZenClass("mods.biggercraftingtables.Big")
+public final class BigCrafting
 {
-	private HugeCrafting() {}
+	private BigCrafting() {}
 
 	@ZenMethod
 	public static void addShaped(@Nonnull final IItemStack output, @Nonnull final IIngredient[][] inputs)
@@ -47,13 +46,13 @@ public final class HugeCrafting
 		for (int y = 0; y < height; y++)
 			for (int x = 0; x < width; x++)
 				input[y][x] = CraftTweakerHelper.toActualObject(inputs[y][x]);
-		CraftTweakerAPI.apply(new Add(new ShapedHugeRecipe(CraftTweakerHelper.toStack(output), RecipeHelper.rawShapeToShape(Util.treeDimArrayToTwoDimArray(input)).actualShape)));
+		CraftTweakerAPI.apply(new Add(new ShapedBigRecipe(CraftTweakerHelper.toStack(output), RecipeHelper.rawShapeToShape(Util.treeDimArrayToTwoDimArray(input)).actualShape)));
 	}
 
 	@ZenMethod
 	public static void addShapeless(@Nonnull final IItemStack output, @Nonnull final IIngredient[] inputs)
 	{
-		CraftTweakerAPI.apply(new Add(new ShapelessHugeRecipe(CraftTweakerHelper.toStack(output), CraftTweakerHelper.toObjects(inputs))));
+		CraftTweakerAPI.apply(new Add(new ShapelessBigRecipe(CraftTweakerHelper.toStack(output), CraftTweakerHelper.toObjects(inputs))));
 	}
 
 	@ZenMethod
@@ -64,9 +63,9 @@ public final class HugeCrafting
 
 	private static class Add implements IAction
 	{
-		private final IHugeRecipe recipe;
+		private final BigRecipeRegistry.IBigRecipe recipe;
 
-		public Add(@Nonnull final IHugeRecipe recipe)
+		public Add(@Nonnull final BigRecipeRegistry.IBigRecipe recipe)
 		{
 			this.recipe = recipe;
 		}
@@ -74,44 +73,34 @@ public final class HugeCrafting
 		@Override
 		public void apply()
 		{
-			HugeRecipeRegistry.instance.addRecipe(recipe);
+			BigRecipeRegistry.INSTANCE.addRecipe(recipe);
 		}
 
 		@Override
 		public String describe()
 		{
-			return "Adding HugeRecipe for " + recipe.getOutput().getDisplayName();
+			return "Adding BigRecipe for " + recipe.getOutput().getDisplayName();
 		}
 	}
 
 	private static class Remove implements IAction
 	{
 		private final ItemStack itemStackToRemove;
-		private final IHugeRecipe recipe;
+		private final BigRecipeRegistry.IBigRecipe recipe;
 
 		private Remove(@Nonnull final ItemStack itemStackToRemove)
 		{
 			this.itemStackToRemove = itemStackToRemove;
-			IHugeRecipe recipe = null;
-			for (final List<IHugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapedRecipes.valueCollection()) {
-				if (hugeRecipeList == null)
+			BigRecipeRegistry.IBigRecipe recipe = null;
+			for (final List<BigRecipeRegistry.IBigRecipe> bigRecipeList : BigRecipeRegistry.INSTANCE.recipes.values()) {
+				if (recipe != null)
+					break;
+				if (bigRecipeList == null)
 					continue;
-				for (final IHugeRecipe hugeRecipe : hugeRecipeList) {
-					if (hugeRecipe.getOutput().isItemEqual(itemStackToRemove)) {
-						HugeRecipeRegistry.instance.removeRecipe(recipe = hugeRecipe);
+				for (final BigRecipeRegistry.IBigRecipe bigRecipe : bigRecipeList) {
+					if (bigRecipe.getOutput().isItemEqual(itemStackToRemove)) {
+						recipe = bigRecipe;
 						break;
-					}
-				}
-			}
-			if (recipe == null) {
-				for (final List<IHugeRecipe> hugeRecipeList : HugeRecipeRegistry.instance.shapelessRecipes.valueCollection()) {
-					if (hugeRecipeList == null)
-						continue;
-					for (final IHugeRecipe hugeRecipe : hugeRecipeList) {
-						if (hugeRecipe.getOutput().isItemEqual(itemStackToRemove)) {
-							HugeRecipeRegistry.instance.removeRecipe(recipe = hugeRecipe);
-							break;
-						}
 					}
 				}
 			}
@@ -121,13 +110,13 @@ public final class HugeCrafting
 		@Override
 		public void apply()
 		{
-			HugeRecipeRegistry.instance.removeRecipe(recipe);
+			BigRecipeRegistry.INSTANCE.removeRecipe(recipe);
 		}
 
 		@Override
 		public String describe()
 		{
-			return "Removing HugeRecipe for " + itemStackToRemove.getDisplayName();
+			return "Removing BigRecipe for " + itemStackToRemove.getDisplayName();
 		}
 	}
 }
