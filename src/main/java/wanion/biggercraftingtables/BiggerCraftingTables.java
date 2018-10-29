@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -38,6 +40,8 @@ public class BiggerCraftingTables
 	@Mod.Instance
 	public static BiggerCraftingTables instance;
 
+	public static SimpleNetworkWrapper networkWrapper;
+
 	public static final int GUI_ID_BIG_CRAFTING_TABLE = 0, GUI_ID_HUGE_CRAFTING_TABLE = 1, GUI_ID_AUTO_BIG_CRAFTING_TABLE = 2, GUI_ID_AUTO_HUGE_CRAFTING_TABLE = 3;
 
 	@SidedProxy(clientSide = CLIENT_PROXY, serverSide = SERVER_PROXY)
@@ -56,6 +60,7 @@ public class BiggerCraftingTables
 	@Mod.EventHandler
 	public void preInit(final FMLPreInitializationEvent event)
 	{
+		networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(MOD_ID);
 		proxy.preInit();
 		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
 		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4BigCraftingTableToHugeCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1, 1), "CC", "CC", 'C', new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1));

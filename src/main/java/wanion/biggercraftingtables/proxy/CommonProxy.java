@@ -9,13 +9,17 @@ package wanion.biggercraftingtables.proxy;
  */
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
@@ -26,7 +30,9 @@ import wanion.biggercraftingtables.block.big.TileEntityBigCraftingTable;
 import wanion.biggercraftingtables.block.huge.TileEntityAutoHugeCraftingTable;
 import wanion.biggercraftingtables.block.huge.TileEntityHugeCraftingTable;
 import wanion.biggercraftingtables.core.GuiHandler;
+import wanion.biggercraftingtables.network.BiggerAutoCraftingJeiTransfer;
 
+import static wanion.biggercraftingtables.BiggerCraftingTables.networkWrapper;
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 public class CommonProxy
@@ -35,10 +41,12 @@ public class CommonProxy
 	{
 		MinecraftForge.EVENT_BUS.register(this);
 		NetworkRegistry.INSTANCE.registerGuiHandler(BiggerCraftingTables.instance, GuiHandler.instance);
-		GameRegistry.registerTileEntity(TileEntityBigCraftingTable.class, MOD_ID + ":bigtable");
-		GameRegistry.registerTileEntity(TileEntityHugeCraftingTable.class, MOD_ID + ":hugetable");
-		GameRegistry.registerTileEntity(TileEntityAutoBigCraftingTable.class, MOD_ID + ":autobigTable");
-		GameRegistry.registerTileEntity(TileEntityAutoHugeCraftingTable.class, MOD_ID + ":autohugetable");
+		GameRegistry.registerTileEntity(TileEntityBigCraftingTable.class, new ResourceLocation(MOD_ID, "bigtable"));
+		GameRegistry.registerTileEntity(TileEntityHugeCraftingTable.class, new ResourceLocation(MOD_ID, "hugetable"));
+		GameRegistry.registerTileEntity(TileEntityAutoBigCraftingTable.class, new ResourceLocation(MOD_ID, "autobigTable"));
+		GameRegistry.registerTileEntity(TileEntityAutoHugeCraftingTable.class, new ResourceLocation(MOD_ID, "autohugetable"));
+		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransfer.Handler.class, BiggerAutoCraftingJeiTransfer.class, 0, Side.SERVER);
+		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransfer.Handler.class, BiggerAutoCraftingJeiTransfer.class, 1, Side.CLIENT);
 	}
 
 	public void init() {}
@@ -58,10 +66,10 @@ public class CommonProxy
 	}
 
 	@SubscribeEvent
-	public void modelRegistryEvent(final ModelRegistryEvent event) {
+	public void modelRegistryEvent(final ModelRegistryEvent event)
+	{
 		modelInit();
 	}
 
 	public void modelInit() {}
-
 }

@@ -78,10 +78,11 @@ public final class ContainerAutoHugeCraftingTable extends ContainerAutoBiggerCra
 					final ItemStack newSlotStack = playerStack.copy();
 					newSlotStack.setCount(1);
 					actualSlot.putStack(newSlotStack);
-				} else if ((playerStack.isEmpty() && slotHasStack) || (!playerStack.isEmpty() && slotHasStack && playerStack.isItemEqual(actualSlot.getStack()))) {
+				} else if (playerStack.isEmpty() && slotHasStack || !playerStack.isEmpty() && playerStack.isItemEqual(actualSlot.getStack())) {
 					actualSlot.putStack(ItemStack.EMPTY);
 				}
 			}
+			tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
 			return ItemStack.EMPTY;
 		} else return super.slotClick(slot, mouseButton, clickType, entityPlayer);
 	}

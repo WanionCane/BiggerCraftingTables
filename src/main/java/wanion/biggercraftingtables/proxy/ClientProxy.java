@@ -19,11 +19,10 @@ import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;
 public final class ClientProxy extends CommonProxy
 {
 	@Override
-	public void init()
-	{
-	}
+	public void init() {}
 
-	public void modelInit() {
+	public void modelInit()
+	{
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCraftingTable.INSTANCE), 0, new ModelResourceLocation(Reference.MOD_ID + ":biggercraftingtable", "tabletypes=big"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCraftingTable.INSTANCE), 1, new ModelResourceLocation(Reference.MOD_ID + ":biggercraftingtable", "tabletypes=huge"));
 

@@ -17,18 +17,9 @@ import javax.annotation.Nonnull;
 
 public final class ShapeSlot extends Slot
 {
-	private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
-
 	public ShapeSlot(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable, final int id, final int x, final int y)
 	{
 		super(tileEntityAutoBiggerCraftingTable, id, x, y);
-		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
-	}
-
-	public void putStack(@Nonnull final ItemStack itemStack)
-	{
-		super.putStack(itemStack);
-		tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
 	}
 
 	@Override

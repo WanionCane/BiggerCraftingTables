@@ -40,7 +40,7 @@ public class HugeRecipeCategory implements IRecipeCategory<BiggerRecipeWrapper>
 	{
 		craftingGridHelper = guiHelper.createCraftingGridHelper(0, this.size = 49);
 		localizedName = I18n.format("crafting.huge");
-		texture = guiHelper.createDrawable(new ResourceLocation(Reference.MOD_ID, "textures/gui/huge_recipe_jei.png"), 0, 0, 160, 125);
+		texture = guiHelper.createDrawable(new ResourceLocation(Reference.MOD_ID, "textures/gui/huge_recipe_jei.png"), 0, 0, 161, 126);
 	}
 
 	@Override
@@ -68,8 +68,9 @@ public class HugeRecipeCategory implements IRecipeCategory<BiggerRecipeWrapper>
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, BiggerRecipeWrapper recipeWrapper, IIngredients ingredients)
+	public void setRecipe(final IRecipeLayout recipeLayout, final BiggerRecipeWrapper recipeWrapper, final IIngredients ingredients)
 	{
+		recipeLayout.setRecipeTransferButton(148, 113);
 		final IGuiItemStackGroup guiItemStackGroup = recipeLayout.getItemStacks();
 		guiItemStackGroup.init(size, false, 139, 54);
 		final IAdvancedRecipe advancedRecipe = recipeWrapper.advancedRecipe;
