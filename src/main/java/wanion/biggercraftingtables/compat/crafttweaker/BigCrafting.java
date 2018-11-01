@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 @SuppressWarnings("unused")
-
 @ZenRegister
 @ZenClass("mods.biggercraftingtables.Big")
 public final class BigCrafting

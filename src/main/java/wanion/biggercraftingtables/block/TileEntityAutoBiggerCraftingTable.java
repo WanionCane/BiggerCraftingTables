@@ -26,20 +26,23 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.items.CapabilityItemHandler;
 import wanion.lib.common.MetaItem;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements ISidedInventory, ITickable
 {
-	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private final int full = getSizeInventory() - 2;
 	private final int half = full / 2;
 	private final BiggerCraftingMatrix biggerCraftingMatrix = new BiggerCraftingMatrix((int) Math.sqrt(half));
 	private final int[] slots;
+	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private R cachedRecipe = null;
 	private TIntIntMap patternMap = null;
 
@@ -250,10 +253,14 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Override
-	public void openInventory(@Nonnull final EntityPlayer player) {}
+	public void openInventory(@Nonnull final EntityPlayer player)
+	{
+	}
 
 	@Override
-	public void closeInventory(@Nonnull final EntityPlayer player) {}
+	public void closeInventory(@Nonnull final EntityPlayer player)
+	{
+	}
 
 	@Override
 	public void markDirty()
@@ -264,6 +271,14 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			blockState.getBlock().updateTick(getWorld(), getPos(), blockState, getWorld().rand);
 			getWorld().notifyBlockUpdate(pos, blockState, blockState, 3);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+	{
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) this : super.getCapability(capability, facing);
 	}
 
 	@Override
@@ -279,7 +294,9 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Override
-	public void setField(final int id, final int value) {}
+	public void setField(final int id, final int value)
+	{
+	}
 
 	@Override
 	public int getFieldCount()
@@ -288,7 +305,9 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Override
-	public void clear() {}
+	public void clear()
+	{
+	}
 
 	@Nonnull
 	@Override
@@ -297,17 +316,13 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		return slots;
 	}
 
-	/**
-	 * Returns true if automation can insert the given item in the given slot from the given side.
-	 */
+	@Override
 	public boolean canInsertItem(final int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
 	{
 		return index < half;
 	}
 
-	/**
-	 * Returns true if automation can extract the given item in the given slot from the given side.
-	 */
+	@Override
 	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
 	{
 		return index == full || stack.getItem() == Items.BUCKET;
