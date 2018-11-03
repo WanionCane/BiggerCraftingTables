@@ -18,6 +18,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nonnull;
 
@@ -26,27 +28,6 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
 	public TileEntityBiggerCraftingTable() {}
-
-	@Override
-	@Nonnull
-	public NBTTagCompound getUpdateTag()
-	{
-		return writeToNBT(new NBTTagCompound());
-	}
-
-	@Override
-	public final SPacketUpdateTileEntity getUpdatePacket()
-	{
-		final NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
-	}
-
-	@Override
-	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
-	{
-		readFromNBT(packet.getNbtCompound());
-	}
 
 	@Override
 	public final void readFromNBT(final NBTTagCompound nbtTagCompound)
@@ -62,6 +43,33 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		super.writeToNBT(nbtTagCompound);
 		writeCustomNBT(nbtTagCompound);
 		return nbtTagCompound;
+	}
+
+	@Override
+	public final SPacketUpdateTileEntity getUpdatePacket()
+	{
+		final NBTTagCompound nbttagcompound = new NBTTagCompound();
+		writeToNBT(nbttagcompound);
+		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
+	}
+
+	@Override
+	@Nonnull
+	public NBTTagCompound getUpdateTag()
+	{
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Nonnull
+	public ITextComponent getDisplayName()
+	{
+		return new TextComponentTranslation(getName());
+	}
+
+	@Override
+	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
+	{
+		readFromNBT(packet.getNbtCompound());
 	}
 
 	void readCustomNBT(final NBTTagCompound nbtTagCompound)
@@ -171,7 +179,9 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	}
 
 	@Override
-	public void setField(final int id, final int value) {}
+	public void setField(final int id, final int value)
+	{
+	}
 
 	@Override
 	public int getFieldCount()

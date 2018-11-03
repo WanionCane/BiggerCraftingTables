@@ -26,9 +26,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import wanion.lib.common.MetaItem;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
@@ -45,6 +49,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private R cachedRecipe = null;
 	private TIntIntMap patternMap = null;
+	private IItemHandler itemHandler = new ItemHandlerAutoBiggerCraftingTable(this);
 
 	protected TileEntityAutoBiggerCraftingTable()
 	{
@@ -52,16 +57,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		for (int i = 0; i < half; i++)
 			slots[i] = i;
 		slots[half] = full;
-	}
-
-	@Nonnull
-	public abstract AbstractRecipeRegistry<R> getRecipeRegistry();
-
-	public final void recipeShapeChanged()
-	{
-		R matchedRecipe = getRecipeRegistry().findMatchingRecipe(biggerCraftingMatrix);
-		itemStacks.set(getSizeInventory() - 1, (cachedRecipe = matchedRecipe) != null ? cachedRecipe.getOutput().copy() : ItemStack.EMPTY);
-		patternMap = null;
 	}
 
 	@Override
@@ -92,6 +87,28 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		markDirty();
 	}
 
+	@Nonnull
+	@Override
+	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
+	{
+		return slots;
+	}
+
+	@Override
+	public boolean canInsertItem(final int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
+	{
+		return index < half;
+	}
+
+	@Override
+	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
+	{
+		return index == full || stack.getItem() == Items.BUCKET;
+	}
+
+	@Nonnull
+	public abstract AbstractRecipeRegistry<R> getRecipeRegistry();
+
 	private boolean matches(@Nonnull final TIntIntMap inputMap, @Nonnull final TIntIntMap patternMap)
 	{
 		if (inputMap.size() >= patternMap.size() && inputMap.keySet().containsAll(patternMap.keySet())) {
@@ -101,6 +118,13 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return true;
 		} else
 			return false;
+	}
+
+	public final void recipeShapeChanged()
+	{
+		R matchedRecipe = getRecipeRegistry().findMatchingRecipe(biggerCraftingMatrix);
+		itemStacks.set(getSizeInventory() - 1, (cachedRecipe = matchedRecipe) != null ? cachedRecipe.getOutput().copy() : ItemStack.EMPTY);
+		patternMap = null;
 	}
 
 	private void cleanInput()
@@ -127,25 +151,92 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Override
+	public boolean isEmpty()
+	{
+		for (final ItemStack itemStack : itemStacks)
+			if (!itemStack.isEmpty())
+				return false;
+		return true;
+	}
+
+	@Override
 	@Nonnull
-	public NBTTagCompound getUpdateTag()
+	public ItemStack getStackInSlot(final int slot)
 	{
-		return writeToNBT(new NBTTagCompound());
+		return itemStacks.get(slot);
 	}
 
 	@Override
-	public final SPacketUpdateTileEntity getUpdatePacket()
+	@Nonnull
+	public ItemStack decrStackSize(final int slot, final int howMuch)
 	{
-		final NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
+		final ItemStack slotStack = itemStacks.get(slot);
+		if (slotStack.isEmpty())
+			return ItemStack.EMPTY;
+		final ItemStack newStack = slotStack.copy();
+		newStack.setCount(howMuch);
+		slotStack.setCount(slotStack.getCount() - howMuch);
+		if (slotStack.isEmpty())
+			itemStacks.set(slot, ItemStack.EMPTY);
+		return newStack;
 	}
 
 	@Override
-	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
+	@Nonnull
+	public ItemStack removeStackFromSlot(final int index)
 	{
-		readFromNBT(packet.getNbtCompound());
+		final ItemStack itemStack = itemStacks.get(index);
+		itemStacks.set(index, ItemStack.EMPTY);
+		return itemStack;
 	}
+
+	@Override
+	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemStack)
+	{
+		itemStacks.set(slot, itemStack);
+	}
+
+	@Override
+	public int getInventoryStackLimit()
+	{
+		return 64;
+	}
+
+	@Override
+	public boolean isUsableByPlayer(@Nonnull final EntityPlayer player)
+	{
+		return world.getTileEntity(getPos()) == this && player.getDistanceSq((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D) <= 64.0D;
+	}
+
+	@Override
+	public void openInventory(@Nonnull final EntityPlayer player) {}
+
+	@Override
+	public void closeInventory(@Nonnull final EntityPlayer player) {}
+
+	@Override
+	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
+	{
+		return true;
+	}
+
+	@Override
+	public int getField(final int id)
+	{
+		return 0;
+	}
+
+	@Override
+	public void setField(final int id, final int value) {}
+
+	@Override
+	public int getFieldCount()
+	{
+		return 0;
+	}
+
+	@Override
+	public void clear() {}
 
 	@Override
 	public final void readFromNBT(final NBTTagCompound nbtTagCompound)
@@ -162,6 +253,58 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		super.writeToNBT(nbtTagCompound);
 		writeCustomNBT(nbtTagCompound);
 		return nbtTagCompound;
+	}
+
+	@Override
+	public void markDirty()
+	{
+		super.markDirty();
+		if (world != null) {
+			final IBlockState blockState = getWorld().getBlockState(pos);
+			blockState.getBlock().updateTick(getWorld(), getPos(), blockState, getWorld().rand);
+			getWorld().notifyBlockUpdate(pos, blockState, blockState, 3);
+		}
+	}
+
+	@Override
+	public final SPacketUpdateTileEntity getUpdatePacket()
+	{
+		final NBTTagCompound nbttagcompound = new NBTTagCompound();
+		writeToNBT(nbttagcompound);
+		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
+	}
+
+	@Override
+	@Nonnull
+	public NBTTagCompound getUpdateTag()
+	{
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Nonnull
+	public ITextComponent getDisplayName()
+	{
+		return new TextComponentTranslation(getName());
+	}
+
+	@Override
+	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
+	{
+		readFromNBT(packet.getNbtCompound());
+	}
+
+	@Override
+	public boolean hasCapability(@Nonnull final Capability<?> capability, final EnumFacing facing)
+	{
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+	{
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) itemHandler : super.getCapability(capability, facing);
 	}
 
 	void readCustomNBT(final NBTTagCompound nbtTagCompound)
@@ -195,143 +338,45 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
-		for (final ItemStack itemStack : itemStacks)
-			if (!itemStack.isEmpty())
-				return false;
-		return true;
-	}
-
-	@Override
-	@Nonnull
-	public ItemStack getStackInSlot(final int slot)
-	{
-		return itemStacks.get(slot);
-	}
-
-	@Override
-	@Nonnull
-	public ItemStack decrStackSize(final int slot, final int howMuch)
-	{
-		final ItemStack slotStack = itemStacks.get(slot);
-		if (slotStack.isEmpty())
-			return ItemStack.EMPTY;
-		final ItemStack newStack = slotStack.copy();
-		newStack.setCount(howMuch);
-		slotStack.setCount(slotStack.getCount() - howMuch);
-		if (slotStack.getCount() == 0)
-			itemStacks.set(slot, ItemStack.EMPTY);
-		return newStack;
-	}
-
-	@Override
-	@Nonnull
-	public ItemStack removeStackFromSlot(final int index)
-	{
-		final ItemStack itemStack = itemStacks.get(index);
-		itemStacks.set(index, ItemStack.EMPTY);
-		return itemStack;
-	}
-
-	@Override
-	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemStack)
-	{
-		itemStacks.set(slot, itemStack);
-	}
-
-	@Override
-	public int getInventoryStackLimit()
-	{
-		return 64;
-	}
-
-	@Override
-	public boolean isUsableByPlayer(@Nonnull final EntityPlayer player)
-	{
-		return world.getTileEntity(getPos()) == this && player.getDistanceSq((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D) <= 64.0D;
-	}
-
-	@Override
-	public void openInventory(@Nonnull final EntityPlayer player)
-	{
-	}
-
-	@Override
-	public void closeInventory(@Nonnull final EntityPlayer player)
-	{
-	}
-
-	@Override
-	public void markDirty()
-	{
-		super.markDirty();
-		if (world != null) {
-			final IBlockState blockState = getWorld().getBlockState(pos);
-			blockState.getBlock().updateTick(getWorld(), getPos(), blockState, getWorld().rand);
-			getWorld().notifyBlockUpdate(pos, blockState, blockState, 3);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	@Nullable
-	public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
-	{
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) this : super.getCapability(capability, facing);
-	}
-
-	@Override
-	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
-	{
-		return true;
-	}
-
-	@Override
-	public int getField(final int id)
-	{
-		return 0;
-	}
-
-	@Override
-	public void setField(final int id, final int value)
-	{
-	}
-
-	@Override
-	public int getFieldCount()
-	{
-		return 0;
-	}
-
-	@Override
-	public void clear()
-	{
-	}
-
-	@Nonnull
-	@Override
-	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
-	{
-		return slots;
-	}
-
-	@Override
-	public boolean canInsertItem(final int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
-	{
-		return index < half;
-	}
-
-	@Override
-	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
-	{
-		return index == full || stack.getItem() == Items.BUCKET;
-	}
-
-	@Override
 	public boolean hasCustomName()
 	{
 		return false;
+	}
+
+	private static class ItemHandlerAutoBiggerCraftingTable extends InvWrapper
+	{
+		private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
+
+		private ItemHandlerAutoBiggerCraftingTable(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable)
+		{
+			super(tileEntityAutoBiggerCraftingTable);
+			this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
+		}
+
+		@Nonnull
+		@Override
+		public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+		{
+			return slot >= tileEntityAutoBiggerCraftingTable.half ? stack : super.insertItem(slot, stack, simulate);
+		}
+
+		@Nonnull
+		@Override
+		public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
+		{
+			boolean full = slot == tileEntityAutoBiggerCraftingTable.full;
+			final ItemStack slotStack = simulate && full ? getStackInSlot(slot).copy() : getStackInSlot(slot);
+			if (full || slotStack.getItem() == Items.BUCKET) {
+				if (slotStack.isEmpty())
+					return ItemStack.EMPTY;
+				final ItemStack newStack = slotStack.copy();
+				newStack.setCount(amount);
+				slotStack.setCount(slotStack.getCount() - amount);
+				if (!simulate && slotStack.isEmpty())
+					setStackInSlot(slot, ItemStack.EMPTY);
+				return newStack;
+			} else return ItemStack.EMPTY;
+		}
 	}
 
 	private final class BiggerCraftingMatrix extends InventoryCrafting
