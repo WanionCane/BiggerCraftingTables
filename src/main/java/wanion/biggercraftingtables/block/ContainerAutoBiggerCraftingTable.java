@@ -40,10 +40,7 @@ public abstract class ContainerAutoBiggerCraftingTable extends Container
 		final int slotCount = inventorySlots.size();
 		final int startsIn = ((slotCount - 36) / 2) - 1, endsIn = slotCount - 38;
 		final int root = (int) Math.sqrt(endsIn - startsIn + 1);
-		for (int i = startsIn; i < endsIn; i++) {
-			final Slot slot = inventorySlots.get(i);
-			slot.putStack(ItemStack.EMPTY);
-		}
+		clearShape(startsIn, endsIn);
 		final List<Object> inputs = advancedRecipe.getInputs();
 		if (advancedRecipe.isShaped()) {
 			int i = 0;
@@ -67,6 +64,12 @@ public abstract class ContainerAutoBiggerCraftingTable extends Container
 		}
 		tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
 		detectAndSendChanges();
+	}
+
+	protected final void clearShape(final int startsIn, final int endsIn)
+	{
+		for (int i = startsIn; i < endsIn; i++)
+			inventorySlots.get(i).putStack(ItemStack.EMPTY);
 	}
 
 	private static ItemStack getStackInput(final Object input)

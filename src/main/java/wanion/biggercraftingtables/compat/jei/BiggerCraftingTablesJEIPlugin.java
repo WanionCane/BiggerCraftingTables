@@ -8,7 +8,10 @@ package wanion.biggercraftingtables.compat.jei;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import mezz.jei.api.*;
+import mezz.jei.api.IJeiHelpers;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.IModRegistry;
+import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.block.ItemBlockAutoBiggerCraftingTable;
@@ -35,7 +38,7 @@ public final class BiggerCraftingTablesJEIPlugin implements IModPlugin
 {
 	public static final String BIG_CRAFTING = "biggerct.big";
 	public static final String HUGE_CRAFTING = "biggerct.huge";
-	public static IJeiHelpers jeiHelpers;
+	static IJeiHelpers jeiHelpers;
 
 	@Override
 	public void registerCategories(final IRecipeCategoryRegistration recipeCategoryRegistration)

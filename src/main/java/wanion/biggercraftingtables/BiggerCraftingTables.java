@@ -23,7 +23,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
 import wanion.biggercraftingtables.block.ItemBlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;

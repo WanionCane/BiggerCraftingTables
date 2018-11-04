@@ -21,12 +21,14 @@ import wanion.biggercraftingtables.network.BiggerAutoCraftingJeiTransfer;
 import wanion.lib.common.Util;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class AutoHugeRecipeTransferHandler implements IRecipeTransferHandler<ContainerAutoHugeCraftingTable>
 {
 	public AutoHugeRecipeTransferHandler() {}
 
+	@Nonnull
 	@Override
 	public Class<ContainerAutoHugeCraftingTable> getContainerClass()
 	{
@@ -35,7 +37,7 @@ public class AutoHugeRecipeTransferHandler implements IRecipeTransferHandler<Con
 
 	@Nullable
 	@Override
-	public IRecipeTransferError transferRecipe(final ContainerAutoHugeCraftingTable container, final IRecipeLayout recipeLayout, final EntityPlayer player, final boolean maxTransfer, final boolean doTransfer)
+	public IRecipeTransferError transferRecipe(@Nonnull final ContainerAutoHugeCraftingTable container, @Nonnull final IRecipeLayout recipeLayout, @Nonnull final EntityPlayer player, final boolean maxTransfer, final boolean doTransfer)
 	{
 		if (!doTransfer)
 			return null;

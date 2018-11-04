@@ -21,10 +21,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import wanion.biggercraftingtables.Reference;
-import wanion.biggercraftingtables.compat.jei.BiggerRecipeWrapper;
 import wanion.biggercraftingtables.compat.jei.BiggerCraftingTablesJEIPlugin;
+import wanion.biggercraftingtables.compat.jei.BiggerRecipeWrapper;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,24 +44,28 @@ public final class BigRecipeCategory implements IRecipeCategory<BiggerRecipeWrap
 		texture = guiHelper.createDrawable(new ResourceLocation(Reference.MOD_ID, "textures/gui/big_recipe_jei.png"), 0, 0, 125, 90);
 	}
 
+	@Nonnull
 	@Override
 	public String getUid()
 	{
 		return BiggerCraftingTablesJEIPlugin.BIG_CRAFTING;
 	}
 
+	@Nonnull
 	@Override
 	public String getTitle()
 	{
 		return localizedName;
 	}
 
+	@Nonnull
 	@Override
 	public String getModName()
 	{
 		return Reference.MOD_NAME;
 	}
 
+	@Nonnull
 	@Override
 	public IDrawable getBackground()
 	{
@@ -68,7 +73,7 @@ public final class BigRecipeCategory implements IRecipeCategory<BiggerRecipeWrap
 	}
 
 	@Override
-	public void setRecipe(final IRecipeLayout recipeLayout, final BiggerRecipeWrapper recipeWrapper, final IIngredients ingredients)
+	public void setRecipe(@Nonnull final IRecipeLayout recipeLayout, @Nonnull final BiggerRecipeWrapper recipeWrapper, @Nonnull final IIngredients ingredients)
 	{
 		recipeLayout.setRecipeTransferButton(112, 77);
 		final IGuiItemStackGroup guiItemStackGroup = recipeLayout.getItemStacks();

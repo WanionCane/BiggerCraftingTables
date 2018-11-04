@@ -16,7 +16,6 @@ import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.management.ThreadInfo;
 
 public final class CraftResultBiggerCraftingTable implements IInventory
 {
@@ -41,22 +40,22 @@ public final class CraftResultBiggerCraftingTable implements IInventory
 		return tileEntityBiggerCraftingTable.isEmpty();
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack getStackInSlot(final int slot)
 	{
 		return tileEntityBiggerCraftingTable.getStackInSlot(this.slot);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack decrStackSize(final int slot, int howMuch)
 	{
 		return tileEntityBiggerCraftingTable.decrStackSize(this.slot, howMuch);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack removeStackFromSlot(final int index)
 	{
 		return tileEntityBiggerCraftingTable.removeStackFromSlot(index);
@@ -68,8 +67,8 @@ public final class CraftResultBiggerCraftingTable implements IInventory
 		tileEntityBiggerCraftingTable.setInventorySlotContents(this.slot, itemStack);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public String getName()
 	{
 		return tileEntityBiggerCraftingTable.getName();
@@ -81,8 +80,8 @@ public final class CraftResultBiggerCraftingTable implements IInventory
 		return tileEntityBiggerCraftingTable.hasCustomName();
 	}
 
+	@Nonnull
 	@Override
-	@Nullable
 	public ITextComponent getDisplayName()
 	{
 		return tileEntityBiggerCraftingTable.getDisplayName();

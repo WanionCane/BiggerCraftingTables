@@ -40,8 +40,8 @@ public final class ContainerAutoBigCraftingTable extends ContainerAutoBiggerCraf
 			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + (18 * i), 180));
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
 	{
 		ItemStack itemstack = null;
@@ -63,8 +63,8 @@ public final class ContainerAutoBigCraftingTable extends ContainerAutoBiggerCraf
 		return itemstack != null ? itemstack : ItemStack.EMPTY;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack slotClick(final int slot, final int mouseButton, final ClickType clickType, final EntityPlayer entityPlayer)
 	{
 		if (slot > 24 && slot < 50) {
@@ -83,6 +83,12 @@ public final class ContainerAutoBigCraftingTable extends ContainerAutoBiggerCraf
 				}
 			}
 			tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
+			return ItemStack.EMPTY;
+		} else if (slot == 50) {
+			if (inventorySlots.get(slot).getHasStack()) {
+				clearShape(tileEntityAutoBiggerCraftingTable.half, tileEntityAutoBiggerCraftingTable.full);
+				tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
+			}
 			return ItemStack.EMPTY;
 		} else return super.slotClick(slot, mouseButton, clickType, entityPlayer);
 	}

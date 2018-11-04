@@ -26,23 +26,23 @@ public final class CraftingHugeCraftingTable extends InventoryCrafting
 		this.container = container;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack getStackInSlot(final int slot)
 	{
 		return slot >= getSizeInventory() ? ItemStack.EMPTY : tileEntityHugeCraftingTable.getStackInSlot(slot);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack getStackInRowAndColumn(final int row, final int column)
 	{
 		final int slot = row * 7 + column;
 		return slot < 49 ? getStackInSlot(slot) : ItemStack.EMPTY;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack decrStackSize(final int slot, final int decrement)
 	{
 		final ItemStack stack = tileEntityHugeCraftingTable.getStackInSlot(slot);

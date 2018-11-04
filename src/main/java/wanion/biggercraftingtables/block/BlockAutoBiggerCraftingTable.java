@@ -85,8 +85,8 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 		return true;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public Item getItemDropped(final IBlockState blockState, final Random random, final int fortune)
 	{
 		return Items.AIR;
@@ -98,8 +98,8 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 		return getMetaFromState(state);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity)
 	{
 		return SoundType.WOOD;
@@ -148,6 +148,7 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getValue(metadata));
 	}
 
+	@Nonnull
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;

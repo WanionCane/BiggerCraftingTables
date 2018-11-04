@@ -36,8 +36,8 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		readCustomNBT(nbtTagCompound);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public NBTTagCompound writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		super.writeToNBT(nbtTagCompound);
@@ -53,8 +53,8 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public NBTTagCompound getUpdateTag()
 	{
 		return writeToNBT(new NBTTagCompound());
@@ -111,15 +111,15 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		return true;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack getStackInSlot(final int slot)
 	{
 		return itemStacks.get(slot);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack decrStackSize(final int slot, final int howMuch)
 	{
 		final ItemStack slotStack = itemStacks.get(slot);
@@ -133,8 +133,8 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		return newStack;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack removeStackFromSlot(final int index)
 	{
 		final ItemStack itemStack = itemStacks.get(index);
@@ -192,8 +192,8 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	@Override
 	public void clear() { }
 
-	@Override
 	@Nonnull
+	@Override
 	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
 	{
 		return new int[0];

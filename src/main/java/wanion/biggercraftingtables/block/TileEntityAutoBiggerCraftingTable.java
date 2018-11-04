@@ -38,12 +38,10 @@ import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements ISidedInventory, ITickable
 {
-	private final int full = getSizeInventory() - 2;
-	private final int half = full / 2;
+	public final int full = getSizeInventory() - 2, half = full / 2;
 	private final BiggerCraftingMatrix biggerCraftingMatrix = new BiggerCraftingMatrix((int) Math.sqrt(half));
 	private final int[] slots;
 	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
@@ -159,15 +157,15 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		return true;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack getStackInSlot(final int slot)
 	{
 		return itemStacks.get(slot);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack decrStackSize(final int slot, final int howMuch)
 	{
 		final ItemStack slotStack = itemStacks.get(slot);
@@ -181,8 +179,8 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		return newStack;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack removeStackFromSlot(final int index)
 	{
 		final ItemStack itemStack = itemStacks.get(index);
@@ -246,8 +244,8 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		recipeShapeChanged();
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public NBTTagCompound writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
 	{
 		super.writeToNBT(nbtTagCompound);
@@ -274,8 +272,8 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public NBTTagCompound getUpdateTag()
 	{
 		return writeToNBT(new NBTTagCompound());
@@ -301,8 +299,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@Nullable
-	public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+	public <T> T getCapability(@Nonnull final Capability<T> capability, final EnumFacing facing)
 	{
 		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) itemHandler : super.getCapability(capability, facing);
 	}

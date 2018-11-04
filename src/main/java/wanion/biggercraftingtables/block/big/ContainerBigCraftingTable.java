@@ -52,8 +52,8 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 		craftingResult.setInventorySlotContents(0, IBigRecipe != null ? IBigRecipe.getOutput() : ItemStack.EMPTY);
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
 	{
 		ItemStack itemstack = null;

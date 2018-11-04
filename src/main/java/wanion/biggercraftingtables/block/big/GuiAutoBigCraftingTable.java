@@ -8,20 +8,21 @@ package wanion.biggercraftingtables.block.big;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import wanion.biggercraftingtables.block.GuiAutoBiggerCraftingTable;
 
 import javax.annotation.Nonnull;
 
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 @SideOnly(Side.CLIENT)
-public final class GuiAutoBigCraftingTable extends GuiContainer
+public final class GuiAutoBigCraftingTable extends GuiAutoBiggerCraftingTable
 {
 	private static final ResourceLocation autoBigCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/auto_big_crafting_table.png");
 	private final TileEntityAutoBigCraftingTable tileEntityAutoBigCraftingTable;
@@ -55,5 +56,13 @@ public final class GuiAutoBigCraftingTable extends GuiContainer
 	{
 		fontRenderer.drawString(I18n.format(tileEntityAutoBigCraftingTable.getName()), 7, 7, 0x404040);
 		fontRenderer.drawString(I18n.format("container.inventory"), 7, 111, 0x404040);
+	}
+
+	@Override
+	protected void renderToolTip(@Nonnull final ItemStack stack, final int x, final int y)
+	{
+		if (super.isPointInRegion(202, 54, 16, 16, x, y))
+			drawClearRecipeToolTip(stack, x, y);
+		else super.renderToolTip(stack, x, y);
 	}
 }

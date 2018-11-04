@@ -148,6 +148,7 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getValue(metadata));
 	}
 
+	@Nonnull
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;

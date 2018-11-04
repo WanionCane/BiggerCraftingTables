@@ -29,8 +29,8 @@ public final class BiggerCraftingSlot extends SpecialSlot
 		this.craftingMatrix = craftingMatrix;
 	}
 
-	@Override
 	@Nonnull
+	@Override
 	public ItemStack onTake(final EntityPlayer thePlayer, @Nonnull final ItemStack stack)
 	{
 		onCrafting(stack);
