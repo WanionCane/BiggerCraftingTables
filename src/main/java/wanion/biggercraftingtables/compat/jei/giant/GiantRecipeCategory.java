@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.compat.jei.huge;
+package wanion.biggercraftingtables.compat.jei.giant;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public final class HugeRecipeCategory implements IRecipeCategory<BiggerRecipeWrapper>
+public final class GiantRecipeCategory implements IRecipeCategory<BiggerRecipeWrapper>
 {
 	private final ICraftingGridHelper craftingGridHelper;
 	private final int size;
@@ -37,18 +37,18 @@ public final class HugeRecipeCategory implements IRecipeCategory<BiggerRecipeWra
 	private final IDrawable texture;
 	private final String localizedName;
 
-	public HugeRecipeCategory(final IGuiHelper guiHelper)
+	public GiantRecipeCategory(final IGuiHelper guiHelper)
 	{
-		craftingGridHelper = guiHelper.createCraftingGridHelper(0, this.size = 49);
-		localizedName = I18n.format("crafting.huge");
-		texture = guiHelper.createDrawable(new ResourceLocation(Reference.MOD_ID, "textures/gui/huge_recipe_jei.png"), 0, 0, 161, 126);
+		craftingGridHelper = guiHelper.createCraftingGridHelper(0, this.size = 81);
+		localizedName = I18n.format("crafting.giant");
+		texture = guiHelper.createDrawable(new ResourceLocation(Reference.MOD_ID, "textures/gui/giant_recipe_jei.png"), 0, 0, 197, 162);
 	}
 
 	@Nonnull
 	@Override
 	public String getUid()
 	{
-		return BiggerCraftingTablesJEIPlugin.HUGE_CRAFTING;
+		return BiggerCraftingTablesJEIPlugin.GIANT_CRAFTING;
 	}
 
 	@Nonnull
@@ -75,25 +75,25 @@ public final class HugeRecipeCategory implements IRecipeCategory<BiggerRecipeWra
 	@Override
 	public void setRecipe(@Nonnull final IRecipeLayout recipeLayout, @Nonnull final BiggerRecipeWrapper recipeWrapper, @Nonnull final IIngredients ingredients)
 	{
-		recipeLayout.setRecipeTransferButton(148, 113);
+		recipeLayout.setRecipeTransferButton(184, 149);
 		final IGuiItemStackGroup guiItemStackGroup = recipeLayout.getItemStacks();
-		guiItemStackGroup.init(size, false, 139, 54);
+		guiItemStackGroup.init(size, false, 175, 72);
 		final IAdvancedRecipe advancedRecipe = recipeWrapper.advancedRecipe;
 		final List<List<ItemStack>> inputs = ingredients.getInputs(VanillaTypes.ITEM);
 		final List<List<ItemStack>> outputs = ingredients.getOutputs(VanillaTypes.ITEM);
-		for (int x = 0; x < 7; x++)
-			for (int y = 0; y < 7; y++)
-				guiItemStackGroup.init(x + (7 * y), true, 18 * x, 18 * y);
-		final List<List<ItemStack>> newInputs = NonNullList.withSize(49, Collections.emptyList());
+		for (int x = 0; x < 9; x++)
+			for (int y = 0; y < 9; y++)
+				guiItemStackGroup.init(x + (9 * y), true, 18 * x, 18 * y);
+		final List<List<ItemStack>> newInputs = NonNullList.withSize(81, Collections.emptyList());
 		if (advancedRecipe.isShaped()) {
 			for (int x = 0; x < advancedRecipe.getWidth(); x++)
 				for (int y = 0; y < advancedRecipe.getHeight(); y++)
-					newInputs.set(x + (7 * y), inputs.get(x + (advancedRecipe.getHeight() * y)));
-			craftingGridHelper.setInputs(guiItemStackGroup, newInputs, 7, 7);
+					newInputs.set(x + (9 * y), inputs.get(x + (advancedRecipe.getHeight() * y)));
+			craftingGridHelper.setInputs(guiItemStackGroup, newInputs, 9, 9);
 		} else {
 			for (int i = 0; i < inputs.size(); i++)
 				newInputs.set(i, inputs.get(i));
-			craftingGridHelper.setInputs(guiItemStackGroup, newInputs, 7, 7);
+			craftingGridHelper.setInputs(guiItemStackGroup, newInputs, 9, 9);
 			recipeLayout.setShapeless();
 		}
 		guiItemStackGroup.set(size, outputs.get(0));

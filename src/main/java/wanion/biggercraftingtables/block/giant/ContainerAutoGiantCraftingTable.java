@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block.huge;
+package wanion.biggercraftingtables.block.giant;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -20,24 +20,24 @@ import wanion.biggercraftingtables.inventory.slot.SpecialSlot;
 
 import javax.annotation.Nonnull;
 
-public final class ContainerAutoHugeCraftingTable extends ContainerAutoBiggerCraftingTable
+public final class ContainerAutoGiantCraftingTable extends ContainerAutoBiggerCraftingTable
 {
-	public ContainerAutoHugeCraftingTable(@Nonnull TileEntityAutoHugeCraftingTable tileEntityAutoHugeCraftingTable, final InventoryPlayer inventoryPlayer)
+	public ContainerAutoGiantCraftingTable(@Nonnull TileEntityAutoGiantCraftingTable tileEntityAutoGiantCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
-		super(tileEntityAutoHugeCraftingTable);
-		for (int y = 0; y < 7; y++)
-			for (int x = 0; x < 7; x++)
-				addSlotToContainer(new Slot(tileEntityAutoHugeCraftingTable, y * 7 + x, 8 + (18 * x), 18 + (18 * y)));
-		for (int y = 0; y < 7; y++)
-			for (int x = 0; x < 7; x++)
-				addSlotToContainer(new ShapeSlot(tileEntityAutoHugeCraftingTable, 49 + (y * 7 + x), 139 + (18 * x), 18 + (18 * y)));
-		addSlotToContainer(new DeadSlot(tileEntityAutoHugeCraftingTable, 99, 274, 72));
-		addSlotToContainer(new SpecialSlot(tileEntityAutoHugeCraftingTable, 98, 274, 100));
+		super(tileEntityAutoGiantCraftingTable);
+		for (int y = 0; y < 9; y++)
+			for (int x = 0; x < 9; x++)
+				addSlotToContainer(new Slot(tileEntityAutoGiantCraftingTable, y * 9 + x, 8 + (18 * x), 18 + (18 * y)));
+		for (int y = 0; y < 9; y++)
+			for (int x = 0; x < 9; x++)
+				addSlotToContainer(new ShapeSlot(tileEntityAutoGiantCraftingTable, 81 + (y * 9 + x), 175 + (18 * x), 18 + (18 * y)));
+		addSlotToContainer(new DeadSlot(tileEntityAutoGiantCraftingTable, 163, 346, 90));
+		addSlotToContainer(new SpecialSlot(tileEntityAutoGiantCraftingTable, 162, 346, 118));
 		for (int y = 0; y < 3; y++)
 			for (int x = 0; x < 9; x++)
-				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, 71 + (18 * x), 158 + (18 * y)));
+				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, 107 + (18 * x), 194 + (18 * y)));
 		for (int i = 0; i < 9; i++)
-			addSlotToContainer(new Slot(inventoryPlayer, i, 71 + (18 * i), 216));
+			addSlotToContainer(new Slot(inventoryPlayer, i, 107 + (18 * i), 252));
 	}
 
 	@Nonnull
@@ -49,11 +49,11 @@ public final class ContainerAutoHugeCraftingTable extends ContainerAutoBiggerCra
 		if (actualSlot != null && actualSlot.getHasStack()) {
 			ItemStack itemstack1 = actualSlot.getStack();
 			itemstack = itemstack1.copy();
-			if (slot > 99) {
-				if (!mergeItemStack(itemstack1, 0, 49, false))
+			if (slot > 163) {
+				if (!mergeItemStack(itemstack1, 0, 81, false))
 					return ItemStack.EMPTY;
-			} else if (slot < 49 || slot == 99) {
-				if (!mergeItemStack(itemstack1, 100, 136, true))
+			} else if (slot < 81 || slot == 163) {
+				if (!mergeItemStack(itemstack1, 164, 200, true))
 					return ItemStack.EMPTY;
 			}
 			if (itemstack1.getCount() == 0)
@@ -67,7 +67,7 @@ public final class ContainerAutoHugeCraftingTable extends ContainerAutoBiggerCra
 	@Override
 	public ItemStack slotClick(final int slot, final int mouseButton, final ClickType clickType, final EntityPlayer entityPlayer)
 	{
-		if (slot > 48 && slot < 98) {
+		if (slot > 80 && slot < 162) {
 			final Slot actualSlot = inventorySlots.get(slot);
 			if (clickType == ClickType.QUICK_MOVE) {
 				actualSlot.putStack(ItemStack.EMPTY);
@@ -84,7 +84,7 @@ public final class ContainerAutoHugeCraftingTable extends ContainerAutoBiggerCra
 			}
 			tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
 			return ItemStack.EMPTY;
-		} else if (slot == 98) {
+		} else if (slot == 162) {
 			if (inventorySlots.get(slot).getHasStack()) {
 				clearShape(tileEntityAutoBiggerCraftingTable.half, tileEntityAutoBiggerCraftingTable.full);
 				tileEntityAutoBiggerCraftingTable.recipeShapeChanged();

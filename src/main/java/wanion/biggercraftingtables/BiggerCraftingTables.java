@@ -41,7 +41,13 @@ public class BiggerCraftingTables
 
 	public static SimpleNetworkWrapper networkWrapper;
 
-	public static final int GUI_ID_BIG_CRAFTING_TABLE = 0, GUI_ID_HUGE_CRAFTING_TABLE = 1, GUI_ID_AUTO_BIG_CRAFTING_TABLE = 2, GUI_ID_AUTO_HUGE_CRAFTING_TABLE = 3;
+	public static final int
+			GUI_ID_BIG_CRAFTING_TABLE = 0,
+			GUI_ID_AUTO_BIG_CRAFTING_TABLE = 1,
+			GUI_ID_HUGE_CRAFTING_TABLE = 2,
+			GUI_ID_AUTO_HUGE_CRAFTING_TABLE = 3,
+			GUI_ID_GIANT_CRAFTING_TABLE = 4,
+			GUI_ID_AUTO_GIANT_CRAFTING_TABLE = 5;
 
 	@SidedProxy(clientSide = CLIENT_PROXY, serverSide = SERVER_PROXY)
 	public static CommonProxy proxy;
@@ -61,10 +67,6 @@ public class BiggerCraftingTables
 	{
 		networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(MOD_ID);
 		proxy.preInit();
-		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
-		GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4BigCraftingTableToHugeCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1, 1), "CC", "CC", 'C', new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1));
-		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "bigCraftingTableToAutoBigCraftingTable"), null, new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE)));
-		GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "hugeCraftingTableToAutoHugeCraftingTable"), null, new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1, 1)));
 	}
 
 	@Mod.EventHandler

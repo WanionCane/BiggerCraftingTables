@@ -1,19 +1,23 @@
 itemGroup.biggercraftingtables=Bigger Crafting Tables
+bigger.clear.shape=Click to Clear Recipe
 
+// Big
 tile.biggercraftingtables.bigtable.name=Big Crafting Table
-tile.biggercraftingtables.hugetable.name=Huge Crafting Table
-
 tile.biggercraftingtables.autobigtable.name=Auto Big Crafting Table
-tile.biggercraftingtables.autohugetable.name=Auto Huge Crafting Table
-
 container.bigcraftingtable=Big Crafting Table
-container.hugecraftingtable=Huge Crafting Table
-
 container.autobigcraftingtable=Auto Big Crafting Table
-container.autohugecraftingtable=Auto Huge Crafting Table
-
 crafting.big=Big Recipe
 
+// Huge
+tile.biggercraftingtables.hugetable.name=Huge Crafting Table
+tile.biggercraftingtables.autohugetable.name=Auto Huge Crafting Table
+container.hugecraftingtable=Huge Crafting Table
+container.autohugecraftingtable=Auto Huge Crafting Table
 crafting.huge=Huge Recipe
 
-bigger.clear.shape=Click to Clear Recipe
+// Giant
+tile.biggercraftingtables.gianttable.name=Giant Crafting Table
+tile.biggercraftingtables.autogianttable.name=Auto Giant Crafting Table
+container.giantcraftingtable=Giant Crafting Table
+container.autogiantcraftingtable=Auto Giant Crafting Table
+crafting.giant=Giant Recipe

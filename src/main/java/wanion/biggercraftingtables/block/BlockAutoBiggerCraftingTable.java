@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.big.TileEntityAutoBigCraftingTable;
+import wanion.biggercraftingtables.block.giant.TileEntityAutoGiantCraftingTable;
 import wanion.biggercraftingtables.block.huge.TileEntityAutoHugeCraftingTable;
 
 import javax.annotation.Nonnull;
@@ -56,6 +57,8 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 				return new TileEntityAutoBigCraftingTable();
 			case 1:
 				return new TileEntityAutoHugeCraftingTable();
+			case 2:
+				return new TileEntityAutoGiantCraftingTable();
 			default:
 				return null;
 		}
@@ -64,10 +67,9 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 	@Override
 	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
 	{
-		if (creativeTabs == this.getCreativeTabToDisplayOn()){
-			for (int i = 0; i < 2; i++)
+		if (creativeTabs == this.getCreativeTabToDisplayOn())
+			for (int i = 0; i < Reference.TableTypes.values().length; i++)
 				items.add(new ItemStack(this, 1, i));
-		}
 	}
 
 	@Override
@@ -79,6 +81,8 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_BIG_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 			else if (tileEntity instanceof TileEntityAutoHugeCraftingTable)
 				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_HUGE_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+			else if (tileEntity instanceof TileEntityAutoGiantCraftingTable)
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_GIANT_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 			else
 				return false;
 		}
@@ -127,8 +131,10 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 		if (world == null)
 			return;
 		final TileEntity tileEntity = world.getTileEntity(blockPos);
-		if (tileEntity instanceof TileEntityAutoBiggerCraftingTable && itemStack.hasTagCompound())
+		if (tileEntity instanceof TileEntityAutoBiggerCraftingTable && itemStack.hasTagCompound()) {
 			((TileEntityAutoBiggerCraftingTable) tileEntity).readCustomNBT(itemStack.getTagCompound());
+			((TileEntityAutoBiggerCraftingTable) tileEntity).recipeShapeChanged();
+		}
 	}
 
 	public BlockStateContainer createBlockState()

@@ -19,6 +19,11 @@
         "textures": {
           "top": "biggercraftingtables:blocks/huge_crafting_table_top"
         }
+      },
+      "giant": {
+        "textures": {
+          "top": "biggercraftingtables:blocks/giant_crafting_table_top"
+        }
       }
     },
     "normal": [

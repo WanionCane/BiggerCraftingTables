@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.big.TileEntityBigCraftingTable;
+import wanion.biggercraftingtables.block.giant.TileEntityGiantCraftingTable;
 import wanion.biggercraftingtables.block.huge.TileEntityHugeCraftingTable;
 
 import javax.annotation.Nonnull;
@@ -56,6 +57,8 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 				return new TileEntityBigCraftingTable();
 			case 1:
 				return new TileEntityHugeCraftingTable();
+			case 2:
+				return new TileEntityGiantCraftingTable();
 			default:
 				return null;
 		}
@@ -64,10 +67,9 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 	@Override
 	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
 	{
-		if (creativeTabs == this.getCreativeTabToDisplayOn()){
-			for (int i = 0; i < 2; i++)
+		if (creativeTabs == this.getCreativeTabToDisplayOn())
+			for (int i = 0; i < Reference.TableTypes.values().length; i++)
 				items.add(new ItemStack(this, 1, i));
-		}
 	}
 
 	@Override
@@ -79,6 +81,8 @@ public final class BlockBiggerCraftingTable extends BlockContainer
 				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_BIG_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 			else if (tileEntity instanceof TileEntityHugeCraftingTable)
 				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+			else if (tileEntity instanceof TileEntityGiantCraftingTable)
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_GIANT_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 			else
 				return false;
 		}

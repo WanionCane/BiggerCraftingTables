@@ -28,6 +28,7 @@ public class BiggerAutoCraftingJeiTransfer implements IMessage
 		this.output = output;
 	}
 
+	@SuppressWarnings("unused")
 	public BiggerAutoCraftingJeiTransfer() {}
 
 	@Override

@@ -35,9 +35,9 @@ public final class ContainerAutoBigCraftingTable extends ContainerAutoBiggerCraf
 		addSlotToContainer(new SpecialSlot(tileEntityAutoBiggerCraftingTable, 50, 202, 82));
 		for (int y = 0; y < 3; y++)
 			for (int x = 0; x < 9; x++)
-				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, 8 + (18 * x), 122 + (18 * y)));
+				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, 35 + (18 * x), 122 + (18 * y)));
 		for (int i = 0; i < 9; i++)
-			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + (18 * i), 180));
+			addSlotToContainer(new Slot(inventoryPlayer, i, 35 + (18 * i), 180));
 	}
 
 	@Nonnull

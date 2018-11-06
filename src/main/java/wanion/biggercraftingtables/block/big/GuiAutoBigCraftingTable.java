@@ -55,7 +55,7 @@ public final class GuiAutoBigCraftingTable extends GuiAutoBiggerCraftingTable
 	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
 	{
 		fontRenderer.drawString(I18n.format(tileEntityAutoBigCraftingTable.getName()), 7, 7, 0x404040);
-		fontRenderer.drawString(I18n.format("container.inventory"), 7, 111, 0x404040);
+		fontRenderer.drawString(I18n.format("container.inventory"), 34, 111, 0x404040);
 	}
 
 	@Override

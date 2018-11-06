@@ -1,4 +1,4 @@
-package wanion.biggercraftingtables.block.huge;
+package wanion.biggercraftingtables.block.giant;
 
 /*
  * Created by WanionCane(https://github.com/WanionCane).
@@ -25,17 +25,17 @@ import javax.annotation.Nonnull;
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 @SideOnly(Side.CLIENT)
-public final class GuiAutoHugeCraftingTable extends GuiAutoBiggerCraftingTable
+public final class GuiAutoGiantCraftingTable extends GuiAutoBiggerCraftingTable
 {
-	private static final ResourceLocation autoHugeCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/auto_huge_crafting_table.png");
-	private final TileEntityAutoHugeCraftingTable tileEntityAutoHugeCraftingTable;
+	private static final ResourceLocation autoGiantCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/auto_giant_crafting_table.png");
+	private final TileEntityAutoGiantCraftingTable tileEntityAutoGiantCraftingTable;
 
-	public GuiAutoHugeCraftingTable(@Nonnull final TileEntityAutoHugeCraftingTable tileEntityAutoHugeCraftingTable, final InventoryPlayer inventoryPlayer)
+	public GuiAutoGiantCraftingTable(@Nonnull final TileEntityAutoGiantCraftingTable tileEntityAutoGiantCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
-		super(new ContainerAutoHugeCraftingTable(tileEntityAutoHugeCraftingTable, inventoryPlayer));
-		this.tileEntityAutoHugeCraftingTable = tileEntityAutoHugeCraftingTable;
-		xSize = 302;
-		ySize = 240;
+		super(new ContainerAutoGiantCraftingTable(tileEntityAutoGiantCraftingTable, inventoryPlayer));
+		this.tileEntityAutoGiantCraftingTable = tileEntityAutoGiantCraftingTable;
+		xSize = 374;
+		ySize = 276;
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public final class GuiAutoHugeCraftingTable extends GuiAutoBiggerCraftingTable
 	protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.getTextureManager().bindTexture(autoHugeCraftingTexture);
+		mc.getTextureManager().bindTexture(autoGiantCraftingTexture);
 		final Tessellator tessellator = Tessellator.getInstance();
 		final BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
@@ -64,14 +64,14 @@ public final class GuiAutoHugeCraftingTable extends GuiAutoBiggerCraftingTable
 	@Override
 	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
 	{
-		fontRenderer.drawString(I18n.format(tileEntityAutoHugeCraftingTable.getName()), 7, 7, 0x404040);
-		fontRenderer.drawString(I18n.format("container.inventory"), 70, 147, 0x404040);
+		fontRenderer.drawString(I18n.format(tileEntityAutoGiantCraftingTable.getName()), 7, 7, 0x404040);
+		fontRenderer.drawString(I18n.format("container.inventory"), 106, 183, 0x404040);
 	}
 
 	@Override
 	protected void renderToolTip(@Nonnull final ItemStack stack, final int x, final int y)
 	{
-		if (super.isPointInRegion(274, 72, 16, 16, x, y))
+		if (super.isPointInRegion(346, 90, 16, 16, x, y))
 			drawClearRecipeToolTip(stack, x, y);
 		else super.renderToolTip(stack, x, y);
 	}

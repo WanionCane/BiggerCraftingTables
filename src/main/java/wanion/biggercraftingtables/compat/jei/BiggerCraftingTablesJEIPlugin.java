@@ -19,16 +19,24 @@ import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;
 import wanion.biggercraftingtables.block.big.ContainerBigCraftingTable;
 import wanion.biggercraftingtables.block.big.GuiAutoBigCraftingTable;
 import wanion.biggercraftingtables.block.big.GuiBigCraftingTable;
+import wanion.biggercraftingtables.block.giant.ContainerGiantCraftingTable;
+import wanion.biggercraftingtables.block.giant.GuiAutoGiantCraftingTable;
+import wanion.biggercraftingtables.block.giant.GuiGiantCraftingTable;
 import wanion.biggercraftingtables.block.huge.ContainerHugeCraftingTable;
 import wanion.biggercraftingtables.block.huge.GuiAutoHugeCraftingTable;
 import wanion.biggercraftingtables.block.huge.GuiHugeCraftingTable;
 import wanion.biggercraftingtables.compat.jei.big.AutoBigRecipeTransferHandler;
 import wanion.biggercraftingtables.compat.jei.big.BigRecipeCategory;
+import wanion.biggercraftingtables.compat.jei.giant.AutoGiantRecipeTransferHandler;
+import wanion.biggercraftingtables.compat.jei.giant.GiantRecipeCategory;
 import wanion.biggercraftingtables.compat.jei.huge.AutoHugeRecipeTransferHandler;
 import wanion.biggercraftingtables.compat.jei.huge.HugeRecipeCategory;
 import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
 import wanion.biggercraftingtables.recipe.big.ShapedBigRecipe;
 import wanion.biggercraftingtables.recipe.big.ShapelessBigRecipe;
+import wanion.biggercraftingtables.recipe.giant.GiantRecipeRegistry;
+import wanion.biggercraftingtables.recipe.giant.ShapedGiantRecipe;
+import wanion.biggercraftingtables.recipe.giant.ShapelessGiantRecipe;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 import wanion.biggercraftingtables.recipe.huge.ShapedHugeRecipe;
 import wanion.biggercraftingtables.recipe.huge.ShapelessHugeRecipe;
@@ -38,6 +46,7 @@ public final class BiggerCraftingTablesJEIPlugin implements IModPlugin
 {
 	public static final String BIG_CRAFTING = "biggerct.big";
 	public static final String HUGE_CRAFTING = "biggerct.huge";
+	public static final String GIANT_CRAFTING = "biggerct.giant";
 	static IJeiHelpers jeiHelpers;
 
 	@Override
@@ -45,6 +54,7 @@ public final class BiggerCraftingTablesJEIPlugin implements IModPlugin
 	{
 		recipeCategoryRegistration.addRecipeCategories(new BigRecipeCategory(recipeCategoryRegistration.getJeiHelpers().getGuiHelper()));
 		recipeCategoryRegistration.addRecipeCategories(new HugeRecipeCategory(recipeCategoryRegistration.getJeiHelpers().getGuiHelper()));
+		recipeCategoryRegistration.addRecipeCategories(new GiantRecipeCategory(recipeCategoryRegistration.getJeiHelpers().getGuiHelper()));
 	}
 
 	@Override
@@ -73,5 +83,16 @@ public final class BiggerCraftingTablesJEIPlugin implements IModPlugin
 		modRegistry.getRecipeTransferRegistry().addRecipeTransferHandler(new AutoHugeRecipeTransferHandler(), HUGE_CRAFTING);
 		modRegistry.addRecipeClickArea(GuiHugeCraftingTable.class, 136, 77, 3, 6, HUGE_CRAFTING);
 		modRegistry.addRecipeClickArea(GuiAutoHugeCraftingTable.class, 267, 77, 3, 6, HUGE_CRAFTING);
+
+		// Giant
+		modRegistry.addRecipes(GiantRecipeRegistry.INSTANCE.getAllRecipes(), GIANT_CRAFTING);
+		modRegistry.handleRecipes(ShapedGiantRecipe.class, BiggerRecipeWrapper::new, GIANT_CRAFTING);
+		modRegistry.handleRecipes(ShapelessGiantRecipe.class, BiggerRecipeWrapper::new, GIANT_CRAFTING);
+		modRegistry.addRecipeCatalyst(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1, 2), GIANT_CRAFTING);
+		modRegistry.addRecipeCatalyst(new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1, 2), GIANT_CRAFTING);
+		modRegistry.getRecipeTransferRegistry().addRecipeTransferHandler(ContainerGiantCraftingTable.class, GIANT_CRAFTING, 0, 81, 82, 36);
+		modRegistry.getRecipeTransferRegistry().addRecipeTransferHandler(new AutoGiantRecipeTransferHandler(), GIANT_CRAFTING);
+		modRegistry.addRecipeClickArea(GuiGiantCraftingTable.class, 172, 95, 3, 6, GIANT_CRAFTING);
+		modRegistry.addRecipeClickArea(GuiAutoGiantCraftingTable.class, 339, 95, 3, 6, GIANT_CRAFTING);
 	}
 }

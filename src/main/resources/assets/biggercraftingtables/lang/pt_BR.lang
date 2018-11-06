@@ -1,13 +1,19 @@
+bigger.clear.shape=Clique para Limpar a Receita
+
+// Big
 tile.biggercraftingtables.bigtable.name=Bancada de Trabalho Grande
-tile.biggercraftingtables.hugetable.name=Bancada de Trabalho Enorme
-
 tile.biggercraftingtables.autobigtable.name=Bancada de Trabalho Grande Automática
-tile.biggercraftingtables.autohugetable.name=Bancada de Trabalho Enorme Automática
-
 container.bigcraftingtable=Bancada de Trabalho Grande
-container.hugecraftingtable=Bancada de Trabalho Enorme
-
 container.autobigcraftingtable=Bancada de Trabalho Grande Automática
+
+// Huge
+tile.biggercraftingtables.hugetable.name=Bancada de Trabalho Enorme
+tile.biggercraftingtables.autohugetable.name=Bancada de Trabalho Enorme Automática
+container.hugecraftingtable=Bancada de Trabalho Enorme
 container.autohugecraftingtable=Bancada de Trabalho Enorme Automática
 
-bigger.clear.shape=Clique para Limpar a Receita
+// Giant
+tile.biggercraftingtables.gianttable.name=Bancada de Trabalho Gigante
+tile.biggercraftingtables.autogianttable.name=Bancada de Trabalho Gigante Automática
+container.giantcraftingtable=Bancada de Trabalho Gigante
+container.autogiantcraftingtable=Bancada de Trabalho Gigante Automática

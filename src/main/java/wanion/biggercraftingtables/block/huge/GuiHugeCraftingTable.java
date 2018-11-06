@@ -48,7 +48,6 @@ public final class GuiHugeCraftingTable extends GuiContainer
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(hugeCraftingTexture);
 		drawTexturedModalRect((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
-
 	}
 
 	@Override

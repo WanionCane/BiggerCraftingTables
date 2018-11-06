@@ -31,7 +31,7 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 	public ContainerBigCraftingTable(@Nonnull final TileEntityBigCraftingTable tileEntityBigCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
 		super(tileEntityBigCraftingTable);
-		craftingMatrix = new CraftingBigCraftingTable(this, tileEntityBigCraftingTable);
+		craftingMatrix = new CraftingBiggerCraftingTable(this, 5);
 		craftingResult = new CraftResultBiggerCraftingTable(tileEntityBigCraftingTable, 25);
 		for (int y = 0; y < 5; y++)
 			for (int x = 0; x < 5; x++)
