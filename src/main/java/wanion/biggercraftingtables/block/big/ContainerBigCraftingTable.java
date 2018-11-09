@@ -45,13 +45,6 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 		onCraftMatrixChanged(craftingMatrix);
 	}
 
-	@Override
-	public void onCraftMatrixChanged(final IInventory inventory)
-	{
-		final IBigRecipe IBigRecipe = BigRecipeRegistry.INSTANCE.findMatchingRecipe(craftingMatrix);
-		craftingResult.setInventorySlotContents(0, IBigRecipe != null ? IBigRecipe.getOutput() : ItemStack.EMPTY);
-	}
-
 	@Nonnull
 	@Override
 	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
@@ -78,5 +71,12 @@ public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTabl
 				actualSlot.onTake(entityPlayer, itemstack1);
 		}
 		return itemstack != null ? itemstack : ItemStack.EMPTY;
+	}
+
+	@Override
+	public void onCraftMatrixChanged(final IInventory inventory)
+	{
+		final IBigRecipe IBigRecipe = BigRecipeRegistry.INSTANCE.findMatchingRecipe(craftingMatrix);
+		craftingResult.setInventorySlotContents(0, IBigRecipe != null ? IBigRecipe.getOutput() : ItemStack.EMPTY);
 	}
 }

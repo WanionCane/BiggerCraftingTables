@@ -46,6 +46,13 @@ public final class GuiGiantCraftingTable extends GuiContainer
 	}
 
 	@Override
+	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
+	{
+		fontRenderer.drawString(I18n.format(tileEntityGiantCraftingTable.getName()), 7, 7, 0x404040);
+		fontRenderer.drawString(I18n.format("container.inventory"), 7, 183, 0x404040);
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -58,12 +65,5 @@ public final class GuiGiantCraftingTable extends GuiContainer
 		bufferbuilder.pos(guiLeft + ySize, guiTop + ySize, 0.0D).tex(1, 1).endVertex();
 		bufferbuilder.pos(guiLeft + ySize, guiTop, 0.0D).tex(1, 0).endVertex();
 		tessellator.draw();
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
-	{
-		fontRenderer.drawString(I18n.format(tileEntityGiantCraftingTable.getName()), 7, 7, 0x404040);
-		fontRenderer.drawString(I18n.format("container.inventory"), 7, 183, 0x404040);
 	}
 }

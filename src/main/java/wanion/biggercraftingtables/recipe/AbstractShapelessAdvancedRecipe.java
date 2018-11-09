@@ -21,9 +21,9 @@ import java.util.List;
 
 public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 {
+	public final List<Object> inputs;
 	private final ItemStack output;
 	private final short recipeSize;
-	public final List<Object> inputs;
 
 	public AbstractShapelessAdvancedRecipe(@Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{
@@ -56,8 +56,12 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 			throw new RuntimeException("Invalid " + getRecipeType());
 		this.inputs = NonNullList.withSize(this.recipeSize = recipeSize, ItemStack.EMPTY);
 		for (int i = 0; i < temporaryInputs.size(); i++)
-			this.inputs.set(i, temporaryInputs	.get(i));
+			this.inputs.set(i, temporaryInputs.get(i));
 	}
+
+	public abstract String getRecipeType();
+
+	public abstract short getMaxRecipeSize();
 
 	@Override
 	public boolean isShaped()
@@ -102,10 +106,6 @@ public abstract class AbstractShapelessAdvancedRecipe implements IAdvancedRecipe
 	{
 		return output.copy();
 	}
-
-	public abstract String getRecipeType();
-
-	public abstract short getMaxRecipeSize();
 
 	@SuppressWarnings("unchecked")
 	@Override

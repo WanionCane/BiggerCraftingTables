@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import wanion.biggercraftingtables.Reference;
 
-public final class  ItemBlockBiggerCraftingTable extends ItemBlock
+public final class ItemBlockBiggerCraftingTable extends ItemBlock
 {
 	public static final ItemBlockBiggerCraftingTable INSTANCE = new ItemBlockBiggerCraftingTable();
 

@@ -21,11 +21,11 @@ import java.util.List;
 
 public abstract class AbstractShapedAdvancedRecipe implements IAdvancedRecipe
 {
+	public final List<Object> inputs;
+	public final int squareRoot;
 	private final ItemStack output;
 	private final short recipeKey, recipeSize;
 	private final short width, height;
-	public final List<Object> inputs;
-	public final int squareRoot;
 
 	public AbstractShapedAdvancedRecipe(final int squareRoot, @Nonnull final ItemStack output, @Nonnull final Object... inputs)
 	{

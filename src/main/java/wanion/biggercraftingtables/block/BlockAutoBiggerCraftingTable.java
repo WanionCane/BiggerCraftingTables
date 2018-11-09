@@ -65,28 +65,15 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 	}
 
 	@Override
-	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
+	public IBlockState getStateFromMeta(final int metadata)
 	{
-		if (creativeTabs == this.getCreativeTabToDisplayOn())
-			for (int i = 0; i < Reference.TableTypes.values().length; i++)
-				items.add(new ItemStack(this, 1, i));
+		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getValue(metadata));
 	}
 
 	@Override
-	public boolean onBlockActivated(final World world, final BlockPos blockPos, final IBlockState state, final EntityPlayer entityPlayer, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
+	public int getMetaFromState(final IBlockState blockState)
 	{
-		if (world != null && !world.isRemote) {
-			final TileEntity tileEntity = world.getTileEntity(blockPos);
-			if (tileEntity instanceof TileEntityAutoBigCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_BIG_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
-			else if (tileEntity instanceof TileEntityAutoHugeCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_HUGE_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
-			else if (tileEntity instanceof TileEntityAutoGiantCraftingTable)
-				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_GIANT_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
-			else
-				return false;
-		}
-		return true;
+		return blockState.getValue(Reference.TABLE_TYPES).getMetadata();
 	}
 
 	@Nonnull
@@ -102,11 +89,60 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 		return getMetaFromState(state);
 	}
 
+	@Override
+	public boolean onBlockActivated(final World world, final BlockPos blockPos, final IBlockState state, final EntityPlayer entityPlayer, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
+	{
+		if (world != null) {
+			final TileEntity tileEntity = world.getTileEntity(blockPos);
+			if (tileEntity instanceof TileEntityAutoBigCraftingTable)
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_BIG_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+			else if (tileEntity instanceof TileEntityAutoHugeCraftingTable)
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_HUGE_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+			else if (tileEntity instanceof TileEntityAutoGiantCraftingTable)
+				FMLNetworkHandler.openGui(entityPlayer, BiggerCraftingTables.instance, BiggerCraftingTables.GUI_ID_AUTO_GIANT_CRAFTING_TABLE, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
+			else
+				return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void onBlockPlacedBy(final World world, final BlockPos blockPos, final IBlockState blockState, final EntityLivingBase entityLivingBase, final ItemStack itemStack)
+	{
+		if (world == null)
+			return;
+		final TileEntity tileEntity = world.getTileEntity(blockPos);
+		if (tileEntity instanceof TileEntityAutoBiggerCraftingTable && itemStack.hasTagCompound()) {
+			((TileEntityAutoBiggerCraftingTable) tileEntity).readCustomNBT(itemStack.getTagCompound());
+			((TileEntityAutoBiggerCraftingTable) tileEntity).recipeShapeChanged();
+		}
+	}
+
+	@Override
+	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
+	{
+		if (creativeTabs == this.getCreativeTabToDisplayOn())
+			for (int i = 0; i < Reference.TableTypes.values().length; i++)
+				items.add(new ItemStack(this, 1, i));
+	}
+
+	public BlockStateContainer createBlockState()
+	{
+		return new BlockStateContainer(this, Reference.TABLE_TYPES);
+	}
+
 	@Nonnull
 	@Override
 	public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity)
 	{
 		return SoundType.WOOD;
+	}
+
+	@Nonnull
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state)
+	{
+		return EnumBlockRenderType.MODEL;
 	}
 
 	@Override
@@ -123,40 +159,5 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 			world.spawnEntity(new EntityItem(world, blockPos.getX() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, blockPos.getY() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, blockPos.getZ() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, droppedStack));
 		}
 		super.breakBlock(world, blockPos, blockState);
-	}
-
-	@Override
-	public void onBlockPlacedBy(final World world, final BlockPos blockPos, final IBlockState blockState, final EntityLivingBase entityLivingBase, final ItemStack itemStack)
-	{
-		if (world == null)
-			return;
-		final TileEntity tileEntity = world.getTileEntity(blockPos);
-		if (tileEntity instanceof TileEntityAutoBiggerCraftingTable && itemStack.hasTagCompound()) {
-			((TileEntityAutoBiggerCraftingTable) tileEntity).readCustomNBT(itemStack.getTagCompound());
-			((TileEntityAutoBiggerCraftingTable) tileEntity).recipeShapeChanged();
-		}
-	}
-
-	public BlockStateContainer createBlockState()
-	{
-		return new BlockStateContainer(this, Reference.TABLE_TYPES);
-	}
-
-	@Override
-	public int getMetaFromState(final IBlockState blockState)
-	{
-		return blockState.getValue(Reference.TABLE_TYPES).metadata;
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(final int metadata)
-	{
-		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getValue(metadata));
-	}
-
-	@Nonnull
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
-		return EnumBlockRenderType.MODEL;
 	}
 }

@@ -15,7 +15,6 @@ import net.minecraft.util.text.ITextComponent;
 import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public final class CraftResultBiggerCraftingTable implements IInventory
 {
@@ -67,26 +66,6 @@ public final class CraftResultBiggerCraftingTable implements IInventory
 		tileEntityBiggerCraftingTable.setInventorySlotContents(this.slot, itemStack);
 	}
 
-	@Nonnull
-	@Override
-	public String getName()
-	{
-		return tileEntityBiggerCraftingTable.getName();
-	}
-
-	@Override
-	public boolean hasCustomName()
-	{
-		return tileEntityBiggerCraftingTable.hasCustomName();
-	}
-
-	@Nonnull
-	@Override
-	public ITextComponent getDisplayName()
-	{
-		return tileEntityBiggerCraftingTable.getDisplayName();
-	}
-
 	@Override
 	public int getInventoryStackLimit()
 	{
@@ -134,4 +113,24 @@ public final class CraftResultBiggerCraftingTable implements IInventory
 
 	@Override
 	public void clear() {}
+
+	@Nonnull
+	@Override
+	public String getName()
+	{
+		return tileEntityBiggerCraftingTable.getName();
+	}
+
+	@Override
+	public boolean hasCustomName()
+	{
+		return tileEntityBiggerCraftingTable.hasCustomName();
+	}
+
+	@Nonnull
+	@Override
+	public ITextComponent getDisplayName()
+	{
+		return tileEntityBiggerCraftingTable.getDisplayName();
+	}
 }

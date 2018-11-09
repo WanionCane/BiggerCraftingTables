@@ -9,10 +9,7 @@ package wanion.biggercraftingtables;
  */
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -20,12 +17,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
-import wanion.biggercraftingtables.block.ItemBlockAutoBiggerCraftingTable;
-import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;
 import wanion.biggercraftingtables.proxy.CommonProxy;
 
 import java.util.Map;
@@ -36,11 +30,6 @@ import static wanion.biggercraftingtables.Reference.*;
 @Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = DEPENDENCIES, acceptedMinecraftVersions = TARGET_MC_VERSION)
 public class BiggerCraftingTables
 {
-	@Mod.Instance
-	public static BiggerCraftingTables instance;
-
-	public static SimpleNetworkWrapper networkWrapper;
-
 	public static final int
 			GUI_ID_BIG_CRAFTING_TABLE = 0,
 			GUI_ID_AUTO_BIG_CRAFTING_TABLE = 1,
@@ -48,9 +37,6 @@ public class BiggerCraftingTables
 			GUI_ID_AUTO_HUGE_CRAFTING_TABLE = 3,
 			GUI_ID_GIANT_CRAFTING_TABLE = 4,
 			GUI_ID_AUTO_GIANT_CRAFTING_TABLE = 5;
-
-	@SidedProxy(clientSide = CLIENT_PROXY, serverSide = SERVER_PROXY)
-	public static CommonProxy proxy;
 
 	public static final CreativeTabs creativeTabs = new CreativeTabs(MOD_ID)
 	{
@@ -61,6 +47,12 @@ public class BiggerCraftingTables
 			return new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 0);
 		}
 	};
+
+	@Mod.Instance
+	public static BiggerCraftingTables instance;
+	@SidedProxy(clientSide = CLIENT_PROXY, serverSide = SERVER_PROXY)
+	public static CommonProxy proxy;
+	public static SimpleNetworkWrapper networkWrapper;
 
 	@Mod.EventHandler
 	public void preInit(final FMLPreInitializationEvent event)

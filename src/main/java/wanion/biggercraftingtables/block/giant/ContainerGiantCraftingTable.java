@@ -18,7 +18,6 @@ import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
 import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
 import wanion.biggercraftingtables.inventory.slot.BiggerCraftingSlot;
 import wanion.biggercraftingtables.recipe.giant.GiantRecipeRegistry;
-import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 
 import javax.annotation.Nonnull;
 
@@ -44,13 +43,6 @@ public final class ContainerGiantCraftingTable extends ContainerBiggerCraftingTa
 		for (int i = 0; i < 9; i++)
 			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + (18 * i), 252));
 		onCraftMatrixChanged(craftingMatrix);
-	}
-
-	@Override
-	public void onCraftMatrixChanged(final IInventory inventory)
-	{
-		final IGiantRecipe giantRecipe = GiantRecipeRegistry.INSTANCE.findMatchingRecipe(craftingMatrix);
-		craftingResult.setInventorySlotContents(0, giantRecipe != null ? giantRecipe.getOutput() : ItemStack.EMPTY);
 	}
 
 	@Nonnull
@@ -79,5 +71,12 @@ public final class ContainerGiantCraftingTable extends ContainerBiggerCraftingTa
 				actualSlot.onTake(entityPlayer, itemstack1);
 		}
 		return itemstack != null ? itemstack : ItemStack.EMPTY;
+	}
+
+	@Override
+	public void onCraftMatrixChanged(final IInventory inventory)
+	{
+		final IGiantRecipe giantRecipe = GiantRecipeRegistry.INSTANCE.findMatchingRecipe(craftingMatrix);
+		craftingResult.setInventorySlotContents(0, giantRecipe != null ? giantRecipe.getOutput() : ItemStack.EMPTY);
 	}
 }

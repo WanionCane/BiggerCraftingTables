@@ -12,6 +12,7 @@ import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ISidedInventory;
@@ -29,25 +30,34 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import wanion.biggercraftingtables.BiggerCraftingTables;
+import wanion.biggercraftingtables.Config;
+import wanion.biggercraftingtables.network.BiggerAutoCraftingSyncEnergy;
 import wanion.lib.common.MetaItem;
+import wanion.lib.common.redstone.IRedstoneControllable;
+import wanion.lib.common.redstone.RedstoneControlState;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
 
-public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements ISidedInventory, ITickable
+public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements ISidedInventory, ITickable, IRedstoneControllable
 {
-	public final int full = getSizeInventory() - 2, half = full / 2;
+	public final int full = getSizeInventory() - 2, half = full / 2, powerConsumption = half * Config.INSTANCE.powerMultiplier;
 	private final BiggerCraftingMatrix biggerCraftingMatrix = new BiggerCraftingMatrix((int) Math.sqrt(half));
 	private final int[] slots;
 	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private R cachedRecipe = null;
 	private TIntIntMap patternMap = null;
 	private IItemHandler itemHandler = new ItemHandlerAutoBiggerCraftingTable(this);
+	private BiggerCraftingEnergyStorage biggerCraftingEnergyStorage = new BiggerCraftingEnergyStorage(powerConsumption * Config.INSTANCE.capacityMultiplier);
+	private RedstoneControlState redstoneControlState;
 
 	protected TileEntityAutoBiggerCraftingTable()
 	{
@@ -60,13 +70,18 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Override
 	public final void update()
 	{
-		if (world == null || world.isRemote || world.isBlockPowered(pos))
+		if (world == null || world.isRemote)
+			return;
+		if (redstoneControlState == RedstoneControlState.OFF && world.isBlockPowered(pos))
+			return;
+		else if (redstoneControlState == RedstoneControlState.ON && !world.isBlockPowered(pos))
 			return;
 		if (cachedRecipe == null) {
 			if (patternMap != null)
 				patternMap = null;
 			return;
-		}
+		} else if (biggerCraftingEnergyStorage.energy < powerConsumption)
+			return;
 		final ItemStack recipeStack = itemStacks.get(getSizeInventory() - 1);
 		final ItemStack outputStack = itemStacks.get(getSizeInventory() - 2);
 		if (recipeStack.isEmpty() || (!outputStack.isEmpty() && outputStack.getCount() == outputStack.getMaxStackSize()))
@@ -77,6 +92,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return;
 		else if (!outputStack.isEmpty() && outputStack.getCount() + recipeStack.getCount() > outputStack.getMaxStackSize() || !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
 			return;
+		biggerCraftingEnergyStorage.useEnergy(powerConsumption);
 		cleanInput();
 		if (outputStack.isEmpty())
 			itemStacks.set(getSizeInventory() - 2, recipeStack.copy());
@@ -84,28 +100,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			outputStack.setCount(outputStack.getCount() + recipeStack.getCount());
 		markDirty();
 	}
-
-	@Nonnull
-	@Override
-	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
-	{
-		return slots;
-	}
-
-	@Override
-	public boolean canInsertItem(final int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
-	{
-		return index < half;
-	}
-
-	@Override
-	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
-	{
-		return index == full || stack.getItem() == Items.BUCKET;
-	}
-
-	@Nonnull
-	public abstract AbstractRecipeRegistry<R> getRecipeRegistry();
 
 	private boolean matches(@Nonnull final TIntIntMap inputMap, @Nonnull final TIntIntMap patternMap)
 	{
@@ -116,13 +110,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return true;
 		} else
 			return false;
-	}
-
-	public final void recipeShapeChanged()
-	{
-		R matchedRecipe = getRecipeRegistry().findMatchingRecipe(biggerCraftingMatrix);
-		itemStacks.set(getSizeInventory() - 1, (cachedRecipe = matchedRecipe) != null ? cachedRecipe.getOutput().copy() : ItemStack.EMPTY);
-		patternMap = null;
 	}
 
 	private void cleanInput()
@@ -147,6 +134,28 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			}
 		}
 	}
+
+	@Nonnull
+	@Override
+	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
+	{
+		return slots;
+	}
+
+	@Override
+	public boolean canInsertItem(final int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
+	{
+		return index < half;
+	}
+
+	@Override
+	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
+	{
+		return index == full || stack.getItem() == Items.BUCKET;
+	}
+
+	@Nonnull
+	public abstract AbstractRecipeRegistry<R> getRecipeRegistry();
 
 	@Override
 	public boolean isEmpty()
@@ -207,7 +216,11 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Override
-	public void openInventory(@Nonnull final EntityPlayer player) {}
+	public void openInventory(@Nonnull final EntityPlayer player)
+	{
+		if (world != null && !world.isRemote && player instanceof EntityPlayerMP)
+			BiggerCraftingTables.networkWrapper.sendTo(new BiggerAutoCraftingSyncEnergy(getEnergyStored()), (EntityPlayerMP) player);
+	}
 
 	@Override
 	public void closeInventory(@Nonnull final EntityPlayer player) {}
@@ -221,20 +234,54 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Override
 	public int getField(final int id)
 	{
-		return 0;
+		return getRedstoneControlState().ordinal();
 	}
 
 	@Override
-	public void setField(final int id, final int value) {}
+	public void setField(final int id, final int value)
+	{
+		setRedstoneControlState(RedstoneControlState.getState(value));
+	}
 
 	@Override
 	public int getFieldCount()
 	{
-		return 0;
+		return 1;
 	}
 
 	@Override
-	public void clear() {}
+	public void clear()
+	{
+		biggerCraftingEnergyStorage.setEnergyStored(0);
+	}
+
+	public void setEnergyStored(final int energy)
+	{
+		biggerCraftingEnergyStorage.setEnergyStored(energy);
+	}
+
+	public int getEnergyStored()
+	{
+		return biggerCraftingEnergyStorage.getEnergyStored();
+	}
+
+	public int getEnergyCapacity()
+	{
+		return biggerCraftingEnergyStorage.getMaxEnergyStored();
+	}
+
+	public final void recipeShapeChanged()
+	{
+		R matchedRecipe = getRecipeRegistry().findMatchingRecipe(biggerCraftingMatrix);
+		itemStacks.set(getSizeInventory() - 1, (cachedRecipe = matchedRecipe) != null ? cachedRecipe.getOutput().copy() : ItemStack.EMPTY);
+		patternMap = null;
+	}
+
+	@Override
+	public boolean hasCustomName()
+	{
+		return false;
+	}
 
 	@Override
 	public final void readFromNBT(final NBTTagCompound nbtTagCompound)
@@ -294,18 +341,20 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Override
 	public boolean hasCapability(@Nonnull final Capability<?> capability, final EnumFacing facing)
 	{
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || capability == CapabilityEnergy.ENERGY;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(@Nonnull final Capability<T> capability, final EnumFacing facing)
 	{
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) itemHandler : super.getCapability(capability, facing);
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) itemHandler : capability == CapabilityEnergy.ENERGY ? (T) biggerCraftingEnergyStorage : super.getCapability(capability, facing);
 	}
 
 	void readCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
+		biggerCraftingEnergyStorage.setEnergyStored(nbtTagCompound.getInteger("Energy"));
+		redstoneControlState = RedstoneControlState.values()[MathHelper.clamp(nbtTagCompound.getInteger("RedstoneControl"), 0, RedstoneControlState.values().length - 1)];
 		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
 		final int max = getSizeInventory() - 1;
 		for (int i = 0; i < max; i++)
@@ -320,6 +369,8 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 
 	NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
+		nbtTagCompound.setInteger("Energy", biggerCraftingEnergyStorage.energy);
+		nbtTagCompound.setInteger("RedstoneControl", redstoneControlState.ordinal());
 		final NBTTagList nbtTagList = new NBTTagList();
 		final int max = getSizeInventory() - 1;
 		for (int i = 0; i < max; i++) {
@@ -334,10 +385,105 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		return nbtTagCompound;
 	}
 
-	@Override
-	public boolean hasCustomName()
+	@Nonnull
+	public final RedstoneControlState getRedstoneControlState()
 	{
-		return false;
+		return redstoneControlState != null ? redstoneControlState : RedstoneControlState.IGNORED;
+	}
+
+	@Override
+	public void setRedstoneControlState(@Nonnull final RedstoneControlState redstoneControlState)
+	{
+		this.redstoneControlState = redstoneControlState;
+	}
+
+	private final class BiggerCraftingMatrix extends InventoryCrafting
+	{
+		final int square;
+
+		private BiggerCraftingMatrix(final int squareRoot)
+		{
+			super(new Container()
+			{
+				@Override
+				public boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
+				{
+					return false;
+				}
+			}, squareRoot, squareRoot);
+			this.square = squareRoot * squareRoot;
+		}
+
+		@Override
+		@Nonnull
+		public ItemStack getStackInSlot(final int slot)
+		{
+			return itemStacks.get(square + slot);
+		}
+	}
+
+	private final class BiggerCraftingEnergyStorage implements IEnergyStorage
+	{
+		private int energy;
+		private int capacity;
+
+		private BiggerCraftingEnergyStorage(int capacity)
+		{
+			this.capacity = capacity;
+			this.energy = 0;
+		}
+
+		@Override
+		public int receiveEnergy(int maxReceive, boolean simulate)
+		{
+			if (!canReceive())
+				return 0;
+
+			int energyReceived = Math.min(capacity - energy, Math.min(this.capacity, maxReceive));
+			if (!simulate)
+				energy += energyReceived;
+			return energyReceived;
+		}
+
+		@Override
+		public int extractEnergy(int maxExtract, boolean simulate)
+		{
+			return 0;
+		}
+
+		@Override
+		public int getEnergyStored()
+		{
+			return energy;
+		}
+
+		@Override
+		public int getMaxEnergyStored()
+		{
+			return capacity;
+		}
+
+		@Override
+		public boolean canExtract()
+		{
+			return false;
+		}
+
+		@Override
+		public boolean canReceive()
+		{
+			return true;
+		}
+
+		private void useEnergy(final int energy)
+		{
+			this.energy -= energy;
+		}
+
+		private void setEnergyStored(final int energy)
+		{
+			this.energy = energy;
+		}
 	}
 
 	private static class ItemHandlerAutoBiggerCraftingTable extends InvWrapper
@@ -373,31 +519,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 					setStackInSlot(slot, ItemStack.EMPTY);
 				return newStack;
 			} else return ItemStack.EMPTY;
-		}
-	}
-
-	private final class BiggerCraftingMatrix extends InventoryCrafting
-	{
-		final int square;
-
-		private BiggerCraftingMatrix(final int squareRoot)
-		{
-			super(new Container()
-			{
-				@Override
-				public boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
-				{
-					return false;
-				}
-			}, squareRoot, squareRoot);
-			this.square = squareRoot * squareRoot;
-		}
-
-		@Override
-		@Nonnull
-		public ItemStack getStackInSlot(final int slot)
-		{
-			return itemStacks.get(square + slot);
 		}
 	}
 }

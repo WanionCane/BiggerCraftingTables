@@ -10,8 +10,6 @@ package wanion.biggercraftingtables.block.big;
 
 import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
 
-import javax.annotation.Nonnull;
-
 public final class TileEntityBigCraftingTable extends TileEntityBiggerCraftingTable
 {
 	@Override

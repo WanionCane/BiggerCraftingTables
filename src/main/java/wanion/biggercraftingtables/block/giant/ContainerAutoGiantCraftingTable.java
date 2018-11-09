@@ -24,7 +24,7 @@ public final class ContainerAutoGiantCraftingTable extends ContainerAutoBiggerCr
 {
 	public ContainerAutoGiantCraftingTable(@Nonnull TileEntityAutoGiantCraftingTable tileEntityAutoGiantCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
-		super(tileEntityAutoGiantCraftingTable);
+		super(tileEntityAutoGiantCraftingTable, inventoryPlayer.player);
 		for (int y = 0; y < 9; y++)
 			for (int x = 0; x < 9; x++)
 				addSlotToContainer(new Slot(tileEntityAutoGiantCraftingTable, y * 9 + x, 8 + (18 * x), 18 + (18 * y)));

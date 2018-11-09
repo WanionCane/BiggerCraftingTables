@@ -29,15 +29,6 @@ public final class BiggerCraftingSlot extends SpecialSlot
 		this.craftingMatrix = craftingMatrix;
 	}
 
-	@Nonnull
-	@Override
-	public ItemStack onTake(final EntityPlayer thePlayer, @Nonnull final ItemStack stack)
-	{
-		onCrafting(stack);
-		super.onTake(thePlayer, stack);
-		return stack;
-	}
-
 	@Override
 	protected void onCrafting(@Nonnull final ItemStack stack)
 	{
@@ -53,5 +44,14 @@ public final class BiggerCraftingSlot extends SpecialSlot
 				craftingMatrix.setInventorySlotContents(i, ItemStack.EMPTY);
 		}
 		containerBiggerCraftingTable.onCraftMatrixChanged(craftingMatrix);
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack onTake(final EntityPlayer thePlayer, @Nonnull final ItemStack stack)
+	{
+		onCrafting(stack);
+		super.onTake(thePlayer, stack);
+		return stack;
 	}
 }

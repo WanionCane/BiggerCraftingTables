@@ -1,4 +1,6 @@
 bigger.clear.shape=Clique para Limpar a Receita
+bigger.crafting.consumes=Consome %1$s FE
+bigger.crafting.operation=por operação
 
 // Big
 tile.biggercraftingtables.bigtable.name=Bancada de Trabalho Grande

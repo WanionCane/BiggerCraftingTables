@@ -10,20 +10,53 @@ package wanion.biggercraftingtables.block;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import wanion.lib.common.redstone.IRedstoneControllable;
+import wanion.lib.common.redstone.IRedstoneControllableProvider;
+import wanion.lib.common.redstone.RedstoneControlState;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class ContainerAutoBiggerCraftingTable extends Container
+public class ContainerAutoBiggerCraftingTable extends Container implements IRedstoneControllableProvider
 {
 	protected final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
+	private RedstoneControlState redstoneControlState;
 
-	public ContainerAutoBiggerCraftingTable(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable)
+	public ContainerAutoBiggerCraftingTable(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable, final EntityPlayer entityPlayer)
 	{
-		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
+		(this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable).openInventory(entityPlayer);
+	}
+
+	@Override
+	public void addListener(IContainerListener listener)
+	{
+		super.addListener(listener);
+		listener.sendAllWindowProperties(this, tileEntityAutoBiggerCraftingTable);
+	}
+
+	@Override
+	public void detectAndSendChanges()
+	{
+		super.detectAndSendChanges();
+		final RedstoneControlState redstoneControlState = getRedstoneControllable().getRedstoneControlState();
+		for (final IContainerListener containerListener : listeners) {
+			if (this.redstoneControlState != redstoneControlState)
+				containerListener.sendWindowProperty(this, 0, redstoneControlState.ordinal());
+		}
+		this.redstoneControlState = redstoneControlState;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void updateProgressBar(int id, int data)
+	{
+		if (id == 0)
+			tileEntityAutoBiggerCraftingTable.setRedstoneControlState(RedstoneControlState.getState(data));
 	}
 
 	@Override
@@ -70,6 +103,19 @@ public abstract class ContainerAutoBiggerCraftingTable extends Container
 	{
 		for (int i = startsIn; i < endsIn; i++)
 			inventorySlots.get(i).putStack(ItemStack.EMPTY);
+	}
+
+	@Nonnull
+	@Override
+	public IRedstoneControllable getRedstoneControllable()
+	{
+		return tileEntityAutoBiggerCraftingTable;
+	}
+
+	@Nonnull
+	public final TileEntityAutoBiggerCraftingTable getTile()
+	{
+		return tileEntityAutoBiggerCraftingTable;
 	}
 
 	private static ItemStack getStackInput(final Object input)

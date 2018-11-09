@@ -8,13 +8,17 @@ package wanion.biggercraftingtables.proxy;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
-import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;
+
+import javax.annotation.Nonnull;
 
 public final class ClientProxy extends CommonProxy
 {
@@ -34,5 +38,11 @@ public final class ClientProxy extends CommonProxy
 		// Giant
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCraftingTable.INSTANCE), 2, new ModelResourceLocation(Reference.MOD_ID + ":biggercraftingtable", "tabletypes=huge"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockAutoBiggerCraftingTable.INSTANCE), 2, new ModelResourceLocation(Reference.MOD_ID + ":autobiggercraftingtable", "tabletypes=huge"));
+	}
+
+	@Override
+	public EntityPlayer getEntityPlayerFromContext(@Nonnull final MessageContext messageContext)
+	{
+		return messageContext.side.isClient() ? Minecraft.getMinecraft().player : super.getEntityPlayerFromContext(messageContext);
 	}
 }

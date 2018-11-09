@@ -30,79 +30,6 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	public TileEntityBiggerCraftingTable() {}
 
 	@Override
-	public final void readFromNBT(final NBTTagCompound nbtTagCompound)
-	{
-		super.readFromNBT(nbtTagCompound);
-		readCustomNBT(nbtTagCompound);
-	}
-
-	@Nonnull
-	@Override
-	public NBTTagCompound writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
-	{
-		super.writeToNBT(nbtTagCompound);
-		writeCustomNBT(nbtTagCompound);
-		return nbtTagCompound;
-	}
-
-	@Override
-	public final SPacketUpdateTileEntity getUpdatePacket()
-	{
-		final NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
-	}
-
-	@Nonnull
-	@Override
-	public NBTTagCompound getUpdateTag()
-	{
-		return writeToNBT(new NBTTagCompound());
-	}
-
-	@Nonnull
-	public ITextComponent getDisplayName()
-	{
-		return new TextComponentTranslation(getName());
-	}
-
-	@Override
-	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
-	{
-		readFromNBT(packet.getNbtCompound());
-	}
-
-	void readCustomNBT(final NBTTagCompound nbtTagCompound)
-	{
-		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
-		final int max = getSizeInventory() - 1;
-		for (int i = 0; i < max; i++)
-			setInventorySlotContents(i, ItemStack.EMPTY);
-		for (int i = 0; i < nbtTagList.tagCount(); i++) {
-			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
-			final int slot = slotCompound.getShort("Slot");
-			if (slot >= 0 && slot < getSizeInventory())
-				setInventorySlotContents(slot, new ItemStack(slotCompound));
-		}
-	}
-
-	NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
-	{
-		final NBTTagList nbtTagList = new NBTTagList();
-		final int max = getSizeInventory() - 1;
-		for (int i = 0; i < max; i++) {
-			final ItemStack itemStack = getStackInSlot(i);
-			if (itemStack.isEmpty())
-				continue;
-			final NBTTagCompound slotCompound = new NBTTagCompound();
-			slotCompound.setShort("Slot", (short) i);
-			nbtTagList.appendTag(itemStack.writeToNBT(slotCompound));
-		}
-		nbtTagCompound.setTag("Contents", nbtTagList);
-		return nbtTagCompound;
-	}
-
-	@Override
 	public boolean isEmpty()
 	{
 		for (final ItemStack itemStack : itemStacks)
@@ -179,9 +106,7 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	}
 
 	@Override
-	public void setField(final int id, final int value)
-	{
-	}
+	public void setField(final int id, final int value) {}
 
 	@Override
 	public int getFieldCount()
@@ -190,7 +115,80 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	}
 
 	@Override
-	public void clear() { }
+	public void clear() {}
+
+	@Override
+	public final void readFromNBT(final NBTTagCompound nbtTagCompound)
+	{
+		super.readFromNBT(nbtTagCompound);
+		readCustomNBT(nbtTagCompound);
+	}
+
+	@Nonnull
+	@Override
+	public NBTTagCompound writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
+	{
+		super.writeToNBT(nbtTagCompound);
+		writeCustomNBT(nbtTagCompound);
+		return nbtTagCompound;
+	}
+
+	@Override
+	public final SPacketUpdateTileEntity getUpdatePacket()
+	{
+		final NBTTagCompound nbttagcompound = new NBTTagCompound();
+		writeToNBT(nbttagcompound);
+		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
+	}
+
+	@Nonnull
+	@Override
+	public NBTTagCompound getUpdateTag()
+	{
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Nonnull
+	public ITextComponent getDisplayName()
+	{
+		return new TextComponentTranslation(getName());
+	}
+
+	@Override
+	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
+	{
+		readFromNBT(packet.getNbtCompound());
+	}
+
+	void readCustomNBT(final NBTTagCompound nbtTagCompound)
+	{
+		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
+		final int max = getSizeInventory() - 1;
+		for (int i = 0; i < max; i++)
+			setInventorySlotContents(i, ItemStack.EMPTY);
+		for (int i = 0; i < nbtTagList.tagCount(); i++) {
+			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
+			final int slot = slotCompound.getShort("Slot");
+			if (slot >= 0 && slot < getSizeInventory())
+				setInventorySlotContents(slot, new ItemStack(slotCompound));
+		}
+	}
+
+	NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
+	{
+		final NBTTagList nbtTagList = new NBTTagList();
+		final int max = getSizeInventory() - 1;
+		for (int i = 0; i < max; i++) {
+			final ItemStack itemStack = getStackInSlot(i);
+			if (itemStack.isEmpty())
+				continue;
+			final NBTTagCompound slotCompound = new NBTTagCompound();
+			slotCompound.setShort("Slot", (short) i);
+			nbtTagList.appendTag(itemStack.writeToNBT(slotCompound));
+		}
+		nbtTagCompound.setTag("Contents", nbtTagList);
+		return nbtTagCompound;
+	}
 
 	@Nonnull
 	@Override

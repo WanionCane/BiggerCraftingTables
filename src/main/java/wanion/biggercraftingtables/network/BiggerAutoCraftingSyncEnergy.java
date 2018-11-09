@@ -10,7 +10,6 @@ package wanion.biggercraftingtables.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,42 +17,38 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.block.ContainerAutoBiggerCraftingTable;
 
-public class BiggerAutoCraftingJeiTransfer implements IMessage
+public final class BiggerAutoCraftingSyncEnergy implements IMessage
 {
-	private short recipeKey;
-	private ItemStack output;
+	private int energy;
 
-	public BiggerAutoCraftingJeiTransfer(short recipeKey, final ItemStack output)
+	public BiggerAutoCraftingSyncEnergy(final int energy)
 	{
-		this.recipeKey = recipeKey;
-		this.output = output;
+		this.energy = energy;
 	}
 
 	@SuppressWarnings("unused")
-	public BiggerAutoCraftingJeiTransfer() {}
+	public BiggerAutoCraftingSyncEnergy() {}
 
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
-		recipeKey = (short) ByteBufUtils.readVarShort(buf);
-		output = ByteBufUtils.readItemStack(buf);
+		this.energy = ByteBufUtils.readVarInt(buf, 4);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf)
 	{
-		ByteBufUtils.writeVarShort(buf, recipeKey);
-		ByteBufUtils.writeItemStack(buf, output);
+		ByteBufUtils.writeVarInt(buf, energy, 4);
 	}
 
-	public static class Handler implements IMessageHandler<BiggerAutoCraftingJeiTransfer, IMessage>
+	public static class Handler implements IMessageHandler<BiggerAutoCraftingSyncEnergy, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final BiggerAutoCraftingJeiTransfer message, final MessageContext ctx)
+		public IMessage onMessage(final BiggerAutoCraftingSyncEnergy message, final MessageContext ctx)
 		{
 			final EntityPlayer entityPlayer = BiggerCraftingTables.proxy.getEntityPlayerFromContext(ctx);
 			if (entityPlayer != null && entityPlayer.openContainer instanceof ContainerAutoBiggerCraftingTable)
-				((ContainerAutoBiggerCraftingTable) entityPlayer.openContainer).defineShape(message.recipeKey, message.output);
+				((ContainerAutoBiggerCraftingTable) entityPlayer.openContainer).getTile().setEnergyStored(message.energy);
 			return null;
 		}
 	}

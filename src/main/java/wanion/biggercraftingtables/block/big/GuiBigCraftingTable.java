@@ -43,17 +43,17 @@ public final class GuiBigCraftingTable extends GuiContainer
 	}
 
 	@Override
+	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
+	{
+		fontRenderer.drawString(I18n.format(tileEntityBigCraftingTable.getName()), 7, 7, 0x404040);
+		fontRenderer.drawString(I18n.format("container.inventory"), 7, 111, 0x404040);
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(bigCraftingTexture);
 		drawTexturedModalRect((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
-	{
-		fontRenderer.drawString(I18n.format(tileEntityBigCraftingTable.getName()), 7, 7, 0x404040);
-		fontRenderer.drawString(I18n.format("container.inventory"), 7, 111, 0x404040);
 	}
 }
