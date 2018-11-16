@@ -11,17 +11,55 @@ package wanion.biggercraftingtables.block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public abstract class ContainerBiggerCraftingTable extends Container
 {
+	private int playerInventoryEnds, playerInventoryStarts, result;
 	private final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable;
+
 
 	public ContainerBiggerCraftingTable(@Nonnull final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable)
 	{
 		this.tileEntityBiggerCraftingTable = tileEntityBiggerCraftingTable;
+	}
+
+	protected final void initVars()
+	{
+		playerInventoryEnds = inventorySlots.size();
+		playerInventoryStarts = playerInventoryEnds - 36;
+		result = playerInventoryStarts - 1;
+	}
+
+	@Nonnull
+	@Override
+	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
+	{
+		ItemStack itemstack = null;
+		final Slot actualSlot = inventorySlots.get(slot);
+		if (actualSlot != null && actualSlot.getHasStack()) {
+			ItemStack itemstack1 = actualSlot.getStack();
+			itemstack = itemstack1.copy();
+			if (slot > result) {
+				if (!mergeItemStack(itemstack1, 0, result, false))
+					return ItemStack.EMPTY;
+			} else if (slot == result) {
+				if (!mergeItemStack(itemstack1, playerInventoryStarts, playerInventoryEnds, true))
+					return ItemStack.EMPTY;
+				actualSlot.onSlotChange(itemstack1, itemstack);
+			} else if (!mergeItemStack(itemstack1, playerInventoryStarts, playerInventoryEnds, true))
+				return ItemStack.EMPTY;
+			if (itemstack1.getCount() == 0)
+				actualSlot.putStack(ItemStack.EMPTY);
+			else
+				actualSlot.onSlotChanged();
+			if (itemstack1.getCount() != itemstack.getCount())
+				actualSlot.onTake(entityPlayer, itemstack1);
+		}
+		return itemstack != null ? itemstack : ItemStack.EMPTY;
 	}
 
 	@Override

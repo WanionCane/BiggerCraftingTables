@@ -9,7 +9,7 @@ package wanion.biggercraftingtables.recipe.giant;
  */
 
 import net.minecraft.item.ItemStack;
-import wanion.biggercraftingtables.recipe.AbstractShapedAdvancedRecipe;
+import wanion.lib.recipe.advanced.AbstractShapedAdvancedRecipe;
 
 import javax.annotation.Nonnull;
 

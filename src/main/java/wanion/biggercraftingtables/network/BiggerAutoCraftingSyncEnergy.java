@@ -48,7 +48,7 @@ public final class BiggerAutoCraftingSyncEnergy implements IMessage
 		{
 			final EntityPlayer entityPlayer = BiggerCraftingTables.proxy.getEntityPlayerFromContext(ctx);
 			if (entityPlayer != null && entityPlayer.openContainer instanceof ContainerAutoBiggerCraftingTable)
-				((ContainerAutoBiggerCraftingTable) entityPlayer.openContainer).getTile().setEnergyStored(message.energy);
+				((ContainerAutoBiggerCraftingTable) entityPlayer.openContainer).getTile().energyControl.setEnergyStored(message.energy);
 			return null;
 		}
 	}

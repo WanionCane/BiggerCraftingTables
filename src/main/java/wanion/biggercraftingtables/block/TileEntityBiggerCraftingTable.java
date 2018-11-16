@@ -13,8 +13,6 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -133,31 +131,10 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		return nbtTagCompound;
 	}
 
-	@Override
-	public final SPacketUpdateTileEntity getUpdatePacket()
-	{
-		final NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
-	}
-
-	@Nonnull
-	@Override
-	public NBTTagCompound getUpdateTag()
-	{
-		return writeToNBT(new NBTTagCompound());
-	}
-
 	@Nonnull
 	public ITextComponent getDisplayName()
 	{
 		return new TextComponentTranslation(getName());
-	}
-
-	@Override
-	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
-	{
-		readFromNBT(packet.getNbtCompound());
 	}
 
 	void readCustomNBT(final NBTTagCompound nbtTagCompound)

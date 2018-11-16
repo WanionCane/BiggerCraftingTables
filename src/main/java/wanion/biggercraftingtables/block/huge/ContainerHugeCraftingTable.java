@@ -8,7 +8,6 @@ package wanion.biggercraftingtables.block.huge;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
@@ -42,35 +41,8 @@ public final class ContainerHugeCraftingTable extends ContainerBiggerCraftingTab
 				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, 8 + (18 * x), 158 + (18 * y)));
 		for (int i = 0; i < 9; i++)
 			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + (18 * i), 216));
+		initVars();
 		onCraftMatrixChanged(craftingMatrix);
-	}
-
-	@Nonnull
-	@Override
-	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
-	{
-		ItemStack itemstack = null;
-		final Slot actualSlot = inventorySlots.get(slot);
-		if (actualSlot != null && actualSlot.getHasStack()) {
-			ItemStack itemstack1 = actualSlot.getStack();
-			itemstack = itemstack1.copy();
-			if (slot > 49) {
-				if (!mergeItemStack(itemstack1, 0, 49, false))
-					return ItemStack.EMPTY;
-			} else if (slot == 49) {
-				if (!mergeItemStack(itemstack1, 50, 86, true))
-					return ItemStack.EMPTY;
-				actualSlot.onSlotChange(itemstack1, itemstack);
-			} else if (!mergeItemStack(itemstack1, 50, 86, true))
-				return ItemStack.EMPTY;
-			if (itemstack1.getCount() == 0)
-				actualSlot.putStack(ItemStack.EMPTY);
-			else
-				actualSlot.onSlotChanged();
-			if (itemstack1.getCount() != itemstack.getCount())
-				actualSlot.onTake(entityPlayer, itemstack1);
-		}
-		return itemstack != null ? itemstack : ItemStack.EMPTY;
 	}
 
 	@Override

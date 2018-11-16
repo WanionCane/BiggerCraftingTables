@@ -26,9 +26,7 @@ import javax.annotation.Nullable;
 
 public class AutoHugeRecipeTransferHandler implements IRecipeTransferHandler<ContainerAutoHugeCraftingTable>
 {
-	public AutoHugeRecipeTransferHandler()
-	{
-	}
+	public AutoHugeRecipeTransferHandler() {}
 
 	@Nonnull
 	@Override

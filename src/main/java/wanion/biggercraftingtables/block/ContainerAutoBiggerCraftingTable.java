@@ -9,54 +9,90 @@ package wanion.biggercraftingtables.block;
  */
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IContainerListener;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import wanion.lib.common.redstone.IRedstoneControllable;
-import wanion.lib.common.redstone.IRedstoneControllableProvider;
-import wanion.lib.common.redstone.RedstoneControlState;
+import wanion.lib.common.ISlotCreator;
+import wanion.lib.common.control.Controls;
+import wanion.lib.common.control.ControlsContainer;
+import wanion.lib.common.control.redstone.IRedstoneControlProvider;
+import wanion.lib.common.control.redstone.RedstoneControl;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerAutoBiggerCraftingTable extends Container implements IRedstoneControllableProvider
+public class ContainerAutoBiggerCraftingTable extends ControlsContainer implements IRedstoneControlProvider
 {
-	protected final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
-	private RedstoneControlState redstoneControlState;
+	private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
+	private final int playerInventoryEnds, playerInventoryStarts, inventoryFull, shapeEnds, result;
 
-	public ContainerAutoBiggerCraftingTable(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable, final EntityPlayer entityPlayer)
+	public ContainerAutoBiggerCraftingTable(@Nonnull final ISlotCreator slotCreator, @Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable)
 	{
-		(this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable).openInventory(entityPlayer);
+		super(tileEntityAutoBiggerCraftingTable.getControls());
+		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
+		final List<Slot> slotList = new ArrayList<>();
+		slotCreator.create(slotList);
+		slotList.forEach(this::addSlotToContainer);
+		final int inventorySize = inventorySlots.size();
+		playerInventoryEnds = inventorySize;
+		playerInventoryStarts = inventorySize - 36;
+		inventoryFull = (playerInventoryStarts - 2) / 2;
+		shapeEnds = inventoryFull * 2;
+		result = shapeEnds + 1;
 	}
 
+	@Nonnull
 	@Override
-	public void addListener(IContainerListener listener)
+	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
 	{
-		super.addListener(listener);
-		listener.sendAllWindowProperties(this, tileEntityAutoBiggerCraftingTable);
-	}
-
-	@Override
-	public void detectAndSendChanges()
-	{
-		super.detectAndSendChanges();
-		final RedstoneControlState redstoneControlState = getRedstoneControllable().getRedstoneControlState();
-		for (final IContainerListener containerListener : listeners) {
-			if (this.redstoneControlState != redstoneControlState)
-				containerListener.sendWindowProperty(this, 0, redstoneControlState.ordinal());
+		ItemStack itemstack = null;
+		final Slot actualSlot = this.inventorySlots.get(slot);
+		if (actualSlot != null && actualSlot.getHasStack()) {
+			ItemStack itemstack1 = actualSlot.getStack();
+			itemstack = itemstack1.copy();
+			if (slot >= playerInventoryStarts) {
+				if (!mergeItemStack(itemstack1, 0, inventoryFull, false))
+					return ItemStack.EMPTY;
+			} else if (slot <= inventoryFull || slot == result) {
+				if (!mergeItemStack(itemstack1, playerInventoryStarts, playerInventoryEnds, true))
+					return ItemStack.EMPTY;
+			}
+			if (itemstack1.getCount() == 0)
+				actualSlot.putStack(ItemStack.EMPTY);
+			actualSlot.onSlotChanged();
 		}
-		this.redstoneControlState = redstoneControlState;
+		return itemstack != null ? itemstack : ItemStack.EMPTY;
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void updateProgressBar(int id, int data)
+	@Nonnull
+	@Override
+	public final ItemStack slotClick(final int slot, final int mouseButton, final ClickType clickType, final EntityPlayer entityPlayer)
 	{
-		if (id == 0)
-			tileEntityAutoBiggerCraftingTable.setRedstoneControlState(RedstoneControlState.getState(data));
+		if (slot >= inventoryFull && slot < shapeEnds) {
+			final Slot actualSlot = inventorySlots.get(slot);
+			if (clickType == ClickType.QUICK_MOVE) {
+				actualSlot.putStack(ItemStack.EMPTY);
+			} else if (clickType == ClickType.PICKUP) {
+				final ItemStack playerStack = entityPlayer.inventory.getItemStack();
+				final boolean slotHasStack = actualSlot.getHasStack();
+				if (!playerStack.isEmpty() && !slotHasStack) {
+					final ItemStack newSlotStack = playerStack.copy();
+					newSlotStack.setCount(1);
+					actualSlot.putStack(newSlotStack);
+				} else if (playerStack.isEmpty() && slotHasStack || !playerStack.isEmpty() && playerStack.isItemEqual(actualSlot.getStack()))
+					actualSlot.putStack(ItemStack.EMPTY);
+			}
+			tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
+			return ItemStack.EMPTY;
+		} else if (slot == shapeEnds) {
+			if (inventorySlots.get(slot).getHasStack()) {
+				clearShape(tileEntityAutoBiggerCraftingTable.half, tileEntityAutoBiggerCraftingTable.full);
+				tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
+			}
+			return ItemStack.EMPTY;
+		} else return super.slotClick(slot, mouseButton, clickType, entityPlayer);
 	}
 
 	@Override
@@ -65,7 +101,7 @@ public class ContainerAutoBiggerCraftingTable extends Container implements IReds
 		return tileEntityAutoBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 
-	public final void defineShape(final short key, @Nonnull ItemStack output)
+	public final void defineShape(final short key, @Nonnull final ItemStack output)
 	{
 		final IAdvancedRecipe advancedRecipe = tileEntityAutoBiggerCraftingTable.getRecipeRegistry().findRecipeByKeyAndOutput(key, output);
 		if (advancedRecipe == null)
@@ -99,23 +135,30 @@ public class ContainerAutoBiggerCraftingTable extends Container implements IReds
 		detectAndSendChanges();
 	}
 
-	protected final void clearShape(final int startsIn, final int endsIn)
+	private void clearShape(final int startsIn, final int endsIn)
 	{
 		for (int i = startsIn; i < endsIn; i++)
 			inventorySlots.get(i).putStack(ItemStack.EMPTY);
 	}
 
 	@Nonnull
-	@Override
-	public IRedstoneControllable getRedstoneControllable()
+	public final TileEntityAutoBiggerCraftingTable getTile()
 	{
 		return tileEntityAutoBiggerCraftingTable;
 	}
 
 	@Nonnull
-	public final TileEntityAutoBiggerCraftingTable getTile()
+	@Override
+	public RedstoneControl getRedstoneControl()
 	{
-		return tileEntityAutoBiggerCraftingTable;
+		return tileEntityAutoBiggerCraftingTable.redstoneControl;
+	}
+
+	@Nonnull
+	@Override
+	public Controls getControls()
+	{
+		return tileEntityAutoBiggerCraftingTable.getControls();
 	}
 
 	private static ItemStack getStackInput(final Object input)

@@ -10,18 +10,14 @@ package wanion.biggercraftingtables.block;
 
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -31,40 +27,38 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.Config;
-import wanion.biggercraftingtables.network.BiggerAutoCraftingSyncEnergy;
 import wanion.lib.common.MetaItem;
-import wanion.lib.common.redstone.IRedstoneControllable;
-import wanion.lib.common.redstone.RedstoneControlState;
+import wanion.lib.common.control.Controls;
+import wanion.lib.common.control.IControl;
+import wanion.lib.common.control.energy.EnergyControl;
+import wanion.lib.common.control.redstone.RedstoneControl;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
-public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements ISidedInventory, ITickable, IRedstoneControllable
+public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements IInventory, ITickable
 {
 	public final int full = getSizeInventory() - 2, half = full / 2, powerConsumption = half * Config.INSTANCE.powerMultiplier;
+	public final RedstoneControl redstoneControl;
+	public final EnergyControl energyControl;
 	private final BiggerCraftingMatrix biggerCraftingMatrix = new BiggerCraftingMatrix((int) Math.sqrt(half));
-	private final int[] slots;
+	private final Controls controls = new Controls();
 	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private R cachedRecipe = null;
 	private TIntIntMap patternMap = null;
 	private IItemHandler itemHandler = new ItemHandlerAutoBiggerCraftingTable(this);
-	private BiggerCraftingEnergyStorage biggerCraftingEnergyStorage = new BiggerCraftingEnergyStorage(powerConsumption * Config.INSTANCE.capacityMultiplier);
-	private RedstoneControlState redstoneControlState;
 
 	protected TileEntityAutoBiggerCraftingTable()
 	{
-		slots = new int[half + 1];
-		for (int i = 0; i < half; i++)
-			slots[i] = i;
-		slots[half] = full;
+		controls.add((this.redstoneControl = new RedstoneControl(this)));
+		controls.add((this.energyControl = new EnergyControl(powerConsumption * Config.INSTANCE.capacityMultiplier, powerConsumption)));
 	}
 
 	@Override
@@ -72,16 +66,14 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	{
 		if (world == null || world.isRemote)
 			return;
-		if (redstoneControlState == RedstoneControlState.OFF && world.isBlockPowered(pos))
-			return;
-		else if (redstoneControlState == RedstoneControlState.ON && !world.isBlockPowered(pos))
+		final Collection<IControl> allControls = controls.getInstances();
+		if (!allControls.stream().allMatch(IControl::canOperate))
 			return;
 		if (cachedRecipe == null) {
 			if (patternMap != null)
 				patternMap = null;
 			return;
-		} else if (biggerCraftingEnergyStorage.energy < powerConsumption)
-			return;
+		}
 		final ItemStack recipeStack = itemStacks.get(getSizeInventory() - 1);
 		final ItemStack outputStack = itemStacks.get(getSizeInventory() - 2);
 		if (recipeStack.isEmpty() || (!outputStack.isEmpty() && outputStack.getCount() == outputStack.getMaxStackSize()))
@@ -92,7 +84,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return;
 		else if (!outputStack.isEmpty() && outputStack.getCount() + recipeStack.getCount() > outputStack.getMaxStackSize() || !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
 			return;
-		biggerCraftingEnergyStorage.useEnergy(powerConsumption);
+		allControls.forEach(IControl::operate);
 		cleanInput();
 		if (outputStack.isEmpty())
 			itemStacks.set(getSizeInventory() - 2, recipeStack.copy());
@@ -110,6 +102,12 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return true;
 		} else
 			return false;
+	}
+
+	@Nonnull
+	public Controls getControls()
+	{
+		return controls;
 	}
 
 	private void cleanInput()
@@ -133,25 +131,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 					itemStacks.set(i, ItemStack.EMPTY);
 			}
 		}
-	}
-
-	@Nonnull
-	@Override
-	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
-	{
-		return slots;
-	}
-
-	@Override
-	public boolean canInsertItem(final int index, @Nonnull final ItemStack itemStackIn, @Nonnull final EnumFacing direction)
-	{
-		return index < half;
-	}
-
-	@Override
-	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
-	{
-		return index == full || stack.getItem() == Items.BUCKET;
 	}
 
 	@Nonnull
@@ -185,6 +164,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		slotStack.setCount(slotStack.getCount() - howMuch);
 		if (slotStack.isEmpty())
 			itemStacks.set(slot, ItemStack.EMPTY);
+		markDirty();
 		return newStack;
 	}
 
@@ -201,6 +181,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	public void setInventorySlotContents(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		itemStacks.set(slot, itemStack);
+		markDirty();
 	}
 
 	@Override
@@ -216,14 +197,12 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Override
-	public void openInventory(@Nonnull final EntityPlayer player)
-	{
-		if (world != null && !world.isRemote && player instanceof EntityPlayerMP)
-			BiggerCraftingTables.networkWrapper.sendTo(new BiggerAutoCraftingSyncEnergy(getEnergyStored()), (EntityPlayerMP) player);
-	}
+	public void openInventory(@Nonnull final EntityPlayer player) {}
 
 	@Override
-	public void closeInventory(@Nonnull final EntityPlayer player) {}
+	public void closeInventory(@Nonnull final EntityPlayer player)
+	{
+	}
 
 	@Override
 	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
@@ -234,41 +213,20 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Override
 	public int getField(final int id)
 	{
-		return getRedstoneControlState().ordinal();
+		return 0;
 	}
 
 	@Override
-	public void setField(final int id, final int value)
-	{
-		setRedstoneControlState(RedstoneControlState.getState(value));
-	}
+	public void setField(final int id, final int value) {}
 
 	@Override
 	public int getFieldCount()
 	{
-		return 1;
+		return 0;
 	}
 
 	@Override
-	public void clear()
-	{
-		biggerCraftingEnergyStorage.setEnergyStored(0);
-	}
-
-	public void setEnergyStored(final int energy)
-	{
-		biggerCraftingEnergyStorage.setEnergyStored(energy);
-	}
-
-	public int getEnergyStored()
-	{
-		return biggerCraftingEnergyStorage.getEnergyStored();
-	}
-
-	public int getEnergyCapacity()
-	{
-		return biggerCraftingEnergyStorage.getMaxEnergyStored();
-	}
+	public void clear() {}
 
 	public final void recipeShapeChanged()
 	{
@@ -300,42 +258,10 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		return nbtTagCompound;
 	}
 
-	@Override
-	public void markDirty()
-	{
-		super.markDirty();
-		if (world != null) {
-			final IBlockState blockState = getWorld().getBlockState(pos);
-			blockState.getBlock().updateTick(getWorld(), getPos(), blockState, getWorld().rand);
-			getWorld().notifyBlockUpdate(pos, blockState, blockState, 3);
-		}
-	}
-
-	@Override
-	public final SPacketUpdateTileEntity getUpdatePacket()
-	{
-		final NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new SPacketUpdateTileEntity(pos, 3, nbttagcompound);
-	}
-
-	@Nonnull
-	@Override
-	public NBTTagCompound getUpdateTag()
-	{
-		return writeToNBT(new NBTTagCompound());
-	}
-
 	@Nonnull
 	public ITextComponent getDisplayName()
 	{
 		return new TextComponentTranslation(getName());
-	}
-
-	@Override
-	public final void onDataPacket(final NetworkManager networkManager, final SPacketUpdateTileEntity packet)
-	{
-		readFromNBT(packet.getNbtCompound());
 	}
 
 	@Override
@@ -348,29 +274,12 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Override
 	public <T> T getCapability(@Nonnull final Capability<T> capability, final EnumFacing facing)
 	{
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) itemHandler : capability == CapabilityEnergy.ENERGY ? (T) biggerCraftingEnergyStorage : super.getCapability(capability, facing);
-	}
-
-	void readCustomNBT(final NBTTagCompound nbtTagCompound)
-	{
-		biggerCraftingEnergyStorage.setEnergyStored(nbtTagCompound.getInteger("Energy"));
-		redstoneControlState = RedstoneControlState.values()[MathHelper.clamp(nbtTagCompound.getInteger("RedstoneControl"), 0, RedstoneControlState.values().length - 1)];
-		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
-		final int max = getSizeInventory() - 1;
-		for (int i = 0; i < max; i++)
-			setInventorySlotContents(i, ItemStack.EMPTY);
-		for (int i = 0; i < nbtTagList.tagCount(); i++) {
-			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
-			final int slot = slotCompound.getShort("Slot");
-			if (slot >= 0 && slot < getSizeInventory())
-				setInventorySlotContents(slot, new ItemStack(slotCompound));
-		}
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ? (T) itemHandler : capability == CapabilityEnergy.ENERGY ? (T) energyControl : super.getCapability(capability, facing);
 	}
 
 	NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
-		nbtTagCompound.setInteger("Energy", biggerCraftingEnergyStorage.energy);
-		nbtTagCompound.setInteger("RedstoneControl", redstoneControlState.ordinal());
+		controls.getInstances().forEach(control -> control.writeToNBT(nbtTagCompound));
 		final NBTTagList nbtTagList = new NBTTagList();
 		final int max = getSizeInventory() - 1;
 		for (int i = 0; i < max; i++) {
@@ -385,16 +294,19 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		return nbtTagCompound;
 	}
 
-	@Nonnull
-	public final RedstoneControlState getRedstoneControlState()
+	void readCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
-		return redstoneControlState != null ? redstoneControlState : RedstoneControlState.IGNORED;
-	}
-
-	@Override
-	public void setRedstoneControlState(@Nonnull final RedstoneControlState redstoneControlState)
-	{
-		this.redstoneControlState = redstoneControlState;
+		controls.getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
+		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
+		final int max = getSizeInventory() - 1;
+		for (int i = 0; i < max; i++)
+			setInventorySlotContents(i, ItemStack.EMPTY);
+		for (int i = 0; i < nbtTagList.tagCount(); i++) {
+			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
+			final int slot = slotCompound.getShort("Slot");
+			if (slot >= 0 && slot < getSizeInventory())
+				setInventorySlotContents(slot, new ItemStack(slotCompound));
+		}
 	}
 
 	private final class BiggerCraftingMatrix extends InventoryCrafting
@@ -422,70 +334,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		}
 	}
 
-	private final class BiggerCraftingEnergyStorage implements IEnergyStorage
-	{
-		private int energy;
-		private int capacity;
-
-		private BiggerCraftingEnergyStorage(int capacity)
-		{
-			this.capacity = capacity;
-			this.energy = 0;
-		}
-
-		@Override
-		public int receiveEnergy(int maxReceive, boolean simulate)
-		{
-			if (!canReceive())
-				return 0;
-
-			int energyReceived = Math.min(capacity - energy, Math.min(this.capacity, maxReceive));
-			if (!simulate)
-				energy += energyReceived;
-			return energyReceived;
-		}
-
-		@Override
-		public int extractEnergy(int maxExtract, boolean simulate)
-		{
-			return 0;
-		}
-
-		@Override
-		public int getEnergyStored()
-		{
-			return energy;
-		}
-
-		@Override
-		public int getMaxEnergyStored()
-		{
-			return capacity;
-		}
-
-		@Override
-		public boolean canExtract()
-		{
-			return false;
-		}
-
-		@Override
-		public boolean canReceive()
-		{
-			return true;
-		}
-
-		private void useEnergy(final int energy)
-		{
-			this.energy -= energy;
-		}
-
-		private void setEnergyStored(final int energy)
-		{
-			this.energy = energy;
-		}
-	}
-
 	private static class ItemHandlerAutoBiggerCraftingTable extends InvWrapper
 	{
 		private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
@@ -508,7 +356,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
 		{
 			boolean full = slot == tileEntityAutoBiggerCraftingTable.full;
-			final ItemStack slotStack = simulate && full ? getStackInSlot(slot).copy() : getStackInSlot(slot);
+			final ItemStack slotStack = simulate ? getStackInSlot(slot).copy() : getStackInSlot(slot);
 			if (full || slotStack.getItem() == Items.BUCKET) {
 				if (slotStack.isEmpty())
 					return ItemStack.EMPTY;
