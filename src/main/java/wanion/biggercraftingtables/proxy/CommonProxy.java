@@ -38,7 +38,6 @@ import wanion.biggercraftingtables.block.big.*;
 import wanion.biggercraftingtables.block.giant.*;
 import wanion.biggercraftingtables.block.huge.*;
 import wanion.biggercraftingtables.network.BiggerAutoCraftingJeiTransfer;
-import wanion.biggercraftingtables.network.BiggerAutoCraftingSyncEnergy;
 
 import javax.annotation.Nonnull;
 
@@ -60,8 +59,6 @@ public class CommonProxy implements IGuiHandler
 		GameRegistry.registerTileEntity(TileEntityAutoGiantCraftingTable.class, new ResourceLocation(MOD_ID, "autogianttable"));
 		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransfer.Handler.class, BiggerAutoCraftingJeiTransfer.class, 0, Side.SERVER);
 		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransfer.Handler.class, BiggerAutoCraftingJeiTransfer.class, 1, Side.CLIENT);
-		networkWrapper.registerMessage(BiggerAutoCraftingSyncEnergy.Handler.class, BiggerAutoCraftingSyncEnergy.class, 2, Side.SERVER);
-		networkWrapper.registerMessage(BiggerAutoCraftingSyncEnergy.Handler.class, BiggerAutoCraftingSyncEnergy.class, 3, Side.CLIENT);
 		if (Config.INSTANCE.createTableRecipes) {
 			GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
 			GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "bigCraftingTableToAutoBigCraftingTable"), null, new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE)));

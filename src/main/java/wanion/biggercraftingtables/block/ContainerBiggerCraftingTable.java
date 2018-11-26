@@ -9,29 +9,44 @@ package wanion.biggercraftingtables.block;
  */
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
+import wanion.biggercraftingtables.inventory.slot.BiggerCraftingSlot;
+import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
+import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
 
-public abstract class ContainerBiggerCraftingTable extends Container
+public abstract class ContainerBiggerCraftingTable<R extends IAdvancedRecipe> extends Container
 {
-	private int playerInventoryEnds, playerInventoryStarts, result;
+	private final InventoryCrafting craftingMatrix;
+	private final IInventory craftingResult;
 	private final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable;
+	private int playerInventoryEnds, playerInventoryStarts, result;
 
-
-	public ContainerBiggerCraftingTable(@Nonnull final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable)
+	public ContainerBiggerCraftingTable(final int root, final int inventoryStartsX, final int inventoryStartsY, final int playerStartsX, final int playerStartsY, final int resultX, final int resultY, @Nonnull final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
 		this.tileEntityBiggerCraftingTable = tileEntityBiggerCraftingTable;
-	}
-
-	protected final void initVars()
-	{
+		craftingMatrix = new CraftingBiggerCraftingTable(this, root);
+		craftingResult = new CraftResultBiggerCraftingTable(tileEntityBiggerCraftingTable, root * root);
+		for (int y = 0; y < root; y++)
+			for (int x = 0; x < root; x++)
+				addSlotToContainer(new Slot(craftingMatrix, y * root + x, inventoryStartsX + (18 * x), inventoryStartsY + (18 * y)));
+		addSlotToContainer(new BiggerCraftingSlot(this, craftingResult, craftingMatrix, 0, resultX, resultY));
+		for (int y = 0; y < 3; y++)
+			for (int x = 0; x < 9; x++)
+				addSlotToContainer(new Slot(inventoryPlayer, 9 + y * 9 + x, playerStartsX + (18 * x), playerStartsY + (18 * y)));
+		for (int i = 0; i < 9; i++)
+			addSlotToContainer(new Slot(inventoryPlayer, i, playerStartsX + (18 * i), playerStartsY + 58));
 		playerInventoryEnds = inventorySlots.size();
 		playerInventoryStarts = playerInventoryEnds - 36;
 		result = playerInventoryStarts - 1;
+		onCraftMatrixChanged(craftingMatrix);
 	}
 
 	@Nonnull
@@ -63,16 +78,26 @@ public abstract class ContainerBiggerCraftingTable extends Container
 	}
 
 	@Override
-	public boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
+	public final void onCraftMatrixChanged(final IInventory inventory)
+	{
+		final R recipe = getRecipeRegistry().findMatchingRecipe(craftingMatrix);
+		craftingResult.setInventorySlotContents(0, recipe != null ? recipe.getOutput() : ItemStack.EMPTY);
+	}
+
+	@Override
+	public final boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
 	{
 		return tileEntityBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 
-	protected class CraftingBiggerCraftingTable extends InventoryCrafting
+	@Nonnull
+	public abstract AbstractRecipeRegistry<R> getRecipeRegistry();
+
+	private class CraftingBiggerCraftingTable extends InventoryCrafting
 	{
 		private final int root, square;
 
-		public CraftingBiggerCraftingTable(@Nonnull final ContainerBiggerCraftingTable container, final int root)
+		private CraftingBiggerCraftingTable(@Nonnull final ContainerBiggerCraftingTable container, final int root)
 		{
 			super(container, root, root);
 			square = (this.root = root) * root;

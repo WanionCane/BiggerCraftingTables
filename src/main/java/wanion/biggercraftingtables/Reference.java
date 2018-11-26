@@ -19,7 +19,7 @@ public final class Reference
 {
 	public static final String MOD_ID = "biggercraftingtables";
 	public static final String MOD_NAME = "Bigger Crafting Tables";
-	public static final String MOD_VERSION = "1.12.2-1.8";
+	public static final String MOD_VERSION = "1.12.2-1.8b";
 	public static final String DEPENDENCIES = "required-before:crafttweaker;required-after:wanionlib@[1.12.2-1.9,)";
 	public static final String TARGET_MC_VERSION = "[1.12,]";
 	public static final String CLIENT_PROXY = "wanion.biggercraftingtables.proxy.ClientProxy";
@@ -33,8 +33,8 @@ public final class Reference
 		HUGE,
 		GIANT;
 
-		@Override
 		@Nonnull
+		@Override
 		public String getName()
 		{
 			return toString().toLowerCase();

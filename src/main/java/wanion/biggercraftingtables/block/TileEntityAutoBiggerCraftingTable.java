@@ -200,9 +200,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	public void openInventory(@Nonnull final EntityPlayer player) {}
 
 	@Override
-	public void closeInventory(@Nonnull final EntityPlayer player)
-	{
-	}
+	public void closeInventory(@Nonnull final EntityPlayer player) {}
 
 	@Override
 	public boolean isItemValidForSlot(final int slot, @Nonnull final ItemStack itemStack)
@@ -361,10 +359,12 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 				if (slotStack.isEmpty())
 					return ItemStack.EMPTY;
 				final ItemStack newStack = slotStack.copy();
-				newStack.setCount(amount);
-				slotStack.setCount(slotStack.getCount() - amount);
+				final int newStackSize = MathHelper.clamp(amount, 1, newStack.getCount());
+				newStack.setCount(newStackSize);
+				slotStack.setCount(slotStack.getCount() - newStackSize);
 				if (!simulate && slotStack.isEmpty())
 					setStackInSlot(slot, ItemStack.EMPTY);
+				getInv().markDirty();
 				return newStack;
 			} else return ItemStack.EMPTY;
 		}
