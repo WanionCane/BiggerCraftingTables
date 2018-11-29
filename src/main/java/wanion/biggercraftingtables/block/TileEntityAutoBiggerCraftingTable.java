@@ -35,6 +35,7 @@ import wanion.biggercraftingtables.Config;
 import wanion.lib.common.MetaItem;
 import wanion.lib.common.control.Controls;
 import wanion.lib.common.control.IControl;
+import wanion.lib.common.control.IControlsProvider;
 import wanion.lib.common.control.energy.EnergyControl;
 import wanion.lib.common.control.redstone.RedstoneControl;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
@@ -43,7 +44,7 @@ import wanion.lib.recipe.advanced.IAdvancedRecipe;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements IInventory, ITickable
+public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements IInventory, ITickable, IControlsProvider
 {
 	public final int full = getSizeInventory() - 2, half = full / 2, powerConsumption = half * Config.INSTANCE.powerMultiplier;
 	public final RedstoneControl redstoneControl;
@@ -105,6 +106,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Nonnull
+	@Override
 	public Controls getControls()
 	{
 		return controls;
@@ -226,7 +228,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	@Override
 	public void clear() {}
 
-	public final void recipeShapeChanged()
+	final void recipeShapeChanged()
 	{
 		R matchedRecipe = getRecipeRegistry().findMatchingRecipe(biggerCraftingMatrix);
 		itemStacks.set(getSizeInventory() - 1, (cachedRecipe = matchedRecipe) != null ? cachedRecipe.getOutput().copy() : ItemStack.EMPTY);
@@ -257,6 +259,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	}
 
 	@Nonnull
+	@Override
 	public ITextComponent getDisplayName()
 	{
 		return new TextComponentTranslation(getName());
@@ -362,9 +365,10 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 				final int newStackSize = MathHelper.clamp(amount, 1, newStack.getCount());
 				newStack.setCount(newStackSize);
 				slotStack.setCount(slotStack.getCount() - newStackSize);
-				if (!simulate && slotStack.isEmpty())
+				if (!simulate && slotStack.isEmpty()) {
 					setStackInSlot(slot, ItemStack.EMPTY);
-				getInv().markDirty();
+					getInv().markDirty();
+				}
 				return newStack;
 			} else return ItemStack.EMPTY;
 		}

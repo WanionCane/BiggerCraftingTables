@@ -81,14 +81,14 @@ public final class HugeRecipeCategory implements IRecipeCategory<BiggerRecipeWra
 		final IAdvancedRecipe advancedRecipe = recipeWrapper.advancedRecipe;
 		final List<List<ItemStack>> inputs = ingredients.getInputs(VanillaTypes.ITEM);
 		final List<List<ItemStack>> outputs = ingredients.getOutputs(VanillaTypes.ITEM);
-		for (int x = 0; x < 7; x++)
-			for (int y = 0; y < 7; y++)
+		for (int y = 0; y < 7; y++)
+			for (int x = 0; x < 7; x++)
 				guiItemStackGroup.init(x + (7 * y), true, 18 * x, 18 * y);
 		final List<List<ItemStack>> newInputs = NonNullList.withSize(49, Collections.emptyList());
 		if (advancedRecipe.isShaped()) {
-			for (int x = 0; x < advancedRecipe.getWidth(); x++)
-				for (int y = 0; y < advancedRecipe.getHeight(); y++)
-					newInputs.set(x + (7 * y), inputs.get(x + (advancedRecipe.getHeight() * y)));
+			for (int y = 0; y < advancedRecipe.getHeight(); y++)
+				for (int x = 0; x < advancedRecipe.getWidth(); x++)
+					newInputs.set(x + (7 * y), inputs.get(x + (advancedRecipe.getWidth() * y)));
 			craftingGridHelper.setInputs(guiItemStackGroup, newInputs, 7, 7);
 		} else {
 			for (int i = 0; i < inputs.size(); i++)
