@@ -30,14 +30,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.Config;
 import wanion.biggercraftingtables.Reference;
-import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
-import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
-import wanion.biggercraftingtables.block.ItemBlockAutoBiggerCraftingTable;
-import wanion.biggercraftingtables.block.ItemBlockBiggerCraftingTable;
+import wanion.biggercraftingtables.block.*;
 import wanion.biggercraftingtables.block.big.*;
 import wanion.biggercraftingtables.block.giant.*;
 import wanion.biggercraftingtables.block.huge.*;
-import wanion.biggercraftingtables.network.BiggerAutoCraftingJeiTransfer;
+import wanion.biggercraftingtables.network.BiggerAutoCraftingJeiTransferMessage;
+import wanion.biggercraftingtables.network.BiggerGhostTransferMessage;
+import wanion.biggercraftingtables.network.ClearShapeMessage;
 
 import javax.annotation.Nonnull;
 
@@ -53,12 +52,20 @@ public class CommonProxy implements IGuiHandler
 		NetworkRegistry.INSTANCE.registerGuiHandler(BiggerCraftingTables.instance, this);
 		GameRegistry.registerTileEntity(TileEntityBigCraftingTable.class, new ResourceLocation(MOD_ID, "bigtable"));
 		GameRegistry.registerTileEntity(TileEntityAutoBigCraftingTable.class, new ResourceLocation(MOD_ID, "autobigTable"));
+		GameRegistry.registerTileEntity(TileEntityBigCreatingTable.class, new ResourceLocation(MOD_ID, "bigCreatingTable"));
 		GameRegistry.registerTileEntity(TileEntityHugeCraftingTable.class, new ResourceLocation(MOD_ID, "hugetable"));
 		GameRegistry.registerTileEntity(TileEntityAutoHugeCraftingTable.class, new ResourceLocation(MOD_ID, "autohugetable"));
+		GameRegistry.registerTileEntity(TileEntityHugeCreatingTable.class, new ResourceLocation(MOD_ID, "hugeCreatingTable"));
 		GameRegistry.registerTileEntity(TileEntityGiantCraftingTable.class, new ResourceLocation(MOD_ID, "gianttable"));
 		GameRegistry.registerTileEntity(TileEntityAutoGiantCraftingTable.class, new ResourceLocation(MOD_ID, "autogianttable"));
-		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransfer.Handler.class, BiggerAutoCraftingJeiTransfer.class, 0, Side.SERVER);
-		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransfer.Handler.class, BiggerAutoCraftingJeiTransfer.class, 1, Side.CLIENT);
+		GameRegistry.registerTileEntity(TileEntityGiantCreatingTable.class, new ResourceLocation(MOD_ID, "giantCreatingTable"));
+		int d = 0;
+		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransferMessage.Handler.class, BiggerAutoCraftingJeiTransferMessage.class, d++, Side.SERVER);
+		networkWrapper.registerMessage(BiggerAutoCraftingJeiTransferMessage.Handler.class, BiggerAutoCraftingJeiTransferMessage.class, d++, Side.CLIENT);
+		networkWrapper.registerMessage(ClearShapeMessage.Handler.class, ClearShapeMessage.class, d++, Side.SERVER);
+		networkWrapper.registerMessage(ClearShapeMessage.Handler.class, ClearShapeMessage.class, d++, Side.CLIENT);
+		networkWrapper.registerMessage(BiggerGhostTransferMessage.Handler.class, BiggerGhostTransferMessage.class, d++, Side.SERVER);
+		networkWrapper.registerMessage(BiggerGhostTransferMessage.Handler.class, BiggerGhostTransferMessage.class, d, Side.CLIENT);
 		if (Config.INSTANCE.createTableRecipes) {
 			GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
 			GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "bigCraftingTableToAutoBigCraftingTable"), null, new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE)));
@@ -76,13 +83,13 @@ public class CommonProxy implements IGuiHandler
 	@SubscribeEvent
 	public void registerItems(final RegistryEvent.Register<Item> event)
 	{
-		event.getRegistry().registerAll(ItemBlockBiggerCraftingTable.INSTANCE, ItemBlockAutoBiggerCraftingTable.INSTANCE);
+		event.getRegistry().registerAll(ItemBlockBiggerCraftingTable.INSTANCE, ItemBlockAutoBiggerCraftingTable.INSTANCE, ItemBlockBiggerCreatingTable.INSTANCE);
 	}
 
 	@SubscribeEvent
 	public void registerBlocks(final RegistryEvent.Register<Block> event)
 	{
-		event.getRegistry().registerAll(BlockBiggerCraftingTable.INSTANCE, BlockAutoBiggerCraftingTable.INSTANCE);
+		event.getRegistry().registerAll(BlockBiggerCraftingTable.INSTANCE, BlockAutoBiggerCraftingTable.INSTANCE, BlockBiggerCreatingTable.INSTANCE);
 	}
 
 	@SubscribeEvent
@@ -106,18 +113,27 @@ public class CommonProxy implements IGuiHandler
 			case BiggerCraftingTables.GUI_ID_AUTO_BIG_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityAutoBigCraftingTable)
 					return new ContainerAutoBigCraftingTable((TileEntityAutoBigCraftingTable) tileEntity, player.inventory);
+			case BiggerCraftingTables.GUI_ID_BIG_CREATING_TABLE:
+				if (tileEntity instanceof TileEntityBigCreatingTable)
+					return new ContainerBigCreatingTable((TileEntityBigCreatingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityHugeCraftingTable)
 					return new ContainerHugeCraftingTable((TileEntityHugeCraftingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_AUTO_HUGE_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityAutoHugeCraftingTable)
 					return new ContainerAutoHugeCraftingTable((TileEntityAutoHugeCraftingTable) tileEntity, player.inventory);
+			case BiggerCraftingTables.GUI_ID_HUGE_CREATING_TABLE:
+				if (tileEntity instanceof TileEntityHugeCreatingTable)
+					return new ContainerHugeCreatingTable((TileEntityHugeCreatingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_GIANT_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityGiantCraftingTable)
 					return new ContainerGiantCraftingTable((TileEntityGiantCraftingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_AUTO_GIANT_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityAutoGiantCraftingTable)
 					return new ContainerAutoGiantCraftingTable((TileEntityAutoGiantCraftingTable) tileEntity, player.inventory);
+			case BiggerCraftingTables.GUI_ID_GIANT_CREATING_TABLE:
+				if (tileEntity instanceof TileEntityGiantCreatingTable)
+					return new ContainerGiantCreatingTable((TileEntityGiantCreatingTable) tileEntity, player.inventory);
 			default:
 				return null;
 		}
@@ -136,18 +152,27 @@ public class CommonProxy implements IGuiHandler
 			case BiggerCraftingTables.GUI_ID_AUTO_BIG_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityAutoBigCraftingTable)
 					return new GuiAutoBigCraftingTable((TileEntityAutoBigCraftingTable) tileEntity, player.inventory);
+			case BiggerCraftingTables.GUI_ID_BIG_CREATING_TABLE:
+				if (tileEntity instanceof TileEntityBigCreatingTable)
+					return new GuiBigCreatingTable((TileEntityBigCreatingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_HUGE_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityHugeCraftingTable)
 					return new GuiHugeCraftingTable((TileEntityHugeCraftingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_AUTO_HUGE_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityAutoHugeCraftingTable)
 					return new GuiAutoHugeCraftingTable((TileEntityAutoHugeCraftingTable) tileEntity, player.inventory);
+			case BiggerCraftingTables.GUI_ID_HUGE_CREATING_TABLE:
+				if (tileEntity instanceof TileEntityHugeCreatingTable)
+					return new GuiHugeCreatingTable((TileEntityHugeCreatingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_GIANT_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityGiantCraftingTable)
 					return new GuiGiantCraftingTable((TileEntityGiantCraftingTable) tileEntity, player.inventory);
 			case BiggerCraftingTables.GUI_ID_AUTO_GIANT_CRAFTING_TABLE:
 				if (tileEntity instanceof TileEntityAutoGiantCraftingTable)
 					return new GuiAutoGiantCraftingTable((TileEntityAutoGiantCraftingTable) tileEntity, player.inventory);
+			case BiggerCraftingTables.GUI_ID_GIANT_CREATING_TABLE:
+				if (tileEntity instanceof TileEntityGiantCreatingTable)
+					return new GuiGiantCreatingTable((TileEntityGiantCreatingTable) tileEntity, player.inventory);
 			default:
 				return null;
 		}

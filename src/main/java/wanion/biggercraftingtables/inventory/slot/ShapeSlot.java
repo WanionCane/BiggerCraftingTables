@@ -9,17 +9,17 @@ package wanion.biggercraftingtables.inventory.slot;
  */
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import wanion.biggercraftingtables.block.TileEntityAutoBiggerCraftingTable;
 
 import javax.annotation.Nonnull;
 
 public final class ShapeSlot extends Slot
 {
-	public ShapeSlot(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable, final int id, final int x, final int y)
+	public ShapeSlot(@Nonnull final IInventory inventory, final int id, final int x, final int y)
 	{
-		super(tileEntityAutoBiggerCraftingTable, id, x, y);
+		super(inventory, id, x, y);
 	}
 
 	@Override

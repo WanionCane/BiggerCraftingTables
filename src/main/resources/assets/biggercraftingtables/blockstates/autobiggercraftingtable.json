@@ -4,8 +4,7 @@
     "model": "biggercraftingtables:block_bigger_table",
     "textures": {
       "side": "biggercraftingtables:blocks/auto_bigger_crafting_tables_sides",
-      "bottom": "biggercraftingtables:blocks/auto_bigger_crafting_tables_bottom",
-      "top": "biggercraftingtables:blocks/auto_big_crafting_table_top"
+      "bottom": "biggercraftingtables:blocks/auto_bigger_crafting_tables_bottom"
     }
   },
   "variants": {

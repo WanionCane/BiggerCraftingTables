@@ -67,7 +67,7 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 	@Override
 	public IBlockState getStateFromMeta(final int metadata)
 	{
-		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getValue(metadata));
+		return getDefaultState().withProperty(Reference.TABLE_TYPES, Reference.TableTypes.getByValue(metadata));
 	}
 
 	@Override
@@ -126,6 +126,7 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 				items.add(new ItemStack(this, 1, i));
 	}
 
+	@Override
 	public BlockStateContainer createBlockState()
 	{
 		return new BlockStateContainer(this, Reference.TABLE_TYPES);

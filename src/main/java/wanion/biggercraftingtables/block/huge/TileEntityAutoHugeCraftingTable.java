@@ -27,7 +27,7 @@ public final class TileEntityAutoHugeCraftingTable extends TileEntityAutoBiggerC
 	@Override
 	public String getName()
 	{
-		return "container.autohugecraftingtable";
+		return "container.autohugecraftingtable.name";
 	}
 
 	@Nonnull

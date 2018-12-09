@@ -28,7 +28,7 @@ public final class ItemBlockAutoBiggerCraftingTable extends ItemBlock
 	@Override
 	public String getUnlocalizedName(final ItemStack itemStack)
 	{
-		return "tile." + Reference.MOD_ID + ".auto" + Reference.TableTypes.getName(getDamage(itemStack)) + "table";
+		return "container.auto" + Reference.TableTypes.getName(getDamage(itemStack)) + "craftingtable";
 	}
 
 	@Override

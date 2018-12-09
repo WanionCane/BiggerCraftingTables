@@ -21,6 +21,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import wanion.lib.Reference;
 import wanion.lib.common.control.energy.EnergyControl;
@@ -28,13 +30,16 @@ import wanion.lib.common.control.redstone.RedstoneControlButton;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public abstract class GuiAutoBiggerCraftingTable extends GuiContainer
 {
 	private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
 	private final ResourceLocation guiTexture;
 	private final int x, y;
+	private final Slot firstPlayerSlot = inventorySlots.getSlot(inventorySlots.inventorySlots.size() - 36);
 	private RedstoneControlButton redstoneControlButton;
 
 	public GuiAutoBiggerCraftingTable(@Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable, @Nonnull final ResourceLocation guiTexture, @Nonnull final Container inventorySlotsIn)
@@ -47,6 +52,7 @@ public abstract class GuiAutoBiggerCraftingTable extends GuiContainer
 		y = slot.yPos;
 	}
 
+	@Override
 	public void initGui()
 	{
 		super.initGui();
@@ -65,8 +71,7 @@ public abstract class GuiAutoBiggerCraftingTable extends GuiContainer
 	protected final void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
 	{
 		fontRenderer.drawString(I18n.format(tileEntityAutoBiggerCraftingTable.getName()), 7, 7, 0x404040);
-		final Slot slot = inventorySlots.getSlot(inventorySlots.inventorySlots.size() - 36);
-		fontRenderer.drawString(I18n.format("container.inventory"), slot.xPos - 1, slot.yPos - 11, 0x404040);
+		fontRenderer.drawString(I18n.format("container.inventory"), firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11, 0x404040);
 		if (super.isPointInRegion(xSize - 25, ySize - 83, 18, 54, mouseX, mouseY)) {
 			final EnergyControl energyControl = tileEntityAutoBiggerCraftingTable.energyControl;
 			drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("bigger.crafting.consumes", tileEntityAutoBiggerCraftingTable.powerConsumption), TextFormatting.GOLD + I18n.format("bigger.crafting.operation")), mouseX - guiLeft, mouseY - guiTop);
@@ -98,23 +103,22 @@ public abstract class GuiAutoBiggerCraftingTable extends GuiContainer
 		else super.renderToolTip(stack, x, y);
 	}
 
-	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
-	{
-		if ((mouseButton == 0 || mouseButton == 1) && redstoneControlButton.mousePressed(this.mc, mouseX, mouseY))
-			redstoneControlButton.controlAction(mouseButton == 0);
-		else super.mouseClicked(mouseX, mouseY, mouseButton);
-	}
-
 	private void drawClearRecipeToolTip(@Nonnull final ItemStack stack, final int x, final int y)
 	{
 		final FontRenderer font = stack.getItem().getFontRenderer(stack);
 		GuiUtils.preItemToolTip(stack);
 		final List<String> toolTip = this.getItemToolTip(stack);
-		toolTip.add("");
-		toolTip.add(TextFormatting.GOLD + I18n.format("bigger.clear.shape"));
+		toolTip.addAll(Arrays.asList("", TextFormatting.GOLD + I18n.format("bigger.clear.shape")));
 		drawHoveringText(toolTip, x, y, (font == null ? fontRenderer : font));
 		GuiUtils.postItemToolTip();
+	}
+
+	@Override
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+	{
+		if ((mouseButton == 0 || mouseButton == 1) && redstoneControlButton.mousePressed(this.mc, mouseX, mouseY))
+			redstoneControlButton.action(mouseButton == 0);
+		else super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	private int scalePowerCentage()

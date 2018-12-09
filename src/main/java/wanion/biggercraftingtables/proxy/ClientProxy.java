@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.BlockAutoBiggerCraftingTable;
 import wanion.biggercraftingtables.block.BlockBiggerCraftingTable;
+import wanion.biggercraftingtables.block.BlockBiggerCreatingTable;
 
 import javax.annotation.Nonnull;
 
@@ -30,14 +31,17 @@ public final class ClientProxy extends CommonProxy
 		// Big
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCraftingTable.INSTANCE), 0, new ModelResourceLocation(Reference.MOD_ID + ":biggercraftingtable", "tabletypes=big"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockAutoBiggerCraftingTable.INSTANCE), 0, new ModelResourceLocation(Reference.MOD_ID + ":autobiggercraftingtable", "tabletypes=big"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCreatingTable.INSTANCE), 0, new ModelResourceLocation(Reference.MOD_ID + ":biggercreatingtable", "tabletypes=big"));
 
 		// Huge
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCraftingTable.INSTANCE), 1, new ModelResourceLocation(Reference.MOD_ID + ":biggercraftingtable", "tabletypes=huge"));
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockAutoBiggerCraftingTable.INSTANCE), 1, new ModelResourceLocation(Reference.MOD_ID + ":autobiggercraftingtable", "tabletypes=huge"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCreatingTable.INSTANCE), 1, new ModelResourceLocation(Reference.MOD_ID + ":biggercreatingtable", "tabletypes=huge"));
 
 		// Giant
-		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCraftingTable.INSTANCE), 2, new ModelResourceLocation(Reference.MOD_ID + ":biggercraftingtable", "tabletypes=huge"));
-		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockAutoBiggerCraftingTable.INSTANCE), 2, new ModelResourceLocation(Reference.MOD_ID + ":autobiggercraftingtable", "tabletypes=huge"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCraftingTable.INSTANCE), 2, new ModelResourceLocation(Reference.MOD_ID + ":biggercraftingtable", "tabletypes=giant"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockAutoBiggerCraftingTable.INSTANCE), 2, new ModelResourceLocation(Reference.MOD_ID + ":autobiggercraftingtable", "tabletypes=giant"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(BlockBiggerCreatingTable.INSTANCE), 2, new ModelResourceLocation(Reference.MOD_ID + ":biggercreatingtable", "tabletypes=giant"));
 	}
 
 	@Override

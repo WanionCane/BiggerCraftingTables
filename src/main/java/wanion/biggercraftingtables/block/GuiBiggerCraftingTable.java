@@ -13,11 +13,14 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 
-public class GuiBiggerCraftingTable extends GuiContainer
+@SideOnly(Side.CLIENT)
+public abstract class GuiBiggerCraftingTable extends GuiContainer
 {
 	private final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable;
 	private final ResourceLocation guiTexture;

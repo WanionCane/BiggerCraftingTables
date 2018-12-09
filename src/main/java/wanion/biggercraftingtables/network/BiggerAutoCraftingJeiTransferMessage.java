@@ -9,6 +9,7 @@ package wanion.biggercraftingtables.network;
  */
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -16,25 +17,28 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.block.ContainerAutoBiggerCraftingTable;
+import wanion.biggercraftingtables.common.IShapedContainer;
 
-public class BiggerAutoCraftingJeiTransfer implements IMessage
+public class BiggerAutoCraftingJeiTransferMessage implements IMessage
 {
+	private int windowId;
 	private short recipeKey;
 	private ItemStack output;
 
-	public BiggerAutoCraftingJeiTransfer(short recipeKey, final ItemStack output)
+	public BiggerAutoCraftingJeiTransferMessage(final int windowId, final short recipeKey, final ItemStack output)
 	{
+		this.windowId = windowId;
 		this.recipeKey = recipeKey;
 		this.output = output;
 	}
 
 	@SuppressWarnings("unused")
-	public BiggerAutoCraftingJeiTransfer() {}
+	public BiggerAutoCraftingJeiTransferMessage() {}
 
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
+		this.windowId = ByteBufUtils.readVarInt(buf, 5);
 		recipeKey = (short) ByteBufUtils.readVarShort(buf);
 		output = ByteBufUtils.readItemStack(buf);
 	}
@@ -42,18 +46,21 @@ public class BiggerAutoCraftingJeiTransfer implements IMessage
 	@Override
 	public void toBytes(ByteBuf buf)
 	{
+		ByteBufUtils.writeVarInt(buf, windowId, 5);
 		ByteBufUtils.writeVarShort(buf, recipeKey);
 		ByteBufUtils.writeItemStack(buf, output);
 	}
 
-	public static class Handler implements IMessageHandler<BiggerAutoCraftingJeiTransfer, IMessage>
+	public static class Handler implements IMessageHandler<BiggerAutoCraftingJeiTransferMessage, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final BiggerAutoCraftingJeiTransfer message, final MessageContext ctx)
+		public IMessage onMessage(final BiggerAutoCraftingJeiTransferMessage message, final MessageContext ctx)
 		{
-			final EntityPlayer entityPlayer = BiggerCraftingTables.proxy.getEntityPlayerFromContext(ctx);
-			if (entityPlayer != null && entityPlayer.openContainer instanceof ContainerAutoBiggerCraftingTable)
-				((ContainerAutoBiggerCraftingTable) entityPlayer.openContainer).defineShape(message.recipeKey, message.output);
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				final EntityPlayer entityPlayer = BiggerCraftingTables.proxy.getEntityPlayerFromContext(ctx);
+				if (entityPlayer != null && entityPlayer.openContainer instanceof IShapedContainer && entityPlayer.openContainer.windowId == message.windowId)
+					((IShapedContainer) entityPlayer.openContainer).defineShape(message.recipeKey, message.output);
+			});
 			return null;
 		}
 	}

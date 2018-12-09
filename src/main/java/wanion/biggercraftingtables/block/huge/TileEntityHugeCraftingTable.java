@@ -21,6 +21,6 @@ public final class TileEntityHugeCraftingTable extends TileEntityBiggerCraftingT
 	@Override
 	public String getName()
 	{
-		return "container.hugecraftingtable";
+		return "container.hugecraftingtable.name";
 	}
 }

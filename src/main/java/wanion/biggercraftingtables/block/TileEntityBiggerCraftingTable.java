@@ -25,8 +25,6 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 {
 	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
-	public TileEntityBiggerCraftingTable() {}
-
 	@Override
 	public boolean isEmpty()
 	{
@@ -141,8 +139,6 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 	{
 		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
 		final int max = getSizeInventory() - 1;
-		for (int i = 0; i < max; i++)
-			setInventorySlotContents(i, ItemStack.EMPTY);
 		for (int i = 0; i < nbtTagList.tagCount(); i++) {
 			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
 			final int slot = slotCompound.getShort("Slot");
@@ -167,6 +163,12 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 		return nbtTagCompound;
 	}
 
+	@Override
+	public boolean hasCustomName()
+	{
+		return false;
+	}
+
 	@Nonnull
 	@Override
 	public int[] getSlotsForFace(@Nonnull final EnumFacing side)
@@ -182,12 +184,6 @@ public abstract class TileEntityBiggerCraftingTable extends TileEntity implement
 
 	@Override
 	public boolean canExtractItem(final int index, @Nonnull final ItemStack stack, @Nonnull final EnumFacing direction)
-	{
-		return false;
-	}
-
-	@Override
-	public boolean hasCustomName()
 	{
 		return false;
 	}

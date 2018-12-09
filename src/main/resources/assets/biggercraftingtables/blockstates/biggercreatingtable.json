@@ -1,0 +1,34 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "biggercraftingtables:block_bigger_table",
+    "textures": {
+      "side": "biggercraftingtables:blocks/auto_bigger_crafting_tables_sides",
+      "bottom": "biggercraftingtables:blocks/auto_bigger_crafting_tables_bottom"
+    }
+  },
+  "variants": {
+    "tabletypes": {
+      "big": {
+        "textures": {
+          "top": "biggercraftingtables:blocks/big_crafting_table_top"
+        }
+      },
+      "huge": {
+        "textures": {
+          "top": "biggercraftingtables:blocks/huge_crafting_table_top"
+        }
+      },
+      "giant": {
+        "textures": {
+          "top": "biggercraftingtables:blocks/giant_crafting_table_top"
+        }
+      }
+    },
+    "normal": [
+    ],
+    "inventory": [
+      {}
+    ]
+  }
+}

@@ -12,6 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import wanion.biggercraftingtables.common.IGhostAcceptorContainer;
+import wanion.biggercraftingtables.common.IShapedContainer;
 import wanion.lib.common.ISlotCreator;
 import wanion.lib.common.control.Controls;
 import wanion.lib.common.control.ControlsContainer;
@@ -23,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerAutoBiggerCraftingTable extends ControlsContainer implements IRedstoneControlProvider
+public class ContainerAutoBiggerCraftingTable extends ControlsContainer implements IRedstoneControlProvider, IShapedContainer, IGhostAcceptorContainer
 {
 	private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
 	private final int playerInventoryEnds, playerInventoryStarts, inventoryFull, shapeEnds, result;
@@ -135,6 +137,14 @@ public class ContainerAutoBiggerCraftingTable extends ControlsContainer implemen
 		detectAndSendChanges();
 	}
 
+	@Override
+	public void clearShape()
+	{
+		final int slotCount = inventorySlots.size();
+		final int startsIn = ((slotCount - 36) / 2) - 1, endsIn = slotCount - 38;
+		clearShape(startsIn, endsIn);
+	}
+
 	private void clearShape(final int startsIn, final int endsIn)
 	{
 		for (int i = startsIn; i < endsIn; i++)
@@ -159,6 +169,20 @@ public class ContainerAutoBiggerCraftingTable extends ControlsContainer implemen
 	public Controls getControls()
 	{
 		return tileEntityAutoBiggerCraftingTable.getControls();
+	}
+
+	@Override
+	public void accept(final int slot, @Nonnull ItemStack itemStack)
+	{
+		if (slot >= inventoryFull && slot < shapeEnds) {
+			final Slot actualSlot = inventorySlots.get(slot);
+			if (itemStack.isItemEqual(actualSlot.getStack()))
+				actualSlot.putStack(ItemStack.EMPTY);
+			else
+				actualSlot.putStack(itemStack);
+			tileEntityAutoBiggerCraftingTable.recipeShapeChanged();
+			detectAndSendChanges();
+		}
 	}
 
 	private static ItemStack getStackInput(final Object input)

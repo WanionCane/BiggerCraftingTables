@@ -300,8 +300,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		controls.getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
 		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
 		final int max = getSizeInventory() - 1;
-		for (int i = 0; i < max; i++)
-			setInventorySlotContents(i, ItemStack.EMPTY);
 		for (int i = 0; i < nbtTagList.tagCount(); i++) {
 			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
 			final int slot = slotCompound.getShort("Slot");

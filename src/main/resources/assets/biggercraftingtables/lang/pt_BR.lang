@@ -1,21 +1,33 @@
 bigger.clear.shape=Clique para Limpar a Receita
 bigger.crafting.consumes=Consome %1$s FE
 bigger.crafting.operation=por operação
+bigger.creating.tooltip.big.name=Grandes
+bigger.creating.tooltip.huge.name=Enormes
+bigger.creating.tooltip.giant.name=Gigantes
+bigger.creating.tooltip=Usado para criar receitas %1$s
+bigger.creating.creative-only=Apenas no Criativo
+bigger.creating.usage=Como Usar:
+bigger.creating.usage.desc.line1=Botão Esquerdo do Mouse Incrementa em 1
+bigger.creating.usage.desc.line2=Botão Direito do Mouse Decrementa em 1
+bigger.creating.usage.desc.line3=Shift Click Esquerdo/Direito;
+bigger.creating.usage.desc.line4=Aumenta o Incremento/Decremento para 16
+bigger.creating.shape.control=Controle de Formato
+bigger.creating.shape.control.state.shaped=Formato Definido
+bigger.creating.shape.control.state.shaped.desc=a Receita tem um Formato Definido.
+bigger.creating.shape.control.state.shapeless=Formato Indefinido
+bigger.creating.shape.control.state.shapeless.desc=a Receita não tem um Formato Definido.
 
 // Big
-tile.biggercraftingtables.bigtable.name=Bancada de Trabalho Grande
-tile.biggercraftingtables.autobigtable.name=Bancada de Trabalho Grande Automática
-container.bigcraftingtable=Bancada de Trabalho Grande
-container.autobigcraftingtable=Bancada de Trabalho Grande Automática
+container.bigcraftingtable.name=Bancada de Trabalho Grande
+container.autobigcraftingtable.name=Bancada de Trabalho Grande Automática
+container.bigcreatingtable.name=Bancada de Criação Grande
 
 // Huge
-tile.biggercraftingtables.hugetable.name=Bancada de Trabalho Enorme
-tile.biggercraftingtables.autohugetable.name=Bancada de Trabalho Enorme Automática
-container.hugecraftingtable=Bancada de Trabalho Enorme
-container.autohugecraftingtable=Bancada de Trabalho Enorme Automática
+container.hugecraftingtable.name=Bancada de Trabalho Enorme
+container.autohugecraftingtable.name=Bancada de Trabalho Enorme Automática
+container.hugecreatingtable.name=Bancada de Criação Enorme
 
 // Giant
-tile.biggercraftingtables.gianttable.name=Bancada de Trabalho Gigante
-tile.biggercraftingtables.autogianttable.name=Bancada de Trabalho Gigante Automática
-container.giantcraftingtable=Bancada de Trabalho Gigante
-container.autogiantcraftingtable=Bancada de Trabalho Gigante Automática
+container.giantcraftingtable.name=Bancada de Trabalho Gigante
+container.autogiantcraftingtable.name=Bancada de Trabalho Gigante Automática
+container.giantcreatingtable.name=Bancada de Criação Gigante
