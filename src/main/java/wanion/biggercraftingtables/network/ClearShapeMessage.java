@@ -8,7 +8,6 @@ package wanion.biggercraftingtables.network;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -31,7 +30,7 @@ public class ClearShapeMessage extends EmptyMessage
 		@Override
 		public IMessage onMessage(final ClearShapeMessage message, final MessageContext ctx)
 		{
-			Minecraft.getMinecraft().addScheduledTask(() -> {
+			BiggerCraftingTables.proxy.getThreadListener().addScheduledTask(() -> {
 				final EntityPlayer entityPlayer = BiggerCraftingTables.proxy.getEntityPlayerFromContext(ctx);
 				if (entityPlayer != null && entityPlayer.openContainer instanceof IShapedContainer && entityPlayer.openContainer.windowId == message.windowId)
 					((IShapedContainer) entityPlayer.openContainer).clearShape();

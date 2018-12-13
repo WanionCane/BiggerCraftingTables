@@ -10,6 +10,7 @@ package wanion.biggercraftingtables.block;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -44,14 +45,22 @@ public final class ItemBlockBiggerCreatingTable extends ItemBlock
 	@SideOnly(Side.CLIENT)
 	public void addInformation(@Nonnull final ItemStack stack, @Nullable final World worldIn, @Nonnull final List<String> tooltip, @Nonnull final ITooltipFlag flagIn)
 	{
-		if (!stack.isEmpty())
+		if (!stack.isEmpty()) {
 			tooltip.add(I18n.format("bigger.creating.tooltip", I18n.format("bigger.creating.tooltip." + Reference.TableTypes.getName(stack.getMetadata()) + ".name")));
-		tooltip.add(TextFormatting.GOLD + I18n.format("bigger.creating.creative-only"));
+			tooltip.add(TextFormatting.GOLD + I18n.format("bigger.creating.creative-only"));
+		}
 	}
 
 	@Override
 	public int getMetadata(final int damage)
 	{
 		return MathHelper.clamp(damage, 0, Reference.TableTypes.values().length);
+	}
+
+	@Nonnull
+	@Override
+	public EnumRarity getRarity(final ItemStack stack)
+	{
+		return EnumRarity.EPIC;
 	}
 }

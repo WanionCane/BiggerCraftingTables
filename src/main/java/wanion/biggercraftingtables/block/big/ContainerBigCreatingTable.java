@@ -13,9 +13,7 @@ import wanion.biggercraftingtables.block.ContainerBiggerCreatingTable;
 
 import javax.annotation.Nonnull;
 
-import static wanion.biggercraftingtables.recipe.big.BigRecipeRegistry.IBigRecipe;
-
-public final class ContainerBigCreatingTable extends ContainerBiggerCreatingTable<IBigRecipe>
+public final class ContainerBigCreatingTable extends ContainerBiggerCreatingTable
 {
 	public ContainerBigCreatingTable(@Nonnull final TileEntityBigCreatingTable tileEntityBigCreatingTable, final InventoryPlayer inventoryPlayer)
 	{

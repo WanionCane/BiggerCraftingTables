@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.IThreadListener;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.Reference;
@@ -48,5 +49,11 @@ public final class ClientProxy extends CommonProxy
 	public EntityPlayer getEntityPlayerFromContext(@Nonnull final MessageContext messageContext)
 	{
 		return messageContext.side.isClient() ? Minecraft.getMinecraft().player : super.getEntityPlayerFromContext(messageContext);
+	}
+
+	@Override
+	public IThreadListener getThreadListener()
+	{
+		return Minecraft.getMinecraft();
 	}
 }

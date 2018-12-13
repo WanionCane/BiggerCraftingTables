@@ -10,54 +10,50 @@ package wanion.biggercraftingtables.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.common.IGhostAcceptorContainer;
+import wanion.biggercraftingtables.block.ContainerBiggerCreatingTable;
 
-public class BiggerGhostTransferMessage implements IMessage
+public class MatchingSync implements IMessage
 {
-	private int windowId, slot;
-	private ItemStack itemStack;
+	private int windowId;
+	private NBTTagCompound nbtTagCompound;
 
-	public BiggerGhostTransferMessage() {}
+	public MatchingSync() {}
 
-	public BiggerGhostTransferMessage(final int windowId, final int slot, final ItemStack itemStack)
+	public MatchingSync(final int windowId, final NBTTagCompound nbtTagCompound)
 	{
 		this.windowId = windowId;
-		this.slot = slot;
-		this.itemStack = itemStack;
+		this.nbtTagCompound = nbtTagCompound;
 	}
 
 	@Override
-	public void fromBytes(ByteBuf buf)
+	public void fromBytes(final ByteBuf buf)
 	{
 		this.windowId = ByteBufUtils.readVarInt(buf, 5);
-		slot = ByteBufUtils.readVarInt(buf, 5);
-		itemStack = ByteBufUtils.readItemStack(buf);
+		this.nbtTagCompound = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
-	public void toBytes(ByteBuf buf)
+	public void toBytes(final ByteBuf buf)
 	{
 		ByteBufUtils.writeVarInt(buf, windowId, 5);
-		ByteBufUtils.writeVarInt(buf, slot, 5);
-		ByteBufUtils.writeItemStack(buf, itemStack);
+		ByteBufUtils.writeTag(buf, nbtTagCompound);
 	}
 
-	public static class Handler implements IMessageHandler<BiggerGhostTransferMessage, IMessage>
+	public static class Handler implements IMessageHandler<MatchingSync, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final BiggerGhostTransferMessage message, final MessageContext ctx)
+		public IMessage onMessage(final MatchingSync matchingSync, final MessageContext ctx)
 		{
 			BiggerCraftingTables.proxy.getThreadListener().addScheduledTask(() -> {
 				final EntityPlayer entityPlayer = BiggerCraftingTables.proxy.getEntityPlayerFromContext(ctx);
-				if (entityPlayer != null && entityPlayer.openContainer instanceof IGhostAcceptorContainer && entityPlayer.openContainer.windowId == message.windowId)
-					((IGhostAcceptorContainer) entityPlayer.openContainer).acceptGhostStack(message.slot, message.itemStack);
-
+				if (entityPlayer != null && entityPlayer.openContainer instanceof ContainerBiggerCreatingTable && entityPlayer.openContainer.windowId == matchingSync.windowId)
+					((ContainerBiggerCreatingTable) entityPlayer.openContainer).syncMatching(matchingSync.nbtTagCompound);
 			});
 			return null;
 		}

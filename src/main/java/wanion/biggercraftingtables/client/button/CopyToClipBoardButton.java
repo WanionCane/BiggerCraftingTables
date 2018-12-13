@@ -11,7 +11,6 @@ package wanion.biggercraftingtables.client.button;
 import joptsimple.internal.Strings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -19,22 +18,26 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.network.ClearShapeMessage;
-import wanion.lib.Reference;
+import wanion.biggercraftingtables.Reference;
+import wanion.biggercraftingtables.block.ContainerBiggerCreatingTable;
+import wanion.biggercraftingtables.block.GuiBiggerCreatingTable;
+import wanion.biggercraftingtables.common.CTUtils;
 import wanion.lib.common.IClickAction;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 
 @SideOnly(Side.CLIENT)
-public final class ClearShapeButton extends GuiButton implements IClickAction
+public final class CopyToClipBoardButton extends GuiButton implements IClickAction
 {
-	private final GuiContainer guiContainer;
+	private final GuiBiggerCreatingTable guiBiggerCreatingTable;
 	private final ResourceLocation resourceLocation = Reference.GUI_TEXTURES;
 
-	public ClearShapeButton(final int buttonId, @Nonnull final GuiContainer guiContainer, final int x, final int y)
+	public CopyToClipBoardButton(final int buttonId, @Nonnull final GuiBiggerCreatingTable guiBiggerCreatingTable, final int x, final int y)
 	{
-		super(buttonId, x, y, 10, 9, Strings.EMPTY);
-		this.guiContainer = guiContainer;
+		super(buttonId, x, y, 8, 9, Strings.EMPTY);
+		this.guiBiggerCreatingTable = guiBiggerCreatingTable;
 	}
 
 	public void drawButton(@Nonnull final Minecraft mc, final int mouseX, final int mouseY, final float partialTicks)
@@ -44,18 +47,21 @@ public final class ClearShapeButton extends GuiButton implements IClickAction
 		mc.getTextureManager().bindTexture(resourceLocation);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-		drawModalRectWithCustomSizedTexture(x, y, !isMouseOver() ? 108 : 118, 0, width, height, 128, 128);
+		drawModalRectWithCustomSizedTexture(x, y, !isMouseOver() ? 0 : 8, 47, width, height, 128, 128);
 	}
 
 	public void drawButtonForegroundLayer(final int mouseX, final int mouseY)
 	{
-		guiContainer.drawHoveringText(TextFormatting.GOLD + I18n.format("bigger.clear.shape"), mouseX - guiContainer.getGuiLeft(), mouseY - guiContainer.getGuiTop());
+		guiBiggerCreatingTable.drawHoveringText(TextFormatting.GOLD + I18n.format("bigger.creating.copy"), mouseX - guiBiggerCreatingTable.getGuiLeft(), mouseY - guiBiggerCreatingTable.getGuiTop());
 	}
 
 	@Override
 	public void action(boolean b)
 	{
-		this.playPressSound(this.guiContainer.mc.getSoundHandler());
-		BiggerCraftingTables.networkWrapper.sendToServer(new ClearShapeMessage(guiContainer.inventorySlots.windowId));
+		this.playPressSound(this.guiBiggerCreatingTable.mc.getSoundHandler());
+		BiggerCraftingTables.proxy.getThreadListener().addScheduledTask(() -> {
+			final StringSelection stringSelection = new StringSelection(CTUtils.toCTScript(((ContainerBiggerCreatingTable) guiBiggerCreatingTable.inventorySlots).getTileEntityBiggerCreatingTable()));
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
+		});
 	}
 }

@@ -12,13 +12,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.control.IState;
 import wanion.lib.common.control.IStateNameable;
 import wanion.lib.common.control.IStateProvider;
 
 import javax.annotation.Nonnull;
 
-public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.ShapeState>
+public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.ShapeState>, IControlNameable
 {
 	private ShapeState state;
 
@@ -53,12 +54,7 @@ public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.S
 	}
 
 	@Override
-	public String getControlName()
-	{
-		return "bigger.creating.shape.control";
-	}
-
-	@Override
+	@Nonnull
 	public ShapeState getState()
 	{
 		return state;
@@ -70,11 +66,31 @@ public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.S
 		this.state = shapeState;
 	}
 
+	@Override
+	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound, @Nonnull final ShapeState shapeState)
+	{
+		nbtTagCompound.setInteger("ShapeControl", shapeState.ordinal());
+	}
+
+	@Override
+	public boolean equals(final Object obj)
+	{
+		return obj == this || (obj instanceof ShapeControl && this.state == ((ShapeControl) obj).state);
+	}
+
+	@Nonnull
+	@Override
+	public String getControlName()
+	{
+		return "bigger.creating.shape.control";
+	}
+
 	public enum ShapeState implements IState<ShapeState>, IStateNameable
 	{
 		SHAPED,
 		SHAPELESS;
 
+		@Nonnull
 		@Override
 		public ShapeState getNextState()
 		{
@@ -82,6 +98,7 @@ public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.S
 			return nextState > values().length - 1 ? values()[0] : values()[nextState];
 		}
 
+		@Nonnull
 		@Override
 		public ShapeState getPreviousState()
 		{
@@ -89,17 +106,23 @@ public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.S
 			return previousState >= 0 ? values()[previousState] : values()[values().length - 1];
 		}
 
-		@Nonnull
 		@Override
 		public Pair<Integer, Integer> getTexturePos(boolean b)
 		{
 			return new ImmutablePair<>(!b ? 0 : 19, 19 * ordinal());
 		}
 
+		@Nonnull
 		@Override
 		public String getStateName()
 		{
 			return "bigger.creating.shape.control.state." + name().toLowerCase();
+		}
+
+		@Override
+		public String getStateDescription()
+		{
+			return null;
 		}
 	}
 }

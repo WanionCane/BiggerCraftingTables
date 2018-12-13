@@ -8,6 +8,7 @@ package wanion.biggercraftingtables.block;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import joptsimple.internal.Strings;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -22,6 +23,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import wanion.biggercraftingtables.client.button.ClearShapeButton;
+import wanion.biggercraftingtables.client.button.CopyToClipBoardButton;
+import wanion.biggercraftingtables.client.button.ExportToFileButton;
+import wanion.biggercraftingtables.client.button.ShapeControlButton;
+import wanion.biggercraftingtables.common.control.MatchingControl;
+import wanion.biggercraftingtables.common.control.ShapeControl;
+import wanion.biggercraftingtables.inventory.slot.MatchingSlot;
+import wanion.lib.common.IClickAction;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -35,27 +43,38 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 	private final ResourceLocation guiTexture;
 	private final Slot firstPlayerSlot = inventorySlots.getSlot(inventorySlots.inventorySlots.size() - 36);
 	private final Slot outputSlot = inventorySlots.getSlot(firstPlayerSlot.slotNumber - 1);
-	private ClearShapeButton clearShapeButton;
-	private List<String> description;
+	private final List<String> matchingDescription;
+	private final List<String> outputDescription;
 
 	public GuiBiggerCreatingTable(@Nonnull final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable, @Nonnull final ResourceLocation guiTexture, @Nonnull final Container inventorySlotsIn)
 	{
 		super(inventorySlotsIn);
 		this.tileEntityBiggerCreatingTable = tileEntityBiggerCreatingTable;
 		this.guiTexture = guiTexture;
+		matchingDescription = Arrays.asList(
+				TextFormatting.GOLD + I18n.format("bigger.creating.usage"),
+				TextFormatting.GRAY + I18n.format("bigger.creating.matching.desc"));
+		outputDescription = Arrays.asList("",
+				TextFormatting.GOLD + I18n.format("bigger.creating.usage"),
+				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line1"),
+				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line2"),
+				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line3"),
+				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line4"));
 	}
 
 	@Override
 	public void initGui()
 	{
 		super.initGui();
-		clearShapeButton = addButton(new ClearShapeButton(0, this, guiLeft + outputSlot.xPos + 3, guiTop + outputSlot.yPos + 24));
-		description = Arrays.asList("",
-				TextFormatting.GOLD + I18n.format("bigger.creating.usage"),
-				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line1"),
-				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line2"),
-				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line3"),
-				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line4"));
+		final ShapeControlButton shapeControlButton = addButton(new ShapeControlButton(this, tileEntityBiggerCreatingTable.getControls().get(ShapeControl.class), guiLeft + outputSlot.xPos - 10, guiTop + outputSlot.yPos - 28, 0));
+		addButton(new ClearShapeButton(1, this, shapeControlButton.x + 22, shapeControlButton.y + 5));
+		addButton(new ExportToFileButton(2, this, guiLeft + outputSlot.xPos - 1, guiTop + outputSlot.yPos + 23));
+		addButton(new CopyToClipBoardButton(3, this, guiLeft + outputSlot.xPos + 9, guiTop + outputSlot.yPos + 23));
+	}
+
+	public TileEntityBiggerCreatingTable getTileEntityBiggerCreatingTable()
+	{
+		return tileEntityBiggerCreatingTable;
 	}
 
 	@Override
@@ -88,9 +107,36 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 	@Override
 	protected final void renderToolTip(@Nonnull final ItemStack stack, final int x, final int y)
 	{
-		if (super.isPointInRegion(outputSlot.xPos, outputSlot.yPos, 16, 16, x, y))
+		final MatchingSlot matchingSlot = findSlot(x, y);
+		if (matchingSlot != null)
+			drawMatchingTooltip(matchingSlot, stack, x, y);
+		else if (super.isPointInRegion(outputSlot.xPos, outputSlot.yPos, 16, 16, x, y))
 			drawOutputSlotToolTip(stack, x, y);
 		else super.renderToolTip(stack, x, y);
+	}
+
+	private MatchingSlot findSlot(final int x, final int y)
+	{
+		final int max = inventorySlots.inventorySlots.size() - 37;
+		for (int i = 0; i < max; i++) {
+			final Slot slot = inventorySlots.getSlot(i);
+			if (slot instanceof MatchingSlot && super.isPointInRegion(slot.xPos, slot.yPos, 16, 16, x, y))
+				return (MatchingSlot) slot;
+		}
+		return null;
+	}
+
+	private void drawMatchingTooltip(@Nonnull final MatchingSlot matchingSlot, @Nonnull final ItemStack stack, final int x, final int y)
+	{
+		final FontRenderer font = stack.getItem().getFontRenderer(stack);
+		GuiUtils.preItemToolTip(stack);
+		final List<String> toolTip = this.getItemToolTip(stack);
+		final MatchingControl matchingControl = matchingSlot.getMatchingControl();
+		toolTip.add(Strings.EMPTY);
+		toolTip.add(TextFormatting.RED + I18n.format(matchingControl.getControlName()) + ": " + TextFormatting.WHITE + matchingControl.getMatcher().getDescription());
+		toolTip.addAll(matchingDescription);
+		drawHoveringText(toolTip, x, y, (font == null ? fontRenderer : font));
+		GuiUtils.postItemToolTip();
 	}
 
 	private void drawOutputSlotToolTip(@Nonnull final ItemStack stack, final int x, final int y)
@@ -98,7 +144,7 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 		final FontRenderer font = stack.getItem().getFontRenderer(stack);
 		GuiUtils.preItemToolTip(stack);
 		final List<String> toolTip = this.getItemToolTip(stack);
-		toolTip.addAll(description);
+		toolTip.addAll(outputDescription);
 		drawHoveringText(toolTip, x, y, (font == null ? fontRenderer : font));
 		GuiUtils.postItemToolTip();
 	}
@@ -106,8 +152,14 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
 	{
-		if ((mouseButton == 0 || mouseButton == 1) && clearShapeButton.mousePressed(this.mc, mouseX, mouseY))
-			clearShapeButton.action(mouseButton == 0);
-		else super.mouseClicked(mouseX, mouseY, mouseButton);
+		if (mouseButton == 0 || mouseButton == 1) {
+			for (final GuiButton button : buttonList) {
+				if (button instanceof IClickAction && button.mousePressed(this.mc, mouseX, mouseY)) {
+					((IClickAction) button).action(mouseButton == 0);
+					return;
+				}
+			}
+		}
+		super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 }

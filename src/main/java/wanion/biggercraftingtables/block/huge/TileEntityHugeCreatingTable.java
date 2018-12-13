@@ -8,6 +8,7 @@ package wanion.biggercraftingtables.block.huge;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.TileEntityBiggerCreatingTable;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
@@ -16,10 +17,11 @@ import javax.annotation.Nonnull;
 
 public final class TileEntityHugeCreatingTable extends TileEntityBiggerCreatingTable
 {
+	@Nonnull
 	@Override
-	protected int getRoot()
+	public Reference.TableTypes getTableType()
 	{
-		return 7;
+		return Reference.TableTypes.HUGE;
 	}
 
 	@Nonnull

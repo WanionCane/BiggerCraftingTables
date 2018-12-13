@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public final class ShapeSlot extends Slot
+public class ShapeSlot extends Slot
 {
 	public ShapeSlot(@Nonnull final IInventory inventory, final int id, final int x, final int y)
 	{

@@ -9,7 +9,6 @@ package wanion.biggercraftingtables.network;
  */
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -56,7 +55,7 @@ public class BiggerAutoCraftingJeiTransferMessage implements IMessage
 		@Override
 		public IMessage onMessage(final BiggerAutoCraftingJeiTransferMessage message, final MessageContext ctx)
 		{
-			Minecraft.getMinecraft().addScheduledTask(() -> {
+			BiggerCraftingTables.proxy.getThreadListener().addScheduledTask(() -> {
 				final EntityPlayer entityPlayer = BiggerCraftingTables.proxy.getEntityPlayerFromContext(ctx);
 				if (entityPlayer != null && entityPlayer.openContainer instanceof IShapedContainer && entityPlayer.openContainer.windowId == message.windowId)
 					((IShapedContainer) entityPlayer.openContainer).defineShape(message.recipeKey, message.output);

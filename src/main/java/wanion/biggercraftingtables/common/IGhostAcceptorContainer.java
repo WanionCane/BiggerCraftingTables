@@ -14,5 +14,5 @@ import javax.annotation.Nonnull;
 
 public interface IGhostAcceptorContainer
 {
-	void accept(int slot, @Nonnull ItemStack itemStack);
+	void acceptGhostStack(int slot, @Nonnull ItemStack itemStack);
 }

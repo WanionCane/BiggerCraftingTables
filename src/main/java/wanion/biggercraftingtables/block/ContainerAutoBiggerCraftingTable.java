@@ -32,7 +32,7 @@ public class ContainerAutoBiggerCraftingTable extends ControlsContainer implemen
 
 	public ContainerAutoBiggerCraftingTable(@Nonnull final ISlotCreator slotCreator, @Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable)
 	{
-		super(tileEntityAutoBiggerCraftingTable.getControls());
+		super(tileEntityAutoBiggerCraftingTable.getControls(), tileEntityAutoBiggerCraftingTable);
 		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
 		final List<Slot> slotList = new ArrayList<>();
 		slotCreator.create(slotList);
@@ -103,6 +103,7 @@ public class ContainerAutoBiggerCraftingTable extends ControlsContainer implemen
 		return tileEntityAutoBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 
+	@Override
 	public final void defineShape(final short key, @Nonnull final ItemStack output)
 	{
 		final IAdvancedRecipe advancedRecipe = tileEntityAutoBiggerCraftingTable.getRecipeRegistry().findRecipeByKeyAndOutput(key, output);
@@ -172,7 +173,7 @@ public class ContainerAutoBiggerCraftingTable extends ControlsContainer implemen
 	}
 
 	@Override
-	public void accept(final int slot, @Nonnull ItemStack itemStack)
+	public void acceptGhostStack(final int slot, @Nonnull ItemStack itemStack)
 	{
 		if (slot >= inventoryFull && slot < shapeEnds) {
 			final Slot actualSlot = inventorySlots.get(slot);

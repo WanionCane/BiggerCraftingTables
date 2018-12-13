@@ -16,6 +16,8 @@ import net.minecraft.util.math.MathHelper;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+import static java.io.File.separatorChar;
+
 public final class Reference
 {
 	public static final String MOD_VERSION = "1.12.2-1.9";
@@ -28,12 +30,20 @@ public final class Reference
 	public static final Random RANDOM = new Random();
 	public static final PropertyEnum<TableTypes> TABLE_TYPES = PropertyEnum.create("tabletypes", TableTypes.class);
 	public static final ResourceLocation GUI_TEXTURES = new ResourceLocation(MOD_ID, "textures/gui/gui_textures.png");
+	public static final char SLASH = separatorChar;
 
 	public enum TableTypes implements IStringSerializable, Comparable<TableTypes>
 	{
 		BIG,
 		HUGE,
 		GIANT;
+
+		final int root;
+
+		TableTypes()
+		{
+			this.root = 5 + (2 * ordinal());
+		}
 
 		@Nonnull
 		@Override
@@ -45,6 +55,11 @@ public final class Reference
 		public int getMetadata()
 		{
 			return ordinal();
+		}
+
+		public int getRoot()
+		{
+			return root;
 		}
 
 		public static String getName(final int metadata)

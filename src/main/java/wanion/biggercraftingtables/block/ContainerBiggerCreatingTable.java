@@ -8,35 +8,49 @@ package wanion.biggercraftingtables.block;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
+import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.common.IGhostAcceptorContainer;
 import wanion.biggercraftingtables.common.IShapedContainer;
+import wanion.biggercraftingtables.common.control.MatchingControl;
+import wanion.biggercraftingtables.inventory.slot.MatchingSlot;
 import wanion.biggercraftingtables.inventory.slot.ShapeSlot;
+import wanion.biggercraftingtables.network.MatchingSync;
 import wanion.lib.common.control.Controls;
 import wanion.lib.common.control.ControlsContainer;
+import wanion.lib.common.control.IControl;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public abstract class ContainerBiggerCreatingTable<R extends IAdvancedRecipe> extends ControlsContainer implements IShapedContainer, IGhostAcceptorContainer
+public abstract class ContainerBiggerCreatingTable extends ControlsContainer implements IShapedContainer, IGhostAcceptorContainer
 {
 	private final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable;
+	private final Int2ObjectMap<MatchingControl> matchingControlMap = new Int2ObjectOpenHashMap<>();
 	private int playerInventoryEnds, playerInventoryStarts, result, root;
 
 	public ContainerBiggerCreatingTable(final int inventoryStartsX, final int inventoryStartsY, final int playerStartsX, final int playerStartsY, final int resultX, final int resultY, @Nonnull final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable, final InventoryPlayer inventoryPlayer)
 	{
-		super(tileEntityBiggerCreatingTable.getControls());
+		super(tileEntityBiggerCreatingTable.getControls(), tileEntityBiggerCreatingTable);
 		this.tileEntityBiggerCreatingTable = tileEntityBiggerCreatingTable;
 		this.root = tileEntityBiggerCreatingTable.getRoot();
 		for (int y = 0; y < root; y++)
 			for (int x = 0; x < root; x++)
-				addSlotToContainer(new ShapeSlot(tileEntityBiggerCreatingTable, y * root + x, inventoryStartsX + (18 * x), inventoryStartsY + (18 * y)));
+				addSlotToContainer(new MatchingSlot(tileEntityBiggerCreatingTable, y * root + x, inventoryStartsX + (18 * x), inventoryStartsY + (18 * y)));
 		addSlotToContainer(new ShapeSlot(tileEntityBiggerCreatingTable, root * root, resultX, resultY));
 		for (int y = 0; y < 3; y++)
 			for (int x = 0; x < 9; x++)
@@ -46,6 +60,45 @@ public abstract class ContainerBiggerCreatingTable<R extends IAdvancedRecipe> ex
 		playerInventoryEnds = inventorySlots.size();
 		playerInventoryStarts = playerInventoryEnds - 36;
 		result = playerInventoryStarts - 1;
+		this.matchingControlMap.putAll(tileEntityBiggerCreatingTable.getMatchingControlMap().values().stream().map(IControl::copy).collect(Collectors.toMap(MatchingControl::hashCode, Function.identity())));
+	}
+
+	@Override
+	public void addListener(final IContainerListener listener)
+	{
+		super.addListener(listener);
+		if (!(listener instanceof EntityPlayerMP))
+			return;
+		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+		matchingControlMap.values().forEach(matchingControl -> matchingControl.writeToNBT(nbtTagCompound));
+		BiggerCraftingTables.networkWrapper.sendTo(new MatchingSync(windowId, nbtTagCompound), (EntityPlayerMP) listener);
+	}
+
+	@Override
+	public void detectAndSendChanges()
+	{
+		super.detectAndSendChanges();
+		final List<MatchingControl> controlList = compareMatchingContents(tileEntityBiggerCreatingTable.getMatchingControlMap());
+		if (!controlList.isEmpty()) {
+			matchingControlMap.putAll(controlList.stream().map(IControl::copy).collect(Collectors.toMap(MatchingControl::hashCode, Function.identity())));
+			final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+			controlList.forEach(control -> control.writeToNBT(nbtTagCompound));
+			for (final IContainerListener containerListener : listeners)
+				if (containerListener instanceof EntityPlayerMP)
+					BiggerCraftingTables.networkWrapper.sendTo(new MatchingSync(windowId, nbtTagCompound), (EntityPlayerMP) containerListener);
+		}
+	}
+
+	@Nonnull
+	private List<MatchingControl> compareMatchingContents(@Nonnull final Int2ObjectMap<MatchingControl> tileMatchingControlMap)
+	{
+		final List<MatchingControl> differences = new ArrayList<>();
+		for (final MatchingControl tileMatchingControl : tileMatchingControlMap.values()) {
+			final MatchingControl matchingControl = matchingControlMap.get(tileMatchingControl.hashCode());
+			if (!tileMatchingControl.equals(matchingControl))
+				differences.add(tileMatchingControl);
+		}
+		return differences;
 	}
 
 	@Nonnull
@@ -74,12 +127,22 @@ public abstract class ContainerBiggerCreatingTable<R extends IAdvancedRecipe> ex
 			} else if (clickType == ClickType.PICKUP) {
 				final ItemStack playerStack = entityPlayer.inventory.getItemStack();
 				final boolean slotHasStack = actualSlot.getHasStack();
-				if (!playerStack.isEmpty() && !slotHasStack) {
+				if (slotHasStack && mouseButton == 1 && actualSlot instanceof MatchingSlot)
+					nextMatching((MatchingSlot) actualSlot);
+				else if (!playerStack.isEmpty()) {
 					final ItemStack newSlotStack = playerStack.copy();
 					newSlotStack.setCount(1);
-					actualSlot.putStack(newSlotStack);
-				} else if (playerStack.isEmpty() && slotHasStack || !playerStack.isEmpty() && playerStack.isItemEqual(actualSlot.getStack()))
+					if (!playerStack.isItemEqual(actualSlot.getStack()))
+						actualSlot.putStack(newSlotStack);
+					else
+						actualSlot.putStack(ItemStack.EMPTY);
+					if (actualSlot instanceof MatchingSlot)
+						resetMatching((MatchingSlot) actualSlot);
+				} else if (slotHasStack) {
 					actualSlot.putStack(ItemStack.EMPTY);
+					if (actualSlot instanceof MatchingSlot)
+						resetMatching((MatchingSlot) actualSlot);
+				}
 			}
 			return ItemStack.EMPTY;
 		} else if (slot == result) {
@@ -108,6 +171,16 @@ public abstract class ContainerBiggerCreatingTable<R extends IAdvancedRecipe> ex
 			return ItemStack.EMPTY;
 		}
 		return super.slotClick(slot, mouseButton, clickType, entityPlayer);
+	}
+
+	private void nextMatching(@Nonnull final MatchingSlot matchingSlot)
+	{
+		matchingSlot.getMatchingControl().nextMatcher();
+	}
+
+	private void resetMatching(@Nonnull final MatchingSlot matchingSlot)
+	{
+		matchingSlot.getMatchingControl().resetMatcher();
 	}
 
 	public final void defineShape(final short key, @Nonnull final ItemStack output)
@@ -154,12 +227,20 @@ public abstract class ContainerBiggerCreatingTable<R extends IAdvancedRecipe> ex
 	}
 
 	@Override
-	public void accept(final int slot, @Nonnull final ItemStack itemStack)
+	public void acceptGhostStack(final int slot, @Nonnull final ItemStack itemStack)
 	{
 		if (slot < inventorySlots.size() - 36) {
-			inventorySlots.get(slot).putStack(itemStack);
+			final Slot actualSlot = inventorySlots.get(slot);
+			actualSlot.putStack(itemStack);
+			if (actualSlot instanceof MatchingSlot)
+				resetMatching((MatchingSlot) actualSlot);
 			detectAndSendChanges();
 		}
+	}
+
+	public TileEntityBiggerCreatingTable getTileEntityBiggerCreatingTable()
+	{
+		return tileEntityBiggerCreatingTable;
 	}
 
 	@Nonnull
@@ -172,6 +253,12 @@ public abstract class ContainerBiggerCreatingTable<R extends IAdvancedRecipe> ex
 	private static ItemStack getStackInput(final Object input)
 	{
 		return input instanceof ItemStack ? ((ItemStack) input).copy() : input instanceof List ? ((ItemStack) ((List) input).get(0)).copy() : null;
+	}
+
+	public final void syncMatching(@Nonnull final NBTTagCompound nbtTagCompound)
+	{
+		tileEntityBiggerCreatingTable.getMatchingControlMap().values().forEach(matchingControl -> matchingControl.readFromNBT(nbtTagCompound));
+		tileEntityBiggerCreatingTable.markDirty();
 	}
 
 	@Override
