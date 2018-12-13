@@ -8,6 +8,9 @@ package wanion.biggercraftingtables.common;
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import gnu.trove.iterator.TIntIterator;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.text.WordUtils;
 import wanion.biggercraftingtables.Reference;
@@ -65,22 +68,24 @@ public final class CTUtils
 			scriptBuilder.append(NEW_LINE);
 			scriptBuilder.append(']');
 		} else {
-			final int intLastInventorySlot = outputSlot - 1;
 			int charPerLineCount = 0;
-			for (int i = 0; i < outputSlot; i++) {
-				final boolean hasNext = i < intLastInventorySlot;
-				if (tileEntityBiggerCreatingTable.getStackInSlot(i).isEmpty())
-					continue;
-				final MatchingControl matchingControl = tileEntityBiggerCreatingTable.getMatchingControl(i);
-				final String format = matchingControl.getMatcher().format();
+			final TIntList validList = new TIntArrayList();
+			for (int i = 0; i < outputSlot; i++)
+				if (!tileEntityBiggerCreatingTable.getStackInSlot(i).isEmpty())
+					validList.add(i);
+			for (final TIntIterator validIterator = validList.iterator(); validIterator.hasNext(); ) {
+				final String format = tileEntityBiggerCreatingTable.getMatchingControl(validIterator.next()).getMatcher().format();
 				charPerLineCount += format.length();
-				if (charPerLineCount >= 512 && hasNext) {
+				if (charPerLineCount >= 512 && validIterator.hasNext()) {
 					charPerLineCount = 0;
 					scriptBuilder.deleteCharAt(scriptBuilder.length() - 1);
 					scriptBuilder.append(NEW_LINE).append(TAB);
 				}
-				scriptBuilder.append(format).append(hasNext ? ", " : ']');
+				scriptBuilder.append(format);
+				if (validIterator.hasNext())
+					scriptBuilder.append(", ");
 			}
+			scriptBuilder.append(']');
 		}
 		scriptBuilder.append(");");
 		scriptBuilder.append(NEW_LINE).append(NEW_LINE);
