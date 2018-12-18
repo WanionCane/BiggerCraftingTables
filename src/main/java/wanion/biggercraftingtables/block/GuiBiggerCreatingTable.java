@@ -53,7 +53,7 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 		this.guiTexture = guiTexture;
 		matchingDescription = Arrays.asList(
 				TextFormatting.GOLD + I18n.format("bigger.creating.usage"),
-				TextFormatting.GRAY + I18n.format("bigger.creating.matching.desc"));
+				TextFormatting.GRAY + I18n.format("wanionlib.matching.desc"));
 		outputDescription = Arrays.asList("",
 				TextFormatting.GOLD + I18n.format("bigger.creating.usage"),
 				TextFormatting.GRAY + I18n.format("bigger.creating.usage.desc.line1"),
