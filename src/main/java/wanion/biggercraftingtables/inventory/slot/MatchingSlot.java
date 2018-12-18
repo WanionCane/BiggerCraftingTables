@@ -9,22 +9,22 @@ package wanion.biggercraftingtables.inventory.slot;
  */
 
 import wanion.biggercraftingtables.block.TileEntityBiggerCreatingTable;
-import wanion.biggercraftingtables.common.control.MatchingControl;
+import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 
 public class MatchingSlot extends ShapeSlot
 {
-	private final MatchingControl matchingControl;
+	private final Matching matching;
 
 	public MatchingSlot( @Nonnull final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable, final int id, final int x, final int y)
 	{
 		super(tileEntityBiggerCreatingTable, id, x, y);
-		this.matchingControl = tileEntityBiggerCreatingTable.getMatchingControl(id);
+		this.matching = tileEntityBiggerCreatingTable.getMatchingController().getMatching(id);
 	}
 
-	public MatchingControl getMatchingControl()
+	public Matching getMatching()
 	{
-		return matchingControl;
+		return matching;
 	}
 }

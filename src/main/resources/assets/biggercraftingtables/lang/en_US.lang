@@ -15,12 +15,10 @@ bigger.creating.usage.desc.line4=Increases the Increment/Decrement to 16
 bigger.creating.shape.control=Shape Control
 bigger.creating.shape.control.state.shaped=Shaped
 bigger.creating.shape.control.state.shapeless=Shapeless
-bigger.creating.matching.control=Matching Control
-bigger.creating.matching.desc=Right click to change mode
-bigger.creating.matching.matcher.item_stack=ItemStack
-bigger.creating.matching.matcher.any_damage=Any Damage
-bigger.creating.matching.matcher.ore_dict=Ore Dict:
 bigger.creating.export=Export to file:
+bigger.creating.export.empty=The Recipe is Empty
+bigger.creating.export.no-output=The Recipe requires an Output
+bigger.creating.export.no-changes=No changes were made
 bigger.creating.copy=Copy to Clipboard
 
 // Big

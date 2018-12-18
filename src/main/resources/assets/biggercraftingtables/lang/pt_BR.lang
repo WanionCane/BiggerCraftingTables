@@ -14,10 +14,10 @@ bigger.creating.usage.desc.line4=Aumenta o Incremento/Decremento para 16
 bigger.creating.shape.control=Controle de Formato
 bigger.creating.shape.control.state.shaped=Formato Definido
 bigger.creating.shape.control.state.shapeless=Formato Indefinido
-bigger.creating.matching.control=Controle do Comparador
-bigger.creating.matching.desc=Clique com o Direito para Mudar
-bigger.creating.matching.matcher.any_damage=Qualquer Dano
 bigger.creating.export=Exportar para o arquivo:
+bigger.creating.export.empty=A Receita está Vazia
+bigger.creating.export.no-output=A Receita precisa de um Resultado
+bigger.creating.export.no-changes=Nenhuma alteração foi feita
 bigger.creating.copy=Copiar para Área de Transferência
 
 // Big

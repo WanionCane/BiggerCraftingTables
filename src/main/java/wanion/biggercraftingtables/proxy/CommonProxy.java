@@ -39,7 +39,6 @@ import wanion.biggercraftingtables.block.huge.*;
 import wanion.biggercraftingtables.network.BiggerAutoCraftingJeiTransferMessage;
 import wanion.biggercraftingtables.network.BiggerGhostTransferMessage;
 import wanion.biggercraftingtables.network.ClearShapeMessage;
-import wanion.biggercraftingtables.network.MatchingSync;
 
 import javax.annotation.Nonnull;
 
@@ -68,9 +67,7 @@ public class CommonProxy implements IGuiHandler
 		networkWrapper.registerMessage(ClearShapeMessage.Handler.class, ClearShapeMessage.class, d++, Side.SERVER);
 		networkWrapper.registerMessage(ClearShapeMessage.Handler.class, ClearShapeMessage.class, d++, Side.CLIENT);
 		networkWrapper.registerMessage(BiggerGhostTransferMessage.Handler.class, BiggerGhostTransferMessage.class, d++, Side.SERVER);
-		networkWrapper.registerMessage(BiggerGhostTransferMessage.Handler.class, BiggerGhostTransferMessage.class, d++, Side.CLIENT);
-		networkWrapper.registerMessage(MatchingSync.Handler.class, MatchingSync.class, d++, Side.SERVER);
-		networkWrapper.registerMessage(MatchingSync.Handler.class, MatchingSync.class, d, Side.CLIENT);
+		networkWrapper.registerMessage(BiggerGhostTransferMessage.Handler.class, BiggerGhostTransferMessage.class, d, Side.CLIENT);
 		if (Config.INSTANCE.createTableRecipes) {
 			GameRegistry.addShapedRecipe(new ResourceLocation(Reference.MOD_ID, "4CraftingTableToBigCraftingTable"), null, new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE, 1), "CC", "CC", 'C', Blocks.CRAFTING_TABLE);
 			GameRegistry.addShapelessRecipe(new ResourceLocation(Reference.MOD_ID, "bigCraftingTableToAutoBigCraftingTable"), null, new ItemStack(ItemBlockAutoBiggerCraftingTable.INSTANCE, 1), Ingredient.fromStacks(new ItemStack(Blocks.REDSTONE_BLOCK)), Ingredient.fromStacks(new ItemStack(ItemBlockBiggerCraftingTable.INSTANCE)));
@@ -81,13 +78,9 @@ public class CommonProxy implements IGuiHandler
 		}
 	}
 
-	public void init()
-	{
-	}
+	public void init() {}
 
-	public void postInit()
-	{
-	}
+	public void postInit() {}
 
 	@SubscribeEvent
 	public void registerItems(final RegistryEvent.Register<Item> event)
@@ -107,9 +100,7 @@ public class CommonProxy implements IGuiHandler
 		modelInit();
 	}
 
-	public void modelInit()
-	{
-	}
+	public void modelInit() {}
 
 	@Override
 	public Object getServerGuiElement(final int ID, final EntityPlayer player, final World world, final int x, final int y, final int z)
@@ -192,6 +183,16 @@ public class CommonProxy implements IGuiHandler
 	public EntityPlayer getEntityPlayerFromContext(@Nonnull final MessageContext messageContext)
 	{
 		return messageContext.getServerHandler().player;
+	}
+
+	public final boolean isClient()
+	{
+		return FMLCommonHandler.instance().getEffectiveSide().isClient();
+	}
+
+	public final boolean isServer()
+	{
+		return FMLCommonHandler.instance().getEffectiveSide().isServer();
 	}
 
 	public IThreadListener getThreadListener()

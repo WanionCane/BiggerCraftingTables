@@ -15,8 +15,9 @@ import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.text.WordUtils;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.TileEntityBiggerCreatingTable;
-import wanion.biggercraftingtables.common.control.MatchingControl;
 import wanion.biggercraftingtables.common.control.ShapeControl;
+import wanion.lib.common.matching.Matching;
+import wanion.lib.common.matching.MatchingController;
 
 import javax.annotation.Nonnull;
 
@@ -46,6 +47,7 @@ public final class CTUtils
 		if (outputStack.getCount() > 1)
 			scriptBuilder.append(" * ").append(outputStack.getCount());
 		scriptBuilder.append(", [");
+		final MatchingController matchingController = tileEntityBiggerCreatingTable.getMatchingController();
 		if (shapeState == ShapeControl.ShapeState.SHAPED) {
 			final int root = tileEntityBiggerCreatingTable.getRoot();
 			final int last = root - 1;
@@ -57,7 +59,7 @@ public final class CTUtils
 					boolean hasNextX = x < last;
 					final int actualSlot = y * root + x;
 					if (!tileEntityBiggerCreatingTable.getStackInSlot(actualSlot).isEmpty()) {
-						final MatchingControl matchingControl = tileEntityBiggerCreatingTable.getMatchingControl(actualSlot);
+						final Matching matchingControl = matchingController.getMatching(actualSlot);
 						scriptBuilder.append(matchingControl.getMatcher().format());
 						if (hasNextX)
 							scriptBuilder.append(", ");
@@ -74,7 +76,7 @@ public final class CTUtils
 				if (!tileEntityBiggerCreatingTable.getStackInSlot(i).isEmpty())
 					validList.add(i);
 			for (final TIntIterator validIterator = validList.iterator(); validIterator.hasNext(); ) {
-				final String format = tileEntityBiggerCreatingTable.getMatchingControl(validIterator.next()).getMatcher().format();
+				final String format = matchingController.getMatching((validIterator.next())).getMatcher().format();
 				charPerLineCount += format.length();
 				if (charPerLineCount >= 512 && validIterator.hasNext()) {
 					charPerLineCount = 0;

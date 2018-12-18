@@ -26,10 +26,10 @@ import wanion.biggercraftingtables.client.button.ClearShapeButton;
 import wanion.biggercraftingtables.client.button.CopyToClipBoardButton;
 import wanion.biggercraftingtables.client.button.ExportToFileButton;
 import wanion.biggercraftingtables.client.button.ShapeControlButton;
-import wanion.biggercraftingtables.common.control.MatchingControl;
 import wanion.biggercraftingtables.common.control.ShapeControl;
 import wanion.biggercraftingtables.inventory.slot.MatchingSlot;
 import wanion.lib.common.IClickAction;
+import wanion.lib.common.matching.Matching;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 	public void initGui()
 	{
 		super.initGui();
-		final ShapeControlButton shapeControlButton = addButton(new ShapeControlButton(this, tileEntityBiggerCreatingTable.getControls().get(ShapeControl.class), guiLeft + outputSlot.xPos - 10, guiTop + outputSlot.yPos - 28, 0));
+		final ShapeControlButton shapeControlButton = addButton(new ShapeControlButton(this, tileEntityBiggerCreatingTable.getControlController().get(ShapeControl.class), guiLeft + outputSlot.xPos - 10, guiTop + outputSlot.yPos - 28, 0));
 		addButton(new ClearShapeButton(1, this, shapeControlButton.x + 22, shapeControlButton.y + 5));
 		addButton(new ExportToFileButton(2, this, guiLeft + outputSlot.xPos - 1, guiTop + outputSlot.yPos + 23));
 		addButton(new CopyToClipBoardButton(3, this, guiLeft + outputSlot.xPos + 9, guiTop + outputSlot.yPos + 23));
@@ -75,6 +75,11 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 	public TileEntityBiggerCreatingTable getTileEntityBiggerCreatingTable()
 	{
 		return tileEntityBiggerCreatingTable;
+	}
+
+	public FontRenderer getFontRenderer()
+	{
+		return this.fontRenderer;
 	}
 
 	@Override
@@ -131,9 +136,9 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 		final FontRenderer font = stack.getItem().getFontRenderer(stack);
 		GuiUtils.preItemToolTip(stack);
 		final List<String> toolTip = this.getItemToolTip(stack);
-		final MatchingControl matchingControl = matchingSlot.getMatchingControl();
+		final Matching matching = matchingSlot.getMatching();
 		toolTip.add(Strings.EMPTY);
-		toolTip.add(TextFormatting.RED + I18n.format(matchingControl.getControlName()) + ": " + TextFormatting.WHITE + matchingControl.getMatcher().getDescription());
+		toolTip.add(TextFormatting.RED + I18n.format(matching.getControlName()) + ": " + TextFormatting.WHITE + matching.getMatcher().getDescription());
 		toolTip.addAll(matchingDescription);
 		drawHoveringText(toolTip, x, y, (font == null ? fontRenderer : font));
 		GuiUtils.postItemToolTip();

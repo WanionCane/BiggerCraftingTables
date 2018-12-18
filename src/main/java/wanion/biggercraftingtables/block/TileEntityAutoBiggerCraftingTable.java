@@ -13,7 +13,6 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,9 +32,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import wanion.biggercraftingtables.Config;
 import wanion.lib.common.MetaItem;
-import wanion.lib.common.control.Controls;
+import wanion.lib.common.control.ControlController;
 import wanion.lib.common.control.IControl;
-import wanion.lib.common.control.IControlsProvider;
+import wanion.lib.common.control.IControlInventory;
 import wanion.lib.common.control.energy.EnergyControl;
 import wanion.lib.common.control.redstone.RedstoneControl;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
@@ -44,13 +43,13 @@ import wanion.lib.recipe.advanced.IAdvancedRecipe;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements IInventory, ITickable, IControlsProvider
+public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecipe> extends TileEntity implements IControlInventory, ITickable
 {
 	public final int full = getSizeInventory() - 2, half = full / 2, powerConsumption = half * Config.INSTANCE.powerMultiplier;
 	public final RedstoneControl redstoneControl;
 	public final EnergyControl energyControl;
 	private final BiggerCraftingMatrix biggerCraftingMatrix = new BiggerCraftingMatrix((int) Math.sqrt(half));
-	private final Controls controls = new Controls();
+	private final ControlController controlController = new ControlController(this);
 	private NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private R cachedRecipe = null;
 	private TIntIntMap patternMap = null;
@@ -58,8 +57,8 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 
 	protected TileEntityAutoBiggerCraftingTable()
 	{
-		controls.add((this.redstoneControl = new RedstoneControl(this)));
-		controls.add((this.energyControl = new EnergyControl(powerConsumption * Config.INSTANCE.capacityMultiplier, powerConsumption)));
+		controlController.add((this.redstoneControl = new RedstoneControl(this)));
+		controlController.add((this.energyControl = new EnergyControl(powerConsumption * Config.INSTANCE.capacityMultiplier, powerConsumption)));
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 	{
 		if (world == null || world.isRemote)
 			return;
-		final Collection<IControl> allControls = controls.getInstances();
+		final Collection<IControl> allControls = controlController.getInstances();
 		if (!allControls.stream().allMatch(IControl::canOperate))
 			return;
 		if (cachedRecipe == null) {
@@ -103,13 +102,6 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return true;
 		} else
 			return false;
-	}
-
-	@Nonnull
-	@Override
-	public Controls getControls()
-	{
-		return controls;
 	}
 
 	private void cleanInput()
@@ -280,7 +272,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 
 	NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
-		controls.getInstances().forEach(control -> control.writeToNBT(nbtTagCompound));
+		controlController.getInstances().forEach(control -> control.writeToNBT(nbtTagCompound));
 		final NBTTagList nbtTagList = new NBTTagList();
 		final int max = getSizeInventory() - 1;
 		for (int i = 0; i < max; i++) {
@@ -297,7 +289,7 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 
 	void readCustomNBT(final NBTTagCompound nbtTagCompound)
 	{
-		controls.getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
+		controlController.getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
 		final NBTTagList nbtTagList = nbtTagCompound.getTagList("Contents", 10);
 		for (int i = 0; i < nbtTagList.tagCount(); i++) {
 			final NBTTagCompound slotCompound = nbtTagList.getCompoundTagAt(i);
@@ -305,6 +297,13 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			if (slot >= 0 && slot < getSizeInventory())
 				setInventorySlotContents(slot, new ItemStack(slotCompound));
 		}
+	}
+
+	@Nonnull
+	@Override
+	public ControlController getControlController()
+	{
+		return controlController;
 	}
 
 	private final class BiggerCraftingMatrix extends InventoryCrafting

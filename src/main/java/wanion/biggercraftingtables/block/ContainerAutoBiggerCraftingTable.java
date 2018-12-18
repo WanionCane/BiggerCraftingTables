@@ -15,8 +15,7 @@ import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.common.IGhostAcceptorContainer;
 import wanion.biggercraftingtables.common.IShapedContainer;
 import wanion.lib.common.ISlotCreator;
-import wanion.lib.common.control.Controls;
-import wanion.lib.common.control.ControlsContainer;
+import wanion.lib.common.control.ControlContainer;
 import wanion.lib.common.control.redstone.IRedstoneControlProvider;
 import wanion.lib.common.control.redstone.RedstoneControl;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
@@ -25,14 +24,14 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerAutoBiggerCraftingTable extends ControlsContainer implements IRedstoneControlProvider, IShapedContainer, IGhostAcceptorContainer
+public class ContainerAutoBiggerCraftingTable extends ControlContainer implements IRedstoneControlProvider, IShapedContainer, IGhostAcceptorContainer
 {
 	private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
 	private final int playerInventoryEnds, playerInventoryStarts, inventoryFull, shapeEnds, result;
 
 	public ContainerAutoBiggerCraftingTable(@Nonnull final ISlotCreator slotCreator, @Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable)
 	{
-		super(tileEntityAutoBiggerCraftingTable.getControls(), tileEntityAutoBiggerCraftingTable);
+		super(tileEntityAutoBiggerCraftingTable);
 		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
 		final List<Slot> slotList = new ArrayList<>();
 		slotCreator.create(slotList);
@@ -163,13 +162,6 @@ public class ContainerAutoBiggerCraftingTable extends ControlsContainer implemen
 	public RedstoneControl getRedstoneControl()
 	{
 		return tileEntityAutoBiggerCraftingTable.redstoneControl;
-	}
-
-	@Nonnull
-	@Override
-	public Controls getControls()
-	{
-		return tileEntityAutoBiggerCraftingTable.getControls();
 	}
 
 	@Override
