@@ -20,8 +20,8 @@ import static java.io.File.separatorChar;
 
 public final class Reference
 {
-	public static final String MOD_VERSION = "1.12.2-2.0";
-	public static final String DEPENDENCIES = "required-before:crafttweaker;required-after:wanionlib@[1.12.2-2.1,)";
+	public static final String MOD_VERSION = "1.12.2-2.1";
+	public static final String DEPENDENCIES = "required-before:crafttweaker;required-after:wanionlib@[1.12.2-2.2,)";
 	public static final String TARGET_MC_VERSION = "[1.12,]";
 	public static final String CLIENT_PROXY = "wanion.biggercraftingtables.proxy.ClientProxy";
 	public static final String SERVER_PROXY = "wanion.biggercraftingtables.proxy.CommonProxy";

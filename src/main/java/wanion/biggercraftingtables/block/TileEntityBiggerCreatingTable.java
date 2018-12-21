@@ -24,13 +24,15 @@ import wanion.lib.common.IControlMatchingInventory;
 import wanion.lib.common.control.ControlController;
 import wanion.lib.common.matching.Matching;
 import wanion.lib.common.matching.MatchingController;
+import wanion.lib.common.matching.matcher.ItemStackMatcher;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public abstract class TileEntityBiggerCreatingTable extends TileEntity implements ISidedInventory, IControlMatchingInventory
 {
-	private final NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+	private final List<ItemStack> itemStacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	private final ControlController controlController = new ControlController(this);
 	private final MatchingController matchingController = new MatchingController(this);
 
@@ -188,7 +190,7 @@ public abstract class TileEntityBiggerCreatingTable extends TileEntity implement
 				setInventorySlotContents(slot, new ItemStack(slotCompound));
 		}
 		controlController.getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
-		matchingController.getInstances().forEach(control -> control.readFromNBT(nbtTagCompound));
+		matchingController.getInstances().forEach(matching -> matching.readFromNBT(nbtTagCompound));
 	}
 
 	NBTTagCompound writeCustomNBT(final NBTTagCompound nbtTagCompound)
@@ -205,7 +207,10 @@ public abstract class TileEntityBiggerCreatingTable extends TileEntity implement
 		}
 		nbtTagCompound.setTag("Contents", nbtTagList);
 		controlController.getInstances().forEach(control -> control.writeToNBT(nbtTagCompound));
-		matchingController.getInstances().forEach(matching -> matching.writeToNBT(nbtTagCompound));
+		matchingController.getInstances().forEach(matching -> {
+			if (!(matching.getMatcher() instanceof ItemStackMatcher))
+				matching.writeToNBT(nbtTagCompound);
+		});
 		return nbtTagCompound;
 	}
 

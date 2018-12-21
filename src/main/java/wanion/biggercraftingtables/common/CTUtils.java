@@ -18,8 +18,10 @@ import wanion.biggercraftingtables.block.TileEntityBiggerCreatingTable;
 import wanion.biggercraftingtables.common.control.ShapeControl;
 import wanion.lib.common.matching.Matching;
 import wanion.lib.common.matching.MatchingController;
+import wanion.lib.common.matching.matcher.NbtMatcher;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 
 public final class CTUtils
 {
@@ -39,13 +41,11 @@ public final class CTUtils
 		final ShapeControl.ShapeState shapeState = tileEntityBiggerCreatingTable.getShapeControl().getState();
 		scriptBuilder.append("mods.biggercraftingtables.");
 		scriptBuilder.append(WordUtils.capitalizeFully(tableType.getName())).append(".add");
-		scriptBuilder.append(shapeState == ShapeControl.ShapeState.SHAPED ? "Shaped" : "Shapeless").append("(<");
-		scriptBuilder.append(outputStack.getItem().getRegistryName());
-		if (outputStack.getItemDamage() > 0)
-			scriptBuilder.append(':').append(outputStack.getItemDamage());
-		scriptBuilder.append('>');
-		if (outputStack.getCount() > 1)
-			scriptBuilder.append(" * ").append(outputStack.getCount());
+		scriptBuilder.append(shapeState == ShapeControl.ShapeState.SHAPED ? "Shaped" : "Shapeless").append('(');
+		final Matching outputMatching = new Matching(Collections.singletonList(outputStack), 0);
+		if (outputStack.hasTagCompound())
+			outputMatching.setMatcher(new NbtMatcher(outputMatching));
+		scriptBuilder.append(outputMatching.getMatcher().format());
 		scriptBuilder.append(", [");
 		final MatchingController matchingController = tileEntityBiggerCreatingTable.getMatchingController();
 		if (shapeState == ShapeControl.ShapeState.SHAPED) {
@@ -78,10 +78,10 @@ public final class CTUtils
 			for (final TIntIterator validIterator = validList.iterator(); validIterator.hasNext(); ) {
 				final String format = matchingController.getMatching((validIterator.next())).getMatcher().format();
 				charPerLineCount += format.length();
-				if (charPerLineCount >= 512 && validIterator.hasNext()) {
-					charPerLineCount = 0;
+				if (charPerLineCount >= 320 && validIterator.hasNext()) {
 					scriptBuilder.deleteCharAt(scriptBuilder.length() - 1);
 					scriptBuilder.append(NEW_LINE).append(TAB);
+					charPerLineCount = 0;
 				}
 				scriptBuilder.append(format);
 				if (validIterator.hasNext())

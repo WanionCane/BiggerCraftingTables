@@ -28,6 +28,7 @@ import wanion.biggercraftingtables.client.button.ExportToFileButton;
 import wanion.biggercraftingtables.client.button.ShapeControlButton;
 import wanion.biggercraftingtables.common.control.ShapeControl;
 import wanion.biggercraftingtables.inventory.slot.MatchingSlot;
+import wanion.lib.client.ClientHelper;
 import wanion.lib.common.IClickAction;
 import wanion.lib.common.matching.Matching;
 
@@ -52,7 +53,7 @@ public abstract class GuiBiggerCreatingTable extends GuiContainer
 		this.tileEntityBiggerCreatingTable = tileEntityBiggerCreatingTable;
 		this.guiTexture = guiTexture;
 		matchingDescription = Arrays.asList(
-				TextFormatting.GOLD + I18n.format("bigger.creating.usage"),
+				ClientHelper.getHowToUse(),
 				TextFormatting.GRAY + I18n.format("wanionlib.matching.desc"));
 		outputDescription = Arrays.asList("",
 				TextFormatting.GOLD + I18n.format("bigger.creating.usage"),
