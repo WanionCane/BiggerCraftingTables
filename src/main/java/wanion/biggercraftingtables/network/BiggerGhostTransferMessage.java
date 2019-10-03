@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.common.IGhostAcceptorContainer;
+import wanion.lib.common.IGhostAcceptorContainer;
 
 public class BiggerGhostTransferMessage implements IMessage
 {

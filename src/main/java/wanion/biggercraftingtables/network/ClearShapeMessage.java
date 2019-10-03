@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.common.IShapedContainer;
+import wanion.lib.common.IShapedContainer;
 import wanion.lib.network.EmptyMessage;
 
 public class ClearShapeMessage extends EmptyMessage

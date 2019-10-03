@@ -80,9 +80,9 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 			return;
 		if (patternMap == null)
 			patternMap = MetaItem.getKeySizeMap(half, full, itemStacks);
-		if (outputStack.isEmpty() && !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
+		if (outputStack.isEmpty() && notMatches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
 			return;
-		else if (!outputStack.isEmpty() && outputStack.getCount() + recipeStack.getCount() > outputStack.getMaxStackSize() || !matches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
+		else if (!outputStack.isEmpty() && outputStack.getCount() + recipeStack.getCount() > outputStack.getMaxStackSize() || notMatches(MetaItem.getSmartKeySizeMap(0, half, itemStacks), patternMap))
 			return;
 		allControls.forEach(IControl::operate);
 		cleanInput();
@@ -93,15 +93,15 @@ public abstract class TileEntityAutoBiggerCraftingTable<R extends IAdvancedRecip
 		markDirty();
 	}
 
-	private boolean matches(@Nonnull final TIntIntMap inputMap, @Nonnull final TIntIntMap patternMap)
+	private boolean notMatches(@Nonnull final TIntIntMap inputMap, @Nonnull final TIntIntMap patternMap)
 	{
 		if (inputMap.size() >= patternMap.size() && inputMap.keySet().containsAll(patternMap.keySet())) {
 			for (final int key : patternMap.keys())
 				if (inputMap.get(key) < patternMap.get(key))
-					return false;
-			return true;
-		} else
+					return true;
 			return false;
+		} else
+			return true;
 	}
 
 	private void cleanInput()

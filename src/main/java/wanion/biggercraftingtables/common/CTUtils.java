@@ -45,7 +45,7 @@ public final class CTUtils
 		final Matching outputMatching = new Matching(Collections.singletonList(outputStack), 0);
 		if (outputStack.hasTagCompound())
 			outputMatching.setMatcher(new NbtMatcher(outputMatching));
-		scriptBuilder.append(outputMatching.getMatcher().format());
+		scriptBuilder.append(outputMatching.getMatcher().ctFormat());
 		scriptBuilder.append(", [");
 		final MatchingController matchingController = tileEntityBiggerCreatingTable.getMatchingController();
 		if (shapeState == ShapeControl.ShapeState.SHAPED) {
@@ -60,7 +60,7 @@ public final class CTUtils
 					final int actualSlot = y * root + x;
 					if (!tileEntityBiggerCreatingTable.getStackInSlot(actualSlot).isEmpty()) {
 						final Matching matchingControl = matchingController.getMatching(actualSlot);
-						scriptBuilder.append(matchingControl.getMatcher().format());
+						scriptBuilder.append(matchingControl.getMatcher().ctFormat());
 						if (hasNextX)
 							scriptBuilder.append(", ");
 					} else scriptBuilder.append(hasNextX ? "null, " : "null");
@@ -76,7 +76,7 @@ public final class CTUtils
 				if (!tileEntityBiggerCreatingTable.getStackInSlot(i).isEmpty())
 					validList.add(i);
 			for (final TIntIterator validIterator = validList.iterator(); validIterator.hasNext(); ) {
-				final String format = matchingController.getMatching((validIterator.next())).getMatcher().format();
+				final String format = matchingController.getMatching((validIterator.next())).getMatcher().ctFormat();
 				charPerLineCount += format.length();
 				if (charPerLineCount >= 320 && validIterator.hasNext()) {
 					scriptBuilder.deleteCharAt(scriptBuilder.length() - 1);

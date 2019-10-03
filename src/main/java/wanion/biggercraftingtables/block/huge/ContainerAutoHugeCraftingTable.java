@@ -11,9 +11,9 @@ package wanion.biggercraftingtables.block.huge;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import wanion.biggercraftingtables.block.ContainerAutoBiggerCraftingTable;
-import wanion.biggercraftingtables.inventory.slot.DeadSlot;
-import wanion.biggercraftingtables.inventory.slot.ShapeSlot;
-import wanion.biggercraftingtables.inventory.slot.SpecialSlot;
+import wanion.lib.inventory.slot.DeadSlot;
+import wanion.lib.inventory.slot.ShapeSlot;
+import wanion.lib.inventory.slot.SpecialSlot;
 
 import javax.annotation.Nonnull;
 

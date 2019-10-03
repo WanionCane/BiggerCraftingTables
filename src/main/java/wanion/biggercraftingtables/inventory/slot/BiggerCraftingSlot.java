@@ -14,6 +14,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.UniversalBucket;
 import wanion.biggercraftingtables.block.ContainerBiggerCraftingTable;
+import wanion.lib.inventory.slot.SpecialSlot;
 
 import javax.annotation.Nonnull;
 

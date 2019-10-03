@@ -27,10 +27,10 @@ import wanion.biggercraftingtables.client.button.CopyToClipBoardButton;
 import wanion.biggercraftingtables.client.button.ExportToFileButton;
 import wanion.biggercraftingtables.client.button.ShapeControlButton;
 import wanion.biggercraftingtables.common.control.ShapeControl;
-import wanion.biggercraftingtables.inventory.slot.MatchingSlot;
 import wanion.lib.client.ClientHelper;
 import wanion.lib.common.IClickAction;
 import wanion.lib.common.matching.Matching;
+import wanion.lib.inventory.slot.MatchingSlot;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

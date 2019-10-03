@@ -74,7 +74,7 @@ public abstract class GuiAutoBiggerCraftingTable extends GuiContainer
 		fontRenderer.drawString(I18n.format("container.inventory"), firstPlayerSlot.xPos - 1, firstPlayerSlot.yPos - 11, 0x404040);
 		if (super.isPointInRegion(xSize - 25, ySize - 83, 18, 54, mouseX, mouseY)) {
 			final EnergyControl energyControl = tileEntityAutoBiggerCraftingTable.energyControl;
-			drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("bigger.crafting.consumes", tileEntityAutoBiggerCraftingTable.powerConsumption), TextFormatting.GOLD + I18n.format("bigger.crafting.operation")), mouseX - guiLeft, mouseY - guiTop);
+			drawHoveringText(Lists.newArrayList(energyControl.getEnergyStored() + " / " + energyControl.getMaxEnergyStored() + " FE", Strings.EMPTY, TextFormatting.GOLD + I18n.format("wanionlib.consumes", tileEntityAutoBiggerCraftingTable.powerConsumption), TextFormatting.GOLD + I18n.format("wanionlib.per.operation")), mouseX - guiLeft, mouseY - guiTop);
 		}
 		for (final GuiButton guibutton : this.buttonList)
 			if (guibutton.isMouseOver())
@@ -108,7 +108,7 @@ public abstract class GuiAutoBiggerCraftingTable extends GuiContainer
 		final FontRenderer font = stack.getItem().getFontRenderer(stack);
 		GuiUtils.preItemToolTip(stack);
 		final List<String> toolTip = this.getItemToolTip(stack);
-		toolTip.addAll(Arrays.asList("", TextFormatting.GOLD + I18n.format("bigger.clear.shape")));
+		toolTip.addAll(Arrays.asList("", TextFormatting.GOLD + I18n.format("wanionlib.recipe.clear")));
 		drawHoveringText(toolTip, x, y, (font == null ? fontRenderer : font));
 		GuiUtils.postItemToolTip();
 	}

@@ -1,5 +1,5 @@
 itemGroup.biggercraftingtables=Bigger Crafting Tables
-bigger.clear.shape=Click to Clear Recipe
+bigger.clear.recipe=Click to Clear Recipe
 bigger.crafting.consumes=Consumes %1$s FE
 bigger.crafting.operation=per operation
 bigger.creating.tooltip.big.name=Big

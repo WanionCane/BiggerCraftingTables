@@ -15,13 +15,13 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.biggercraftingtables.common.IGhostAcceptorContainer;
-import wanion.biggercraftingtables.common.IShapedContainer;
-import wanion.biggercraftingtables.inventory.slot.MatchingSlot;
-import wanion.biggercraftingtables.inventory.slot.ShapeSlot;
 import wanion.lib.common.ControlMatchingContainer;
+import wanion.lib.common.IGhostAcceptorContainer;
+import wanion.lib.common.IShapedContainer;
 import wanion.lib.common.matching.IMatchingControllerProvider;
 import wanion.lib.common.matching.MatchingController;
+import wanion.lib.inventory.slot.MatchingSlot;
+import wanion.lib.inventory.slot.ShapeSlot;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
