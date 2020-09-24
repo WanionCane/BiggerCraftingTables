@@ -18,16 +18,17 @@ import static wanion.biggercraftingtables.recipe.giant.GiantRecipeRegistry.IGian
 
 public final class TileEntityAutoGiantCraftingTable extends TileEntityAutoBiggerCraftingTable<IGiantRecipe>
 {
+	@Nonnull
+	@Override
+	public String getDefaultName()
+	{
+		return "container.autogiantcraftingtable.name";
+	}
+
 	@Override
 	public int getSizeInventory()
 	{
 		return 164;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "container.autogiantcraftingtable.name";
 	}
 
 	@Nonnull

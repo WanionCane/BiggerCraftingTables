@@ -12,10 +12,11 @@ import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.TileEntityBiggerCreatingTable;
 import wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
+import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
 
-public final class TileEntityHugeCreatingTable extends TileEntityBiggerCreatingTable
+public final class TileEntityHugeCreatingTable extends TileEntityBiggerCreatingTable<HugeRecipeRegistry.IHugeRecipe>
 {
 	@Nonnull
 	@Override
@@ -26,14 +27,14 @@ public final class TileEntityHugeCreatingTable extends TileEntityBiggerCreatingT
 
 	@Nonnull
 	@Override
-	public AbstractRecipeRegistry getRecipeRegistry()
+	public AbstractRecipeRegistry<HugeRecipeRegistry.IHugeRecipe> getRecipeRegistry()
 	{
 		return HugeRecipeRegistry.INSTANCE;
 	}
 
+	@Nonnull
 	@Override
-	public String getName()
-	{
+	public String getDefaultName() {
 		return "container.hugecreatingtable.name";
 	}
 }

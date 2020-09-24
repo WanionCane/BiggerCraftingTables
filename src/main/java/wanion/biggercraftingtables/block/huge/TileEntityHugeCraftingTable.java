@@ -10,17 +10,19 @@ package wanion.biggercraftingtables.block.huge;
 
 import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
 
+import javax.annotation.Nonnull;
+
 public final class TileEntityHugeCraftingTable extends TileEntityBiggerCraftingTable
 {
+	@Nonnull
+	@Override
+	public String getDefaultName() {
+		return "container.hugecraftingtable.name";
+	}
+
 	@Override
 	public int getSizeInventory()
 	{
 		return 50;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "container.hugecraftingtable.name";
 	}
 }

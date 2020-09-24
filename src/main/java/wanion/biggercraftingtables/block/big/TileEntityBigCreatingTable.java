@@ -15,7 +15,7 @@ import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 
 import javax.annotation.Nonnull;
 
-public final class TileEntityBigCreatingTable extends TileEntityBiggerCreatingTable
+public final class TileEntityBigCreatingTable extends TileEntityBiggerCreatingTable<BigRecipeRegistry.IBigRecipe>
 {
 	@Nonnull
 	@Override
@@ -26,13 +26,14 @@ public final class TileEntityBigCreatingTable extends TileEntityBiggerCreatingTa
 
 	@Nonnull
 	@Override
-	public AbstractRecipeRegistry getRecipeRegistry()
+	public AbstractRecipeRegistry<BigRecipeRegistry.IBigRecipe> getRecipeRegistry()
 	{
 		return BigRecipeRegistry.INSTANCE;
 	}
 
+	@Nonnull
 	@Override
-	public String getName()
+	public String getDefaultName()
 	{
 		return "container.bigcreatingtable.name";
 	}

@@ -16,18 +16,18 @@ import javax.annotation.Nonnull;
 
 import static wanion.biggercraftingtables.recipe.huge.HugeRecipeRegistry.IHugeRecipe;
 
-public final class TileEntityAutoHugeCraftingTable extends TileEntityAutoBiggerCraftingTable<HugeRecipeRegistry.IHugeRecipe>
+public final class TileEntityAutoHugeCraftingTable extends TileEntityAutoBiggerCraftingTable<IHugeRecipe>
 {
+	@Nonnull
+	@Override
+	public String getDefaultName() {
+		return "container.autohugecraftingtable.name";
+	}
+
 	@Override
 	public int getSizeInventory()
 	{
 		return 100;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "container.autohugecraftingtable.name";
 	}
 
 	@Nonnull

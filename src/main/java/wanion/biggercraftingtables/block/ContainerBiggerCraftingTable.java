@@ -17,20 +17,22 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import wanion.biggercraftingtables.inventory.CraftResultBiggerCraftingTable;
 import wanion.biggercraftingtables.inventory.slot.BiggerCraftingSlot;
+import wanion.lib.common.WContainer;
 import wanion.lib.recipe.advanced.AbstractRecipeRegistry;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
 
-public abstract class ContainerBiggerCraftingTable<R extends IAdvancedRecipe> extends Container
+public abstract class ContainerBiggerCraftingTable<R extends IAdvancedRecipe, T extends TileEntityBiggerCraftingTable> extends WContainer<T>
 {
 	private final InventoryCrafting craftingMatrix;
 	private final IInventory craftingResult;
 	private final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable;
-	private int playerInventoryEnds, playerInventoryStarts, result;
+	private final int playerInventoryEnds, playerInventoryStarts, result;
 
-	public ContainerBiggerCraftingTable(final int root, final int inventoryStartsX, final int inventoryStartsY, final int playerStartsX, final int playerStartsY, final int resultX, final int resultY, @Nonnull final TileEntityBiggerCraftingTable tileEntityBiggerCraftingTable, final InventoryPlayer inventoryPlayer)
+	public ContainerBiggerCraftingTable(final int root, final int inventoryStartsX, final int inventoryStartsY, final int playerStartsX, final int playerStartsY, final int resultX, final int resultY, @Nonnull final T tileEntityBiggerCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
+		super(tileEntityBiggerCraftingTable);
 		this.tileEntityBiggerCraftingTable = tileEntityBiggerCraftingTable;
 		craftingMatrix = new CraftingBiggerCraftingTable(this, root);
 		craftingResult = new CraftResultBiggerCraftingTable(tileEntityBiggerCraftingTable, root * root);
@@ -51,7 +53,7 @@ public abstract class ContainerBiggerCraftingTable<R extends IAdvancedRecipe> ex
 
 	@Nonnull
 	@Override
-	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
+	public final ItemStack transferStackInSlot(@Nonnull final EntityPlayer entityPlayer, final int slot)
 	{
 		ItemStack itemstack = null;
 		final Slot actualSlot = inventorySlots.get(slot);
@@ -78,16 +80,10 @@ public abstract class ContainerBiggerCraftingTable<R extends IAdvancedRecipe> ex
 	}
 
 	@Override
-	public final void onCraftMatrixChanged(final IInventory inventory)
+	public final void onCraftMatrixChanged(@Nonnull final IInventory inventory)
 	{
 		final R recipe = getRecipeRegistry().findMatchingRecipe(craftingMatrix);
 		craftingResult.setInventorySlotContents(0, recipe != null ? recipe.getOutput() : ItemStack.EMPTY);
-	}
-
-	@Override
-	public final boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
-	{
-		return tileEntityBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 
 	@Nonnull

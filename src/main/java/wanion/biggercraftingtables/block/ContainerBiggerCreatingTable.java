@@ -15,11 +15,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import wanion.biggercraftingtables.BiggerCraftingTables;
-import wanion.lib.common.ControlMatchingContainer;
 import wanion.lib.common.IGhostAcceptorContainer;
 import wanion.lib.common.IShapedContainer;
-import wanion.lib.common.matching.IMatchingControllerProvider;
-import wanion.lib.common.matching.MatchingController;
+import wanion.lib.common.WContainer;
 import wanion.lib.inventory.slot.MatchingSlot;
 import wanion.lib.inventory.slot.ShapeSlot;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
@@ -27,12 +25,12 @@ import wanion.lib.recipe.advanced.IAdvancedRecipe;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ContainerBiggerCreatingTable extends ControlMatchingContainer implements IShapedContainer, IGhostAcceptorContainer, IMatchingControllerProvider
+public class ContainerBiggerCreatingTable<R extends IAdvancedRecipe, T extends TileEntityBiggerCreatingTable<R>> extends WContainer<T> implements IGhostAcceptorContainer, IShapedContainer
 {
-	private final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable;
-	private int playerInventoryEnds, playerInventoryStarts, result, root;
+	private final T tileEntityBiggerCreatingTable;
+	private final int playerInventoryEnds, playerInventoryStarts, result, root;
 
-	public ContainerBiggerCreatingTable(final int inventoryStartsX, final int inventoryStartsY, final int playerStartsX, final int playerStartsY, final int resultX, final int resultY, @Nonnull final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable, final InventoryPlayer inventoryPlayer)
+	public ContainerBiggerCreatingTable(final int inventoryStartsX, final int inventoryStartsY, final int playerStartsX, final int playerStartsY, final int resultX, final int resultY, @Nonnull final T tileEntityBiggerCreatingTable, final InventoryPlayer inventoryPlayer)
 	{
 		super(tileEntityBiggerCreatingTable);
 		this.tileEntityBiggerCreatingTable = tileEntityBiggerCreatingTable;
@@ -53,7 +51,7 @@ public class ContainerBiggerCreatingTable extends ControlMatchingContainer imple
 
 	@Nonnull
 	@Override
-	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
+	public final ItemStack transferStackInSlot(@Nonnull final EntityPlayer entityPlayer, final int slot)
 	{
 		ItemStack itemstack = null;
 		final Slot actualSlot = inventorySlots.get(slot);
@@ -68,7 +66,7 @@ public class ContainerBiggerCreatingTable extends ControlMatchingContainer imple
 
 	@Nonnull
 	@Override
-	public final ItemStack slotClick(final int slot, final int mouseButton, final ClickType clickType, final EntityPlayer entityPlayer)
+	public final ItemStack slotClick(final int slot, final int mouseButton, @Nonnull final ClickType clickType, @Nonnull final EntityPlayer entityPlayer)
 	{
 		if (slot >= 0 && slot < result) {
 			final Slot actualSlot = inventorySlots.get(slot);
@@ -139,6 +137,7 @@ public class ContainerBiggerCreatingTable extends ControlMatchingContainer imple
 		}
 	}
 
+	@Override
 	public final void defineShape(final short key, @Nonnull final ItemStack output)
 	{
 		final IAdvancedRecipe advancedRecipe = tileEntityBiggerCreatingTable.getRecipeRegistry().findRecipeByKeyAndOutput(key, output);
@@ -200,26 +199,9 @@ public class ContainerBiggerCreatingTable extends ControlMatchingContainer imple
 		}
 	}
 
-	public TileEntityBiggerCreatingTable getTileEntityBiggerCreatingTable()
-	{
-		return tileEntityBiggerCreatingTable;
-	}
-
-	@Nonnull
-	@Override
-	public MatchingController getMatchingController()
-	{
-		return tileEntityBiggerCreatingTable.getMatchingController();
-	}
-
 	private static ItemStack getStackInput(final Object input)
 	{
-		return input instanceof ItemStack ? ((ItemStack) input).copy() : input instanceof List ? ((ItemStack) ((List) input).get(0)).copy() : null;
+		return input instanceof ItemStack ? ((ItemStack) input).copy() : input instanceof List ? ((ItemStack) ((List<?>) input).get(0)).copy() : null;
 	}
 
-	@Override
-	public final boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
-	{
-		return tileEntityBiggerCreatingTable.isUsableByPlayer(entityPlayer);
-	}
 }

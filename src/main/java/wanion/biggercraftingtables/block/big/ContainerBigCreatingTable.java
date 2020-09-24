@@ -10,10 +10,11 @@ package wanion.biggercraftingtables.block.big;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import wanion.biggercraftingtables.block.ContainerBiggerCreatingTable;
+import wanion.biggercraftingtables.recipe.big.BigRecipeRegistry;
 
 import javax.annotation.Nonnull;
 
-public final class ContainerBigCreatingTable extends ContainerBiggerCreatingTable
+public final class ContainerBigCreatingTable extends ContainerBiggerCreatingTable<BigRecipeRegistry.IBigRecipe, TileEntityBigCreatingTable>
 {
 	public ContainerBigCreatingTable(@Nonnull final TileEntityBigCreatingTable tileEntityBigCreatingTable, final InventoryPlayer inventoryPlayer)
 	{

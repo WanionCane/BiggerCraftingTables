@@ -15,21 +15,19 @@ import net.minecraft.item.ItemStack;
 import wanion.lib.common.IGhostAcceptorContainer;
 import wanion.lib.common.IShapedContainer;
 import wanion.lib.common.ISlotCreator;
-import wanion.lib.common.control.ControlContainer;
-import wanion.lib.common.control.redstone.IRedstoneControlProvider;
-import wanion.lib.common.control.redstone.RedstoneControl;
+import wanion.lib.common.WContainer;
 import wanion.lib.recipe.advanced.IAdvancedRecipe;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerAutoBiggerCraftingTable extends ControlContainer implements IRedstoneControlProvider, IShapedContainer, IGhostAcceptorContainer
+public abstract class ContainerAutoBiggerCraftingTable<T extends TileEntityAutoBiggerCraftingTable<?>> extends WContainer<T> implements IShapedContainer, IGhostAcceptorContainer
 {
-	private final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable;
+	private final TileEntityAutoBiggerCraftingTable<?> tileEntityAutoBiggerCraftingTable;
 	private final int playerInventoryEnds, playerInventoryStarts, inventoryFull, shapeEnds, result;
 
-	public ContainerAutoBiggerCraftingTable(@Nonnull final ISlotCreator slotCreator, @Nonnull final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable)
+	public ContainerAutoBiggerCraftingTable(@Nonnull final ISlotCreator slotCreator, @Nonnull final T tileEntityAutoBiggerCraftingTable)
 	{
 		super(tileEntityAutoBiggerCraftingTable);
 		this.tileEntityAutoBiggerCraftingTable = tileEntityAutoBiggerCraftingTable;
@@ -46,7 +44,7 @@ public class ContainerAutoBiggerCraftingTable extends ControlContainer implement
 
 	@Nonnull
 	@Override
-	public final ItemStack transferStackInSlot(final EntityPlayer entityPlayer, final int slot)
+	public final ItemStack transferStackInSlot(@Nonnull final EntityPlayer entityPlayer, final int slot)
 	{
 		ItemStack itemstack = null;
 		final Slot actualSlot = this.inventorySlots.get(slot);
@@ -69,7 +67,7 @@ public class ContainerAutoBiggerCraftingTable extends ControlContainer implement
 
 	@Nonnull
 	@Override
-	public final ItemStack slotClick(final int slot, final int mouseButton, final ClickType clickType, final EntityPlayer entityPlayer)
+	public final ItemStack slotClick(final int slot, final int mouseButton, @Nonnull final ClickType clickType, @Nonnull final EntityPlayer entityPlayer)
 	{
 		if (slot >= inventoryFull && slot < shapeEnds) {
 			final Slot actualSlot = inventorySlots.get(slot);
@@ -94,12 +92,6 @@ public class ContainerAutoBiggerCraftingTable extends ControlContainer implement
 			}
 			return ItemStack.EMPTY;
 		} else return super.slotClick(slot, mouseButton, clickType, entityPlayer);
-	}
-
-	@Override
-	public boolean canInteractWith(@Nonnull final EntityPlayer entityPlayer)
-	{
-		return tileEntityAutoBiggerCraftingTable.isUsableByPlayer(entityPlayer);
 	}
 
 	@Override
@@ -151,19 +143,6 @@ public class ContainerAutoBiggerCraftingTable extends ControlContainer implement
 			inventorySlots.get(i).putStack(ItemStack.EMPTY);
 	}
 
-	@Nonnull
-	public final TileEntityAutoBiggerCraftingTable getTile()
-	{
-		return tileEntityAutoBiggerCraftingTable;
-	}
-
-	@Nonnull
-	@Override
-	public RedstoneControl getRedstoneControl()
-	{
-		return tileEntityAutoBiggerCraftingTable.redstoneControl;
-	}
-
 	@Override
 	public void acceptGhostStack(final int slot, @Nonnull ItemStack itemStack)
 	{
@@ -180,6 +159,6 @@ public class ContainerAutoBiggerCraftingTable extends ControlContainer implement
 
 	private static ItemStack getStackInput(final Object input)
 	{
-		return input instanceof ItemStack ? ((ItemStack) input).copy() : input instanceof List ? ((ItemStack) ((List) input).get(0)).copy() : null;
+		return input instanceof ItemStack ? ((ItemStack) input).copy() : input instanceof List ? ((ItemStack) ((List<?>) input).get(0)).copy() : null;
 	}
 }

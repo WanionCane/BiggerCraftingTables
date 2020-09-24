@@ -19,14 +19,12 @@ import javax.annotation.Nonnull;
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 @SideOnly(Side.CLIENT)
-public final class GuiAutoGiantCraftingTable extends GuiAutoBiggerCraftingTable
+public final class GuiAutoGiantCraftingTable extends GuiAutoBiggerCraftingTable<TileEntityAutoGiantCraftingTable>
 {
 	private static final ResourceLocation autoGiantCraftingTexture = new ResourceLocation(MOD_ID, "textures/gui/auto_giant_crafting_table.png");
 
 	public GuiAutoGiantCraftingTable(@Nonnull final TileEntityAutoGiantCraftingTable tileEntityAutoGiantCraftingTable, final InventoryPlayer inventoryPlayer)
 	{
-		super(tileEntityAutoGiantCraftingTable, autoGiantCraftingTexture, new ContainerAutoGiantCraftingTable(tileEntityAutoGiantCraftingTable, inventoryPlayer));
-		xSize = 374;
-		ySize = 276;
+		super(new ContainerAutoGiantCraftingTable(tileEntityAutoGiantCraftingTable, inventoryPlayer), autoGiantCraftingTexture, 374, 276);
 	}
 }

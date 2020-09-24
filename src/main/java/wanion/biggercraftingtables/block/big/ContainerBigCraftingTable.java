@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 import static wanion.biggercraftingtables.recipe.big.BigRecipeRegistry.IBigRecipe;
 
-public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTable<IBigRecipe>
+public final class ContainerBigCraftingTable extends ContainerBiggerCraftingTable<IBigRecipe, TileEntityBigCraftingTable>
 {
 	public ContainerBigCraftingTable(@Nonnull final TileEntityBigCraftingTable tileEntityBigCraftingTable, final InventoryPlayer inventoryPlayer)
 	{

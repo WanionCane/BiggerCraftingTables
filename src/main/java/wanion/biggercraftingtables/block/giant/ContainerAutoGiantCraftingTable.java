@@ -11,13 +11,14 @@ package wanion.biggercraftingtables.block.giant;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import wanion.biggercraftingtables.block.ContainerAutoBiggerCraftingTable;
+import wanion.biggercraftingtables.recipe.giant.GiantRecipeRegistry;
 import wanion.lib.inventory.slot.DeadSlot;
 import wanion.lib.inventory.slot.ShapeSlot;
 import wanion.lib.inventory.slot.SpecialSlot;
 
 import javax.annotation.Nonnull;
 
-public final class ContainerAutoGiantCraftingTable extends ContainerAutoBiggerCraftingTable
+public final class ContainerAutoGiantCraftingTable extends ContainerAutoBiggerCraftingTable<TileEntityAutoGiantCraftingTable>
 {
 	public ContainerAutoGiantCraftingTable(@Nonnull final TileEntityAutoGiantCraftingTable tileEntityAutoGiantCraftingTable, final InventoryPlayer inventoryPlayer)
 	{

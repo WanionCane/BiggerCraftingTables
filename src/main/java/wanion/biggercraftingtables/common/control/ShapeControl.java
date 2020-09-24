@@ -9,15 +9,18 @@ package wanion.biggercraftingtables.common.control;
  */
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import wanion.biggercraftingtables.Reference;
 import wanion.lib.common.control.IControlNameable;
 import wanion.lib.common.control.IState;
 import wanion.lib.common.control.IStateNameable;
 import wanion.lib.common.control.IStateProvider;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.ShapeState>, IControlNameable
 {
@@ -31,19 +34,6 @@ public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.S
 	public ShapeControl(@Nonnull final ShapeState state)
 	{
 		this.state = state;
-	}
-
-	@Override
-	public void writeToNBT(@Nonnull final NBTTagCompound nbtTagCompound)
-	{
-		nbtTagCompound.setInteger("ShapeControl", state.ordinal());
-	}
-
-	@Override
-	public void readFromNBT(@Nonnull final NBTTagCompound nbtTagCompound)
-	{
-		if (nbtTagCompound.hasKey("ShapeControl"))
-			state = ShapeState.values()[MathHelper.clamp(nbtTagCompound.getInteger("ShapeControl"), 0, ShapeState.values().length - 1)];
 	}
 
 	@Nonnull
@@ -85,6 +75,22 @@ public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.S
 		return "bigger.creating.shape.control";
 	}
 
+	@Nonnull
+	@Override
+	public NBTTagCompound writeNBT()
+	{
+		final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+		nbtTagCompound.setInteger("ShapeControl", state.ordinal());
+		return nbtTagCompound;
+	}
+
+	@Override
+	public void readNBT(@Nonnull NBTTagCompound nbtTagCompound)
+	{
+		if (nbtTagCompound.hasKey("ShapeControl"))
+			state = ShapeState.values()[MathHelper.clamp(nbtTagCompound.getInteger("ShapeControl"), 0, ShapeState.values().length - 1)];
+	}
+
 	public enum ShapeState implements IState<ShapeState>, IStateNameable
 	{
 		SHAPED,
@@ -104,6 +110,12 @@ public class ShapeControl implements IStateProvider<ShapeControl, ShapeControl.S
 		{
 			final int previousState = ordinal() - 1;
 			return previousState >= 0 ? values()[previousState] : values()[values().length - 1];
+		}
+
+		@Override
+		public ResourceLocation getTextureResourceLocation()
+		{
+			return Reference.GUI_TEXTURES;
 		}
 
 		@Override

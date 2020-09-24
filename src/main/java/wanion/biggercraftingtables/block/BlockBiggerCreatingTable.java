@@ -150,7 +150,7 @@ public final class BlockBiggerCreatingTable extends BlockContainer
 	{
 		if (world == null)
 			return;
-		final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable = (TileEntityBiggerCreatingTable) world.getTileEntity(blockPos);
+		final TileEntityBiggerCreatingTable<?> tileEntityBiggerCreatingTable = (TileEntityBiggerCreatingTable<?>) world.getTileEntity(blockPos);
 		if (tileEntityBiggerCreatingTable != null) {
 			final ItemStack droppedStack = new ItemStack(this, 1, getMetaFromState(blockState));
 			final NBTTagCompound nbtTagCompound = tileEntityBiggerCreatingTable.writeCustomNBT(new NBTTagCompound());

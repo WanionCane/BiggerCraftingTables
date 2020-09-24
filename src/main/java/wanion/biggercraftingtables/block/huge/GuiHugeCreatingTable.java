@@ -19,13 +19,13 @@ import javax.annotation.Nonnull;
 import static wanion.biggercraftingtables.Reference.MOD_ID;
 
 @SideOnly(Side.CLIENT)
-public final class GuiHugeCreatingTable extends GuiBiggerCreatingTable
+public final class GuiHugeCreatingTable extends GuiBiggerCreatingTable<TileEntityHugeCreatingTable>
 {
 	private static final ResourceLocation hugeCreatingTexture = new ResourceLocation(MOD_ID, "textures/gui/huge_crafting_table.png");
 
 	public GuiHugeCreatingTable(@Nonnull final TileEntityHugeCreatingTable tileEntityBiggerCreatingTable, final InventoryPlayer inventoryPlayer)
 	{
-		super(tileEntityBiggerCreatingTable, hugeCreatingTexture, new ContainerHugeCreatingTable(tileEntityBiggerCreatingTable, inventoryPlayer));
+		super(new ContainerHugeCreatingTable(tileEntityBiggerCreatingTable, inventoryPlayer), hugeCreatingTexture);
 		xSize = 176;
 		ySize = 240;
 	}

@@ -20,7 +20,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import wanion.biggercraftingtables.BiggerCraftingTables;
 import wanion.biggercraftingtables.Reference;
-import wanion.biggercraftingtables.block.ContainerBiggerCreatingTable;
 import wanion.biggercraftingtables.block.GuiBiggerCreatingTable;
 import wanion.biggercraftingtables.block.TileEntityBiggerCreatingTable;
 import wanion.biggercraftingtables.common.CTUtils;
@@ -37,16 +36,16 @@ import java.util.List;
 public final class CopyToClipBoardButton extends GuiButton implements IClickAction
 {
 	private final ResourceLocation resourceLocation = Reference.GUI_TEXTURES;
-	private final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable;
-	private final GuiBiggerCreatingTable guiBiggerCreatingTable;
+	private final TileEntityBiggerCreatingTable<?> tileEntityBiggerCreatingTable;
+	private final GuiBiggerCreatingTable<? extends TileEntityBiggerCreatingTable<?>> guiBiggerCreatingTable;
 	private final List<String> baseDescription = new ArrayList<>();
 	private final Slot outputSlot;
 	private boolean success = false;
 
-	public CopyToClipBoardButton(final int buttonId, @Nonnull final GuiBiggerCreatingTable guiBiggerCreatingTable, final int x, final int y)
+	public CopyToClipBoardButton(final int buttonId, @Nonnull final GuiBiggerCreatingTable<? extends TileEntityBiggerCreatingTable<?>> guiBiggerCreatingTable, final int x, final int y)
 	{
 		super(buttonId, x, y, 8, 9, Strings.EMPTY);
-		tileEntityBiggerCreatingTable = ((ContainerBiggerCreatingTable) guiBiggerCreatingTable.inventorySlots).getTileEntityBiggerCreatingTable();
+		tileEntityBiggerCreatingTable = guiBiggerCreatingTable.getContainer().getTile();
 		this.guiBiggerCreatingTable = guiBiggerCreatingTable;
 		this.baseDescription.add(TextFormatting.GOLD + I18n.format("bigger.creating.copy"));
 		this.outputSlot = guiBiggerCreatingTable.inventorySlots.getSlot(guiBiggerCreatingTable.inventorySlots.inventorySlots.size() - 37);
@@ -90,7 +89,7 @@ public final class CopyToClipBoardButton extends GuiButton implements IClickActi
 		this.playPressSound(this.guiBiggerCreatingTable.mc.getSoundHandler());
 		success = true;
 		BiggerCraftingTables.proxy.getThreadListener().addScheduledTask(() -> {
-			final StringSelection stringSelection = new StringSelection(CTUtils.toCTScript(((ContainerBiggerCreatingTable) guiBiggerCreatingTable.inventorySlots).getTileEntityBiggerCreatingTable()));
+			final StringSelection stringSelection = new StringSelection(CTUtils.toCTScript(tileEntityBiggerCreatingTable));
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, null);
 		});
 	}

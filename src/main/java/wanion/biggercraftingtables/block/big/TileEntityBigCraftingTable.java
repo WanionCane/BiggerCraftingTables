@@ -9,18 +9,20 @@ package wanion.biggercraftingtables.block.big;
  */
 
 import wanion.biggercraftingtables.block.TileEntityBiggerCraftingTable;
+import javax.annotation.Nonnull;
 
 public final class TileEntityBigCraftingTable extends TileEntityBiggerCraftingTable
 {
+	@Nonnull
+	@Override
+	public String getDefaultName()
+	{
+		return "container.bigcraftingtable.name";
+	}
+
 	@Override
 	public int getSizeInventory()
 	{
 		return 26;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "container.bigcraftingtable.name";
 	}
 }

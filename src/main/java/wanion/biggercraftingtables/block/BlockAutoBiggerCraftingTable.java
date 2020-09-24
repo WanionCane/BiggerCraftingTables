@@ -151,7 +151,7 @@ public final class BlockAutoBiggerCraftingTable extends BlockContainer
 	{
 		if (world == null)
 			return;
-		final TileEntityAutoBiggerCraftingTable tileEntityAutoBiggerCraftingTable = (TileEntityAutoBiggerCraftingTable) world.getTileEntity(blockPos);
+		final TileEntityAutoBiggerCraftingTable<?> tileEntityAutoBiggerCraftingTable = (TileEntityAutoBiggerCraftingTable<?>) world.getTileEntity(blockPos);
 		if (tileEntityAutoBiggerCraftingTable != null) {
 			final ItemStack droppedStack = new ItemStack(this, 1, getMetaFromState(blockState));
 			final NBTTagCompound nbtTagCompound = tileEntityAutoBiggerCraftingTable.writeCustomNBT(new NBTTagCompound());
