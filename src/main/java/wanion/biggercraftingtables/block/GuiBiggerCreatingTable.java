@@ -28,6 +28,7 @@ import wanion.lib.client.ClientHelper;
 import wanion.lib.client.gui.WGuiContainer;
 import wanion.lib.common.IClickAction;
 import wanion.lib.common.WContainer;
+import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.Matching;
 import wanion.lib.inventory.slot.MatchingSlot;
 
@@ -96,7 +97,7 @@ public abstract class GuiBiggerCreatingTable<T extends TileEntityBiggerCreatingT
 		final FontRenderer font = stack.getItem().getFontRenderer(stack);
 		GuiUtils.preItemToolTip(stack);
 		final List<String> toolTip = this.getItemToolTip(stack);
-		final Matching matching = matchingSlot.getMatching();
+		final AbstractMatching<?> matching = matchingSlot.getMatching();
 		toolTip.add(Strings.EMPTY);
 		toolTip.add(TextFormatting.RED + I18n.format(matching.getControlName()) + ": " + TextFormatting.WHITE + matching.getMatcher().getDescription());
 		toolTip.addAll(matchingDescription);

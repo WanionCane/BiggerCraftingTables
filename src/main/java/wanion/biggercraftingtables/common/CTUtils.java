@@ -16,6 +16,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.TileEntityBiggerCreatingTable;
 import wanion.biggercraftingtables.common.control.ShapeControl;
+import wanion.lib.common.matching.AbstractMatching;
 import wanion.lib.common.matching.Matching;
 import wanion.lib.common.matching.MatchingController;
 import wanion.lib.common.matching.matcher.NbtMatcher;
@@ -30,7 +31,7 @@ public final class CTUtils
 
 	private CTUtils() {}
 
-	public static String toCTScript(@Nonnull final TileEntityBiggerCreatingTable tileEntityBiggerCreatingTable)
+	public static String toCTScript(@Nonnull final TileEntityBiggerCreatingTable<?> tileEntityBiggerCreatingTable)
 	{
 		final int outputSlot = tileEntityBiggerCreatingTable.getSizeInventory() - 1;
 		final ItemStack outputStack = tileEntityBiggerCreatingTable.getStackInSlot(outputSlot);
@@ -59,7 +60,7 @@ public final class CTUtils
 					boolean hasNextX = x < last;
 					final int actualSlot = y * root + x;
 					if (!tileEntityBiggerCreatingTable.getStackInSlot(actualSlot).isEmpty()) {
-						final Matching matchingControl = matchingController.getMatching(actualSlot);
+						final AbstractMatching<?> matchingControl = matchingController.getMatching(actualSlot);
 						scriptBuilder.append(matchingControl.getMatcher().ctFormat());
 						if (hasNextX)
 							scriptBuilder.append(", ");
